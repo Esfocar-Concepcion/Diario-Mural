@@ -3,45 +3,741 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diario Mural — ESFOCAR Concepción v2</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <title>Diario Mural — ESFOCAR Concepción</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; }
-    @media (max-width: 700px) {
-      .grid-21 { grid-template-columns: 1fr !important; }
-      .grid-5  { grid-template-columns: 1fr 1fr !important; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f2f3ee;
+      --bg2:        #ffffff;
+      --bg3:        #e8eae2;
+      --surface:    #ffffff;
+      --border:     #d4d8cc;
+      --border2:    #c4c9ba;
+      --text:       #1c1f18;
+      --text2:      #4a4f42;
+      --text3:      #7a8070;
+      --accent:     #4a7c59;
+      --accent2:    #3a6147;
+      --accent3:    #d6e8d9;
+      --danger:     #b84c37;
+      --warn:       #a06030;
+      --crit:       #7a1a1a;
+      --header-bg:  #1e2d1a;
+      --header-text:#d8e8d0;
+      --shadow:     rgba(0,0,0,0.10);
     }
+
+    body {
+      font-family: 'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background .25s, color .25s;
+    }
+
+    /* Dark mode */
+    body.dark {
+      --bg:         #111510;
+      --bg2:        #1a1f18;
+      --bg3:        #222820;
+      --surface:    #1e2419;
+      --border:     #2e3828;
+      --border2:    #3a4832;
+      --text:       #d8e4d0;
+      --text2:      #a8b89a;
+      --text3:      #6a7a60;
+      --accent:     #5a9468;
+      --accent2:    #6aad7a;
+      --accent3:    #1e3028;
+      --danger:     #d45c44;
+      --warn:       #c07840;
+      --crit:       #e03030;
+      --header-bg:  #0c120a;
+      --header-text:#b8d0a8;
+      --shadow:     rgba(0,0,0,0.40);
+    }
+
+    /* ── Layout ── */
+    #crit-bar {
+      background: var(--crit);
+      color: #fff;
+      padding: 7px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .78rem;
+      letter-spacing: .06em;
+      font-family: monospace;
+    }
+    #crit-bar.hidden { display: none; }
+
+    header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px var(--shadow);
+    }
+    .header-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .brand-logo {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.15rem; letter-spacing: .05em;
+      flex-shrink: 0;
+      border: 2px solid #c9a84c;
+      box-shadow: 0 0 8px rgba(201,168,76,0.35);
+    }
+    .brand-sub { font-size: .6rem; letter-spacing: .22em; color: var(--accent2); font-family: monospace; line-height: 1; }
+    .brand-title { font-size: .98rem; font-weight: 700; letter-spacing: .04em; line-height: 1.2; }
+
+    nav.nav-d { display: flex; gap: 4px; align-items: center; }
+    nav.nav-m { display: none; gap: 8px; }
+
+    .nav-btn {
+      background: transparent; border: none; padding: 6px 14px;
+      cursor: pointer; font-size: .78rem; letter-spacing: .06em;
+      border-radius: 2px; font-family: inherit; color: var(--header-text);
+      transition: background .15s; border: 1px solid transparent;
+    }
+    .nav-btn.active {
+      background: var(--accent3);
+      color: var(--accent2);
+      border-color: var(--accent);
+    }
+    .nav-btn:hover { opacity: .85; }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      color: inherit; padding: 4px 8px; border-radius: 2px; font-size: 1rem;
+    }
+
+    /* Mobile menu */
+    #mob-menu {
+      background: var(--header-bg);
+      border-top: 1px solid var(--border);
+      padding: 8px 18px 14px;
+      display: none;
+    }
+    #mob-menu.open { display: block; }
+    .mob-item {
+      display: block; width: 100%; text-align: left;
+      background: none; border: none; border-bottom: 1px solid var(--border);
+      color: var(--header-text); padding: 10px 4px; cursor: pointer;
+      font-size: .88rem; font-family: inherit;
+    }
+
+    main { max-width: 1140px; margin: 0 auto; padding: 26px 16px 60px; }
+
+    footer {
+      background: var(--header-bg);
+      color: var(--text3);
+      padding: 22px 20px;
+      text-align: center;
+      font-size: .62rem;
+      letter-spacing: .2em;
+      font-family: monospace;
+    }
+
+    /* ── Sections ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Grid helpers ── */
+    .grid-5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 26px; }
+    .grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    .grid-11 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px,1fr)); gap: 14px; }
+    .grid-auto-sm { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--header-bg);
+      color: var(--header-text);
+      border-radius: 4px;
+      padding: 36px 36px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .06;
+      pointer-events: none;
+    }
+    .hero-sub { font-size: .62rem; letter-spacing: .28em; color: var(--accent2); font-family: monospace; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 8px; line-height: 1.2; }
+    .hero-accent { font-size: 1rem; font-weight: 400; color: var(--accent); }
+    .hero p { font-size: .88rem; color: var(--text2); line-height: 1.7; max-width: 480px; margin: 0 0 22px; }
+    .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ── Metric cards ── */
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 16px 14px;
+      text-align: center;
+    }
+    .metric-icon { font-size: 1.1rem; }
+    .metric-val { font-size: 1.7rem; font-weight: 700; line-height: 1.2; }
+    .metric-label { font-size: .68rem; color: var(--text3); letter-spacing: .05em; margin-top: 2px; }
+
+    /* ── SecTitle ── */
+    .sec-title { margin-bottom: 16px; }
+    .sec-title h2 { font-size: 1rem; margin: 0; color: var(--text); font-weight: 700; letter-spacing: .04em; }
+    .sec-title-bar { height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin-top: 5px; width: 60px; }
+
+    /* ── PubCard ── */
+    .pub-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: box-shadow .15s, transform .1s;
+    }
+    .pub-card:hover { box-shadow: 0 3px 12px var(--shadow); transform: translateY(-1px); }
+    .pub-card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 7px; align-items: center; }
+    .pub-card-title { font-size: .9rem; font-weight: 600; color: var(--text); margin-bottom: 5px; line-height: 1.35; }
+    .pub-card-date { font-size: .7rem; color: var(--text3); margin-bottom: 8px; font-family: monospace; }
+    .pub-card-body {
+      font-size: .8rem; color: var(--text2); line-height: 1.6;
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+    .pub-card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+
+    /* ── EvCard ── */
+    .ev-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 12px 14px;
+    }
+    .ev-card-title { font-size: .86rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .ev-card-date { font-size: .7rem; color: var(--text3); font-family: monospace; }
+    .ev-card-lugar { font-size: .73rem; color: var(--text2); margin-top: 3px; }
+    .ev-card-desc { font-size: .76rem; color: var(--text3); margin-top: 4px; line-height: 1.5; }
+
+    /* ── Badges ── */
+    .badge {
+      border-radius: 2px; font-size: .65rem; font-weight: 700;
+      padding: 2px 7px; letter-spacing: .06em; font-family: monospace;
+    }
+    .badge-cat { background: var(--accent3); color: var(--accent); border: 1px solid var(--accent); }
+    .badge-imp { background: rgba(74,124,89,.13); color: var(--accent); border: 1px solid var(--accent); font-size: .62rem; }
+    .badge-urg { background: rgba(184,76,55,.13); color: var(--danger); border: 1px solid var(--danger); font-size: .62rem; }
+    .badge-crit { background: rgba(122,26,26,.13); color: var(--crit); border: 1px solid var(--crit); font-size: .62rem; }
+    .tag { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); border-radius: 2px; font-size: .65rem; padding: 1px 6px; font-family: monospace; }
+
+    /* ── Forms ── */
+    input, select, textarea {
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      padding: 8px 11px;
+      font-size: .82rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      width: 100%;
+      transition: border-color .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--accent); outline-offset: 1px;
+    }
+    textarea { resize: vertical; }
+
+    /* ── Buttons ── */
+    .btn-p {
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 18px; cursor: pointer; border-radius: 2px;
+      font-size: .8rem; letter-spacing: .05em; font-family: inherit;
+    }
+    .btn-s {
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--accent); padding: 8px 18px;
+      cursor: pointer; border-radius: 2px;
+      font-size: .8rem; letter-spacing: .05em; font-family: inherit;
+    }
+    .btn-p:hover, .btn-s:hover { opacity: .85; }
+
+    .mini-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 3px 8px; cursor: pointer; border-radius: 2px;
+      font-size: .8rem; color: var(--text2);
+    }
+    .mini-btn:hover { opacity: .8; }
+
+    /* ── Sub label ── */
+    .sub-lbl { font-size: .65rem; letter-spacing: .18em; color: var(--text3); margin-bottom: 8px; font-family: monospace; }
+
+    /* ── Table ── */
+    .tbl { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .tbl th { padding: 9px 13px; text-align: left; font-size: .65rem; letter-spacing: .1em; color: var(--text3); font-family: monospace; font-weight: 600; background: var(--bg3); border-bottom: 1px solid var(--border); }
+    .tbl td { padding: 9px 13px; border-bottom: 1px solid var(--border); }
+    .tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; overflow-x: auto; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 16px;
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 26px;
+      max-width: 520px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+    .modal-box h3 { margin: 0 0 18px; font-size: 1rem; color: var(--text); }
+
+    /* ── Vacio ── */
+    .vacio { color: var(--text3); font-size: .84rem; padding: 20px 0; text-align: center; }
+
+    /* ── Detalle ── */
+    .detalle-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 32px 36px;
+    }
+
+    /* ── Filtros ── */
+    .filtros-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 3px; padding: 16px 18px; margin-bottom: 18px;
+    }
+    .filtros-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .filtros-row2 { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    /* ── Servicios ── */
+    .svc-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .svc-sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 10px 16px; text-align: center; min-width: 100px; }
+
+    /* ── Orden del Día ── */
+    .orden-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent); border-radius: 4px; padding: 22px 26px;
+    }
+    .orden-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+    .orden-field { }
+    .orden-instruccion { font-size: .88rem; color: var(--text2); line-height: 1.75; white-space: pre-wrap; }
+    .orden-firma { border-top: 1px solid var(--border); padding-top: 12px; display: flex; gap: 8px; align-items: center; }
+
+    /* ── Adjuntos ── */
+    .adj-list { display: flex; flex-direction: column; gap: 7px; margin-top: 8px; }
+    .adj-item {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg3); padding: 5px 10px; border-radius: 3px; font-size: .75rem;
+    }
+
+    /* ── Doc card ── */
+    .doc-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 16px 18px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    /* ── Etiqueta buttons ── */
+    .etq-btn {
+      padding: 3px 10px; border-radius: 2px; font-size: .72rem; cursor: pointer;
+      border: 1px solid var(--border); background: var(--bg3); color: var(--text2);
+      font-family: inherit;
+    }
+    .etq-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent2); }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .grid-21 { grid-template-columns: 1fr !important; }
+      .grid-5  { grid-template-columns: 1fr 1fr 1fr !important; }
+    }
+    @media (max-width: 680px) {
+      nav.nav-d { display: none !important; }
+      nav.nav-m { display: flex !important; }
+      .grid-5  { grid-template-columns: 1fr 1fr !important; }
+      .grid-21 { grid-template-columns: 1fr !important; }
+      .grid-11 { grid-template-columns: 1fr !important; }
+      .detalle-box { padding: 20px 16px; }
+      .hero { padding: 24px 20px; }
+    }
+
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .form-row > * { flex: 1; min-width: 120px; }
+    .form-col { display: flex; flex-direction: column; gap: 11px; }
+    .form-checks { display: flex; gap: 18px; flex-wrap: wrap; }
+    .form-checks label { display: flex; align-items: center; gap: 5px; font-size: .82rem; color: var(--text2); cursor: pointer; }
+    .form-btns { display: flex; gap: 10px; }
+    .form-btns .btn-p, .form-btns .btn-s { flex: 1; }
+
+    .flex-sb { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .flex-row { display: flex; gap: 8px; align-items: center; }
+    .flex-col { display: flex; flex-direction: column; gap: 12px; }
+    .mb-12 { margin-bottom: 12px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-18 { margin-bottom: 18px; }
+    .mb-26 { margin-bottom: 26px; }
+    .mb-28 { margin-bottom: 28px; }
+    .mb-32 { margin-bottom: 32px; }
+    .mt-14 { margin-top: 14px; }
+    .mt-20 { margin-top: 20px; }
+    .w100 { width: 100%; }
+    .text-center { text-align: center; }
+    .res-count { font-size: .7rem; color: var(--text3); font-family: monospace; margin-bottom: 12px; }
+    .active-badge { background: var(--accent3); color: var(--accent); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
+    .inactive-badge { background: var(--bg3); color: var(--text3); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect, useMemo, useCallback } = React;
 
-/**
- * DIARIO MURAL — ESFOCAR CONCEPCIÓN v2
- * ─────────────────────────────────────
- * Estructura preparada para conexión a base de datos.
- * Reemplaza las funciones del objeto `DB` con llamadas fetch/axios a tu API.
- */
+<!-- BARRA CRÍTICA -->
+<div id="crit-bar" class="hidden">
+  <span id="crit-txt">▲ CRÍTICO</span>
+  <button class="icon-btn" onclick="document.getElementById('crit-bar').classList.add('hidden')" style="color:#fff">✕</button>
+</div>
 
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="brand" onclick="showSec('inicio')">
+      <div class="brand-logo">EF</div>
+      <div>
+        <div class="brand-sub">ESFOCAR · CONCEPCIÓN</div>
+        <div class="brand-title">Diario Mural</div>
+      </div>
+    </div>
+    <nav class="nav-d" id="nav-desktop"></nav>
+    <nav class="nav-m">
+      <button class="icon-btn" style="color:var(--header-text)" onclick="toggleDark()" id="dark-btn-mob">◑</button>
+      <button class="nav-btn" style="border:1px solid var(--accent)" onclick="toggleMobMenu()">☰</button>
+    </nav>
+  </div>
+  <div id="mob-menu"></div>
+</header>
 
+<!-- CONTENIDO -->
+<main>
 
-// ═══════════════════════════════════════════════════════════
-// CAPA DE DATOS — Reemplazar con llamadas API reales
-// ═══════════════════════════════════════════════════════════
-const DB = {
-  getPubs:    () => Promise.resolve(PUBS_SEED),
-  savePub:    (p) => Promise.resolve({ ...p, id: p.id || Date.now() }),
-  deletePub:  (id) => Promise.resolve({ ok: true }),
-  getEventos: () => Promise.resolve(EVENTOS_SEED),
-  saveEvento: (e) => Promise.resolve({ ...e, id: e.id || Date.now() }),
-  deleteEvento:(id)=> Promise.resolve({ ok: true }),
-};
+  <!-- ═══ INICIO ═══ -->
+  <div id="sec-inicio" class="section active">
+    <div class="hero">
+      <div class="hero-sub">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div>
+      <h1>Diario Mural<br><span class="hero-accent">Grupo Concepción</span></h1>
+      <p>Espacio oficial de información institucional para los alumnos de la Escuela de Formación de Carabineros.</p>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="showSec('publicaciones')">Ver publicaciones</button>
+        <button class="btn-s" onclick="showSec('calendario')">Calendario →</button>
+      </div>
+    </div>
 
+    <div class="grid-5 mb-26" id="metrics-grid"></div>
+
+    <div class="grid-21">
+      <div>
+        <div class="sec-title"><h2>Publicaciones recientes</h2><div class="sec-title-bar"></div></div>
+        <div class="flex-col" id="home-pubs"></div>
+        <button class="btn-s mt-14 w100 text-center" onclick="showSec('publicaciones')">Ver todas →</button>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Próximos eventos</h2><div class="sec-title-bar"></div></div>
+        <div class="flex-col" id="home-evs"></div>
+        <button class="btn-s mt-14 w100 text-center" onclick="showSec('calendario')">Ver calendario →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PUBLICACIONES ═══ -->
+  <div id="sec-publicaciones" class="section">
+    <div class="sec-title"><h2>Publicaciones</h2><div class="sec-title-bar"></div></div>
+    <div class="filtros-box">
+      <div class="filtros-row">
+        <input id="f-q" placeholder="Buscar por título, contenido, autor o etiqueta…" oninput="applyFilters()" style="flex:1;min-width:200px">
+        <select id="f-cat" onchange="applyFilters()" style="min-width:180px">
+          <option value="todas">Todas las categorías</option>
+        </select>
+        <select id="f-pri" onchange="applyFilters()" style="min-width:160px">
+          <option value="todas">Todas las prioridades</option>
+          <option value="critico">Crítico</option>
+          <option value="urgente">Urgente</option>
+          <option value="importante">Importante</option>
+          <option value="normal">Normal</option>
+        </select>
+      </div>
+      <div class="filtros-row2">
+        <span style="font-size:.72rem;color:var(--text3);font-family:monospace">FECHA:</span>
+        <input id="f-desde" type="date" oninput="applyFilters()" style="width:140px">
+        <span style="color:var(--text3);font-size:.8rem">—</span>
+        <input id="f-hasta" type="date" oninput="applyFilters()" style="width:140px">
+        <span style="font-size:.72rem;color:var(--text3);font-family:monospace;margin-left:8px">ETIQUETA:</span>
+        <select id="f-etq" onchange="applyFilters()" style="min-width:130px">
+          <option value="">Todas</option>
+        </select>
+        <button class="btn-s" id="btn-limpiar" onclick="limpiarFiltros()" style="padding:6px 12px;font-size:.75rem;display:none">✕ Limpiar filtros</button>
+      </div>
+    </div>
+    <div class="res-count" id="res-count"></div>
+    <div class="grid-auto" id="pub-grid"></div>
+  </div>
+
+  <!-- ═══ DETALLE ═══ -->
+  <div id="sec-detalle" class="section">
+    <button class="btn-s mb-18" onclick="showSec('publicaciones')">← Volver</button>
+    <div class="detalle-box" id="detalle-content"></div>
+  </div>
+
+  <!-- ═══ CALENDARIO ═══ -->
+  <div id="sec-calendario" class="section">
+    <div class="sec-title"><h2>Calendario de Actividades</h2><div class="sec-title-bar"></div></div>
+    <div class="grid-11">
+      <div>
+        <div class="sub-lbl">PRÓXIMOS</div>
+        <div class="flex-col" id="cal-prox"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">PASADOS</div>
+        <div class="flex-col" id="cal-pasados"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DOCUMENTOS ═══ -->
+  <div id="sec-documentos" class="section">
+    <div class="sec-title"><h2>Biblioteca de Documentos</h2><div class="sec-title-bar"></div></div>
+    <div class="grid-auto-sm" id="docs-grid"></div>
+  </div>
+
+  <!-- ═══ ADMIN ═══ -->
+  <div id="sec-admin" class="section">
+    <div class="flex-sb mb-22">
+      <div class="sec-title" style="margin:0"><h2>Panel de Administración</h2><div class="sec-title-bar"></div></div>
+      <div class="flex-row">
+        <button class="btn-p" onclick="openModalPub()">+ Publicación</button>
+        <button class="btn-s" onclick="openModalEv()">+ Evento</button>
+      </div>
+    </div>
+    <div class="grid-5 mb-26" id="admin-metrics" style="grid-template-columns:repeat(4,1fr)"></div>
+    <div class="mb-32">
+      <div class="sub-lbl">PUBLICACIONES</div>
+      <div class="tbl-wrap"><table class="tbl" id="admin-pub-tbl"></table></div>
+    </div>
+    <div>
+      <div class="sub-lbl" id="admin-ev-lbl">EVENTOS</div>
+      <div class="tbl-wrap"><table class="tbl" id="admin-ev-tbl"></table></div>
+    </div>
+  </div>
+
+  <!-- ═══ SERVICIOS ═══ -->
+  <div id="sec-servicios" class="section">
+    <!-- Documentos publicados -->
+    <div class="mb-28">
+      <div class="flex-sb mb-16">
+        <div class="sec-title" style="margin:0"><h2>Documentos Publicados</h2><div class="sec-title-bar"></div></div>
+        <button class="btn-p" id="btn-doc-svc" style="display:none" onclick="openModalDocSvc()">+ Subir documento</button>
+      </div>
+      <div class="grid-auto-sm" id="docs-svc-grid"></div>
+    </div>
+    <!-- Orden del Día -->
+    <div class="mb-28">
+      <div class="flex-sb mb-16">
+        <div class="sec-title" style="margin:0"><h2>Orden del Día</h2><div class="sec-title-bar"></div></div>
+        <div class="flex-row" id="orden-btns"></div>
+      </div>
+      <div class="orden-box" id="orden-content"></div>
+    </div>
+    <!-- Servicios del personal -->
+    <div>
+      <div class="flex-sb mb-16">
+        <div class="sec-title" style="margin:0"><h2>Servicios del Personal</h2><div class="sec-title-bar"></div></div>
+        <button class="btn-p" id="btn-add-svc" style="display:none" onclick="openModalSvc()">+ Agregar servicio</button>
+      </div>
+      <div class="flex-row mb-16" style="flex-wrap:wrap">
+        <select id="f-esc" onchange="renderServicios()" style="min-width:160px">
+          <option value="todos">Todos los escuadrones</option>
+          <option>Escuadrón A</option><option>Escuadrón B</option>
+          <option>Escuadrón C</option><option>Sin asignar</option>
+        </select>
+        <select id="f-tipo-svc" onchange="renderServicios()" style="min-width:160px">
+          <option value="todos">Todos los tipos</option>
+          <option>Guardia</option><option>Facción</option>
+          <option>Servicio de Cuartel</option><option>Turno Especial</option>
+          <option>Instrucción</option><option>Comisión</option>
+        </select>
+        <span class="sub-lbl" id="svc-count" style="margin:0;align-self:center"></span>
+      </div>
+      <div id="svc-tbl-wrap"></div>
+      <div class="svc-summary" id="svc-resumen"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div>ESCUELA DE FORMACIÓN DE CARABINEROS — GRUPO CONCEPCIÓN</div>
+  <div style="margin-top:4px">Diario Mural Institucional · <span id="footer-year"></span></div>
+</footer>
+
+<!-- ═══ MODALES ═══ -->
+<div id="modal-login" class="modal-overlay" style="display:none" onclick="closeModal('modal-login',event)">
+  <div class="modal-box">
+    <h3>🔐 Acceso Administrador</h3>
+    <p style="font-size:.8rem;color:var(--text3);margin-bottom:14px">Ingrese la contraseña institucional.</p>
+    <input type="password" id="inp-pass" placeholder="Contraseña" class="mb-12"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="pass-err" style="color:var(--danger);font-size:.78rem;margin-bottom:10px;display:none">Contraseña incorrecta.</div>
+    <div class="form-btns">
+      <button class="btn-p" onclick="doLogin()">Ingresar</button>
+      <button class="btn-s" onclick="closeModal('modal-login')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-pub" class="modal-overlay" style="display:none" onclick="closeModal('modal-pub',event)">
+  <div class="modal-box">
+    <h3 id="modal-pub-title">Nueva publicación</h3>
+    <div class="form-col">
+      <input id="fp-titulo" placeholder="Título *">
+      <div class="form-row">
+        <select id="fp-cat"></select>
+        <select id="fp-pri">
+          <option value="normal">Normal</option>
+          <option value="importante">Importante</option>
+          <option value="urgente">Urgente</option>
+          <option value="critico">Crítico</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input id="fp-autor" placeholder="Autor">
+        <input id="fp-fecha" type="date">
+      </div>
+      <textarea id="fp-contenido" placeholder="Contenido *" style="min-height:110px"></textarea>
+      <div>
+        <div class="sub-lbl">ETIQUETAS</div>
+        <div id="etq-btns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">ADJUNTOS (PDF, Word, Imágenes, etc.)</div>
+        <input type="file" id="fp-adjuntos" multiple
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.gif"
+          onchange="handleAdjuntos(this)">
+        <div class="adj-list" id="adj-preview"></div>
+      </div>
+      <div class="form-checks">
+        <label><input type="checkbox" id="fp-fijada"> 📌 Fijar</label>
+        <label><input type="checkbox" id="fp-activa" checked> ✅ Activa</label>
+      </div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarPub()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-pub')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-ev" class="modal-overlay" style="display:none" onclick="closeModal('modal-ev',event)">
+  <div class="modal-box">
+    <h3 id="modal-ev-title">Nuevo evento</h3>
+    <div class="form-col">
+      <input id="fe-titulo" placeholder="Título *">
+      <div class="form-row">
+        <input id="fe-fecha" type="date">
+        <input id="fe-hora" placeholder="Hora (ej: 08:00)">
+      </div>
+      <input id="fe-lugar" placeholder="Lugar">
+      <textarea id="fe-desc" placeholder="Descripción" style="min-height:80px"></textarea>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarEv()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-ev')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-svc" class="modal-overlay" style="display:none" onclick="closeModal('modal-svc',event)">
+  <div class="modal-box">
+    <h3 id="modal-svc-title">Nuevo servicio</h3>
+    <div class="form-col">
+      <div class="form-row">
+        <input id="fs-nombre" placeholder="Nombre y apellido *" style="flex:2">
+        <input id="fs-rut" placeholder="RUT (opcional)" style="flex:1">
+      </div>
+      <div class="form-row">
+        <select id="fs-esc">
+          <option>Escuadrón A</option><option>Escuadrón B</option>
+          <option>Escuadrón C</option><option>Sin asignar</option>
+        </select>
+        <select id="fs-tipo">
+          <option>Guardia</option><option>Facción</option>
+          <option>Servicio de Cuartel</option><option>Turno Especial</option>
+          <option>Instrucción</option><option>Comisión</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div style="flex:1"><div class="sub-lbl">HORA INICIO</div><input id="fs-hi" type="time" value="08:00"></div>
+        <div style="flex:1"><div class="sub-lbl">HORA TÉRMINO</div><input id="fs-ht" type="time" value="16:00"></div>
+      </div>
+      <input id="fs-lugar" placeholder="Lugar (ej: Portería, Pabellón A…)">
+      <textarea id="fs-obs" placeholder="Observaciones (opcional)" style="min-height:60px"></textarea>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarSvc()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-svc')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-doc-svc" class="modal-overlay" style="display:none" onclick="closeModal('modal-doc-svc',event)">
+  <div class="modal-box">
+    <h3>Publicar Documento (PDF / Word)</h3>
+    <div class="form-col">
+      <div><div class="sub-lbl">TÍTULO *</div><input id="fd-titulo" placeholder="Ej: Orden del Día — 29 Abril 2026"></div>
+      <div><div class="sub-lbl">DESCRIPCIÓN (opcional)</div><input id="fd-desc" placeholder="Breve descripción"></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">FECHA</div><input id="fd-fecha" type="date"></div>
+        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fd-autor" placeholder="Ej: Oficial de Cuartel"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">ARCHIVO (PDF o Word) *</div>
+        <input type="file" id="fd-archivo" accept=".pdf,.doc,.docx" onchange="handleDocSvc(this)">
+        <div id="fd-preview" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      </div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarDocSvc()">📤 Publicar</button>
+        <button class="btn-s" onclick="closeModal('modal-doc-svc')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
 // ═══════════════════════════════════════════════════════════
 // CONSTANTES
 // ═══════════════════════════════════════════════════════════
@@ -49,105 +745,51 @@ const ADMIN_PASS = "974877Z";
 const HOY = new Date().toISOString().split("T")[0];
 
 const CATS = [
-  { id: "noticias",        label: "Noticias",           icon: "◈" },
-  { id: "instrucciones",   label: "Instrucciones",      icon: "◉" },
-  { id: "comunicados",     label: "Comunicados",        icon: "◎" },
-  { id: "actividades",     label: "Actividades",        icon: "◆" },
-  { id: "avisos",          label: "Avisos Urgentes",    icon: "▲" },
-  { id: "documentos",      label: "Documentos",         icon: "▣" },
-  { id: "vida-estudiantil",label: "Vida Estudiantil",   icon: "◐" },
-  { id: "calendario",      label: "Calendario",         icon: "◫" },
+  { id:"noticias",         label:"Noticias",          icon:"◈" },
+  { id:"instrucciones",    label:"Instrucciones",     icon:"◉" },
+  { id:"comunicados",      label:"Comunicados",       icon:"◎" },
+  { id:"actividades",      label:"Actividades",       icon:"◆" },
+  { id:"avisos",           label:"Avisos Urgentes",   icon:"▲" },
+  { id:"documentos",       label:"Documentos",        icon:"▣" },
+  { id:"vida-estudiantil", label:"Vida Estudiantil",  icon:"◐" },
+  { id:"calendario",       label:"Calendario",        icon:"◫" },
 ];
 
-const PRIORIDADES = [
-  { id: "normal",     label: "Normal",     color: null },
-  { id: "importante", label: "Importante", color: "#4a7c59" },
-  { id: "urgente",    label: "Urgente",    color: "#b84c37" },
-  { id: "critico",    label: "Crítico",    color: "#7a1a1a" },
-];
-
-const ETIQUETAS_PRESET = [
-  "Disciplina", "Académico", "Formación", "Salud", "Deportes",
-  "Ceremonial", "Administrativo", "Servicio", "Permiso", "Uniforme",
-];
+const ETIQUETAS = ["Disciplina","Académico","Formación","Salud","Deportes","Ceremonial","Administrativo","Servicio","Permiso","Uniforme"];
+const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
 // ═══════════════════════════════════════════════════════════
-// DATOS SEMILLA
+// ESTADO
 // ═══════════════════════════════════════════════════════════
-const PUBS_SEED = [
-  {
-    id: 1, titulo: "Formación Extraordinaria — 1 de Mayo",
-    categoria: "avisos", autor: "Inspectoría General",
-    fecha: "2026-04-28", prioridad: "critico", fijada: true, activa: true,
-    etiquetas: ["Ceremonial", "Formación", "Disciplina"],
-    contenido: "Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada.",
-  },
-  {
-    id: 2, titulo: "Instrucciones Revista de Dormitorio — Semana 28 Abril",
-    categoria: "instrucciones", autor: "Oficial de Cuartel",
-    fecha: "2026-04-27", prioridad: "importante", fijada: false, activa: true,
-    etiquetas: ["Disciplina", "Uniforme"],
-    contenido: "Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados.",
-  },
-  {
-    id: 3, titulo: "Comunicado: Normas de Presentación Personal",
-    categoria: "comunicados", autor: "Comandancia ESFOCAR",
-    fecha: "2026-04-25", prioridad: "importante", fijada: true, activa: true,
-    etiquetas: ["Disciplina", "Uniforme"],
-    contenido: "Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios.",
-  },
-  {
-    id: 4, titulo: "Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente",
-    categoria: "noticias", autor: "Secretaría ESFOCAR",
-    fecha: "2026-04-22", prioridad: "normal", fijada: false, activa: true,
-    etiquetas: ["Formación", "Académico"],
-    contenido: "Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad.",
-  },
-  {
-    id: 5, titulo: "Calendario Semanal — 28 Abril al 4 Mayo",
-    categoria: "actividades", autor: "Coordinación Académica",
-    fecha: "2026-04-27", prioridad: "normal", fijada: false, activa: true,
-    etiquetas: ["Académico", "Formación"],
-    contenido: "Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A.",
-  },
-  {
-    id: 6, titulo: "Resultados Torneo Deportivo Interno 2026",
-    categoria: "vida-estudiantil", autor: "Bienestar Estudiantil",
-    fecha: "2026-04-20", prioridad: "normal", fijada: false, activa: true,
-    etiquetas: ["Deportes"],
-    contenido: "Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes.",
-  },
-  {
-    id: 7, titulo: "Reglamento de Convivencia Estudiantil 2026",
-    categoria: "documentos", autor: "Secretaría",
-    fecha: "2026-04-15", prioridad: "normal", fijada: false, activa: true,
-    etiquetas: ["Administrativo", "Disciplina"],
-    contenido: "Se publica el Reglamento de Convivencia Estudiantil actualizado para 2026. Incluye modificaciones en artículos 12, 23 y 45 referentes a dispositivos electrónicos, permisos de salida y licencias médicas. Lectura obligatoria.",
-  },
-  {
-    id: 8, titulo: "Cambio Horario Comedor — Semana 28 Abril",
-    categoria: "avisos", autor: "Administración",
-    fecha: "2026-04-26", prioridad: "urgente", fijada: false, activa: true,
-    etiquetas: ["Administrativo"],
-    contenido: "Por mantención de equipos el comedor operará en horario especial: Desayuno 06:45. Almuerzo 12:30 (escuadrón A primero). Once 18:00. Cena 20:30. Respetar los horarios asignados.",
-  },
-  {
-    id: 9, titulo: "Charla Salud Mental y Bienestar Estudiantil",
-    categoria: "actividades", autor: "Área de Salud",
-    fecha: "2026-04-18", prioridad: "normal", fijada: false, activa: true,
-    etiquetas: ["Salud", "Académico"],
-    contenido: "Se realizará una charla sobre salud mental y técnicas de manejo del estrés para los alumnos del Grupo Concepción. Participación voluntaria pero recomendada. Auditorio principal, 15:00 hrs.",
-  },
-  {
-    id: 10, titulo: "Instrucciones para Salida Fin de Semana",
-    categoria: "instrucciones", autor: "Oficial de Servicio",
-    fecha: "2026-04-24", prioridad: "importante", fijada: false, activa: true,
-    etiquetas: ["Permiso", "Disciplina"],
-    contenido: "Para la salida reglamentaria del próximo fin de semana: presentar libreta de permisos al oficial de guardia. Hora límite de regreso: domingo 21:00 hrs. Cualquier novedad debe ser reportada inmediatamente.",
-  },
+let esAdmin = false;
+let darkMode = false;
+let secActual = "inicio";
+let editPubId = null;
+let editEvId  = null;
+let editSvcId = null;
+let adjuntosTemp = [];
+let docSvcTemp = null;
+let etqSeleccionadas = [];
+let ordenEditando = false;
+
+let ordenDia = { fecha: HOY, encuadre: "07:30", instruccion: "", novedad: "Sin novedad.", firmante: "", grado: "" };
+let servicios = [];
+let docsSvc = [];
+
+let pubs = [
+  { id:1, titulo:"Formación Extraordinaria — 1 de Mayo", categoria:"avisos", autor:"Inspectoría General", fecha:"2026-04-28", prioridad:"critico", fijada:true, activa:true, etiquetas:["Ceremonial","Formación","Disciplina"], adjuntos:[], contenido:"Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada." },
+  { id:2, titulo:"Instrucciones Revista de Dormitorio — Semana 28 Abril", categoria:"instrucciones", autor:"Oficial de Cuartel", fecha:"2026-04-27", prioridad:"importante", fijada:false, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados." },
+  { id:3, titulo:"Comunicado: Normas de Presentación Personal", categoria:"comunicados", autor:"Comandancia ESFOCAR", fecha:"2026-04-25", prioridad:"importante", fijada:true, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios." },
+  { id:4, titulo:"Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente", categoria:"noticias", autor:"Secretaría ESFOCAR", fecha:"2026-04-22", prioridad:"normal", fijada:false, activa:true, etiquetas:["Formación","Académico"], adjuntos:[], contenido:"Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad." },
+  { id:5, titulo:"Calendario Semanal — 28 Abril al 4 Mayo", categoria:"actividades", autor:"Coordinación Académica", fecha:"2026-04-27", prioridad:"normal", fijada:false, activa:true, etiquetas:["Académico","Formación"], adjuntos:[], contenido:"Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A." },
+  { id:6, titulo:"Resultados Torneo Deportivo Interno 2026", categoria:"vida-estudiantil", autor:"Bienestar Estudiantil", fecha:"2026-04-20", prioridad:"normal", fijada:false, activa:true, etiquetas:["Deportes"], adjuntos:[], contenido:"Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes." },
+  { id:7, titulo:"Reglamento de Convivencia Estudiantil 2026", categoria:"documentos", autor:"Secretaría", fecha:"2026-04-15", prioridad:"normal", fijada:false, activa:true, etiquetas:["Administrativo","Disciplina"], adjuntos:[], contenido:"Se publica el Reglamento de Convivencia Estudiantil actualizado para 2026. Incluye modificaciones en artículos 12, 23 y 45 referentes a dispositivos electrónicos, permisos de salida y licencias médicas. Lectura obligatoria." },
+  { id:8, titulo:"Cambio Horario Comedor — Semana 28 Abril", categoria:"avisos", autor:"Administración", fecha:"2026-04-26", prioridad:"urgente", fijada:false, activa:true, etiquetas:["Administrativo"], adjuntos:[], contenido:"Por mantención de equipos el comedor operará en horario especial: Desayuno 06:45. Almuerzo 12:30 (escuadrón A primero). Once 18:00. Cena 20:30. Respetar los horarios asignados." },
+  { id:9, titulo:"Charla Salud Mental y Bienestar Estudiantil", categoria:"actividades", autor:"Área de Salud", fecha:"2026-04-18", prioridad:"normal", fijada:false, activa:true, etiquetas:["Salud","Académico"], adjuntos:[], contenido:"Se realizará una charla sobre salud mental y técnicas de manejo del estrés para los alumnos del Grupo Concepción. Participación voluntaria pero recomendada. Auditorio principal, 15:00 hrs." },
+  { id:10, titulo:"Instrucciones para Salida Fin de Semana", categoria:"instrucciones", autor:"Oficial de Servicio", fecha:"2026-04-24", prioridad:"importante", fijada:false, activa:true, etiquetas:["Permiso","Disciplina"], adjuntos:[], contenido:"Para la salida reglamentaria del próximo fin de semana: presentar libreta de permisos al oficial de guardia. Hora límite de regreso: domingo 21:00 hrs. Cualquier novedad debe ser reportada inmediatamente." },
 ];
 
-const EVENTOS_SEED = [
+let eventos = [
   { id:1, titulo:"Formación Extraordinaria", fecha:"2026-05-01", hora:"07:30", lugar:"Patio Central", descripcion:"Uniforme de gala obligatorio." },
   { id:2, titulo:"Evaluación Derecho Procesal", fecha:"2026-05-02", hora:"09:00", lugar:"Sala A", descripcion:"Evaluación parcial semestre I." },
   { id:3, titulo:"Tiro en Polígono", fecha:"2026-04-29", hora:"14:00", lugar:"Polígono ESFOCAR", descripcion:"Escuadrón B." },
@@ -159,1319 +801,914 @@ const EVENTOS_SEED = [
 ];
 
 // ═══════════════════════════════════════════════════════════
-// TEMA — Variables CSS dinámicas
-// ═══════════════════════════════════════════════════════════
-const TEMA = {
-  claro: {
-    "--bg":         "#f2f3ee",
-    "--bg2":        "#ffffff",
-    "--bg3":        "#e8eae2",
-    "--surface":    "#ffffff",
-    "--border":     "#d4d8cc",
-    "--border2":    "#c4c9ba",
-    "--text":       "#1c1f18",
-    "--text2":      "#4a4f42",
-    "--text3":      "#7a8070",
-    "--accent":     "#4a7c59",
-    "--accent2":    "#3a6147",
-    "--accent3":    "#d6e8d9",
-    "--danger":     "#b84c37",
-    "--warn":       "#a06030",
-    "--crit":       "#7a1a1a",
-    "--header-bg":  "#1e2d1a",
-    "--header-text":"#d8e8d0",
-    "--shadow":     "rgba(0,0,0,0.10)",
-  },
-  oscuro: {
-    "--bg":         "#111510",
-    "--bg2":        "#1a1f18",
-    "--bg3":        "#222820",
-    "--surface":    "#1e2419",
-    "--border":     "#2e3828",
-    "--border2":    "#3a4832",
-    "--text":       "#d8e4d0",
-    "--text2":      "#a8b89a",
-    "--text3":      "#6a7a60",
-    "--accent":     "#5a9468",
-    "--accent2":    "#6aad7a",
-    "--accent3":    "#1e3028",
-    "--danger":     "#d45c44",
-    "--warn":       "#c07840",
-    "--crit":       "#e03030",
-    "--header-bg":  "#0c120a",
-    "--header-text":"#b8d0a8",
-    "--shadow":     "rgba(0,0,0,0.40)",
-  },
-};
-
-// ═══════════════════════════════════════════════════════════
 // UTILIDADES
 // ═══════════════════════════════════════════════════════════
-const fmt = (s) => {
+function fmt(s) {
   if (!s) return "";
   const [y,m,d] = s.split("-");
-  const M = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-  return `${parseInt(d)} ${M[parseInt(m)-1]} ${y}`;
-};
+  return parseInt(d) + " " + MESES[parseInt(m)-1] + " " + y;
+}
 
-const priColor = (p, vars) => {
+function priColor(p) {
   if (p === "critico")    return "var(--crit)";
   if (p === "urgente")    return "var(--danger)";
   if (p === "importante") return "var(--accent)";
   return "var(--border2)";
-};
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function catLabel(id) {
+  const c = CATS.find(x => x.id === id);
+  return c ? c.icon + " " + c.label.toUpperCase() : id;
+}
+
+function priBadge(pri) {
+  if (pri === "normal") return "";
+  const cls = { importante:"badge-imp", urgente:"badge-urg", critico:"badge-crit" };
+  const lbl = { importante:"IMPORTANTE", urgente:"URGENTE", critico:"CRÍTICO" };
+  return `<span class="badge ${cls[pri]}">${lbl[pri]}</span>`;
+}
+
+function tipoBadge(tipo) {
+  const colors = {
+    "Guardia":"var(--accent)", "Facción":"var(--accent2)",
+    "Servicio de Cuartel":"var(--text3)", "Turno Especial":"var(--warn)",
+    "Instrucción":"var(--crit)", "Comisión":"var(--danger)"
+  };
+  const c = colors[tipo] || "var(--text3)";
+  return `<span style="background:${c}22;color:${c};border:1px solid ${c};border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;letter-spacing:.06em;font-family:monospace">${esc(tipo).toUpperCase()}</span>`;
+}
+
+function iconAdj(tipo, nombre) {
+  if (tipo?.includes("pdf") || nombre?.endsWith(".pdf")) return "📄";
+  if (tipo?.includes("image")) return "🖼️";
+  if (tipo?.includes("word") || nombre?.endsWith(".docx") || nombre?.endsWith(".doc")) return "📝";
+  if (nombre?.endsWith(".xlsx") || nombre?.endsWith(".xls")) return "📊";
+  return "📎";
+}
+
+function pubsActivas() {
+  return pubs.filter(p => p.activa).sort((a,b) => {
+    const ord = { critico:0, urgente:1, importante:2, normal:3 };
+    if (a.fijada !== b.fijada) return a.fijada ? -1 : 1;
+    if (ord[a.prioridad] !== ord[b.prioridad]) return ord[a.prioridad] - ord[b.prioridad];
+    return new Date(b.fecha) - new Date(a.fecha);
+  });
+}
+
+function proxEventos() {
+  return eventos.filter(e => e.fecha >= HOY).sort((a,b) => a.fecha.localeCompare(b.fecha));
+}
 
 // ═══════════════════════════════════════════════════════════
-// APP PRINCIPAL
+// NAVEGACIÓN
 // ═══════════════════════════════════════════════════════════
-function DiarioMural() {
-  const [dark, setDark] = useState(false);
-  const [pubs, setPubs] = useState([]);
-  const [eventos, setEventos] = useState([]);
-  const [sec, setSec] = useState("inicio");
-  const [esAdmin, setEsAdmin] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+const NAV_ITEMS = [
+  { id:"inicio", lbl:"Inicio" },
+  { id:"publicaciones", lbl:"Publicaciones" },
+  { id:"calendario", lbl:"Calendario" },
+  { id:"documentos", lbl:"Documentos" },
+  { id:"servicios", lbl:"Servicios" },
+];
 
-  // Filtros
-  const [q, setQ] = useState("");
-  const [filtroCat, setFiltroCat] = useState("todas");
-  const [filtroFechaD, setFiltroFechaD] = useState("");
-  const [filtroFechaH, setFiltroFechaH] = useState("");
-  const [filtroEtiqueta, setFiltroEtiqueta] = useState("");
-  const [filtroPrioridad, setFiltroPrioridad] = useState("todas");
+function buildNav() {
+  const nd = document.getElementById("nav-desktop");
+  const mm = document.getElementById("mob-menu");
 
-  // Modales
-  const [mLogin, setMLogin] = useState(false);
-  const [mPub, setMPub] = useState(false);
-  const [mEvento, setMEvento] = useState(false);
-  const [detalle, setDetalle] = useState(null);
-  const [editId, setEditId] = useState(null);
-  const [pass, setPass] = useState("");
-  const [passErr, setPassErr] = useState("");
-  const [avisoBar, setAvisoBar] = useState(true);
+  const adminItem = esAdmin ? [{ id:"admin", lbl:"⚙ Admin" }] : [];
+  const items = [...NAV_ITEMS, ...adminItem];
 
-  // Forms
-  const pubZ = { titulo:"", categoria:"noticias", autor:"", fecha:HOY, contenido:"", fijada:false, prioridad:"normal", activa:true, etiquetas:[], adjuntos:[] };
-  const evZ  = { titulo:"", fecha:"", hora:"", lugar:"", descripcion:"" };
-  const [fPub, setFPub] = useState(pubZ);
-  const [fEv,  setFEv]  = useState(evZ);
-
-  // ── Estados Servicios / Orden del Día ──
-  const TIPOS_SERVICIO = ["Guardia","Facción","Servicio de Cuartel","Turno Especial","Instrucción","Comisión"];
-  const ESCUADRONES = ["Escuadrón A","Escuadrón B","Escuadrón C","Sin asignar"];
-  const svcZ = { nombre:"", rut:"", escuadron:"Escuadrón A", tipoServicio:"Guardia", horaInicio:"08:00", horaTermino:"16:00", lugar:"", obs:"" };
-  const ordZ = { fecha:HOY, encuadre:"07:30", instruccion:"", novedad:"Sin novedad.", firmante:"", grado:"" };
-  const [servicios, setServicios]   = useState([]);
-  const [mSvc, setMSvc]             = useState(false);
-  const [editSvcId, setEditSvcId]   = useState(null);
-  const [fSvc, setFSvc]             = useState(svcZ);
-  const [ordenDia, setOrdenDia]     = useState({ ...ordZ });
-  const [editOrden, setEditOrden]   = useState(false);
-  const [filtroEsc, setFiltroEsc]   = useState("todos");
-  const [filtroTipo, setFiltroTipo] = useState("todos");
-
-  const docSvcZ = { titulo:"", descripcion:"", fecha:HOY, autor:"", archivo:null };
-  const [docsSvc, setDocsSvc]       = useState([]);
-  const [mDocSvc, setMDocSvc]       = useState(false);
-  const [fDocSvc, setFDocSvc]       = useState(docSvcZ);
-  // Aplicar tema
-  useEffect(() => {
-    const t = dark ? TEMA.oscuro : TEMA.claro;
-    Object.entries(t).forEach(([k,v]) => document.documentElement.style.setProperty(k,v));
-  }, [dark]);
-
-  // Cargar datos
-  useEffect(() => {
-    DB.getPubs().then(setPubs);
-    DB.getEventos().then(setEventos);
-  }, []);
-
-  // ── Derivados ──
-  const pubsActivas = useMemo(() =>
-    pubs.filter(p => p.activa).sort((a,b) => {
-      const ord = { critico:0, urgente:1, importante:2, normal:3 };
-      if (a.fijada !== b.fijada) return a.fijada ? -1 : 1;
-      if (ord[a.prioridad] !== ord[b.prioridad]) return ord[a.prioridad] - ord[b.prioridad];
-      return new Date(b.fecha) - new Date(a.fecha);
-    }), [pubs]);
-
-  const pubsFiltradas = useMemo(() => {
-    let lista = pubsActivas;
-    if (filtroCat !== "todas") lista = lista.filter(p => p.categoria === filtroCat);
-    if (filtroPrioridad !== "todas") lista = lista.filter(p => p.prioridad === filtroPrioridad);
-    if (filtroEtiqueta) lista = lista.filter(p => p.etiquetas?.includes(filtroEtiqueta));
-    if (filtroFechaD) lista = lista.filter(p => p.fecha >= filtroFechaD);
-    if (filtroFechaH) lista = lista.filter(p => p.fecha <= filtroFechaH);
-    if (q.trim()) {
-      const ql = q.toLowerCase();
-      lista = lista.filter(p =>
-        p.titulo.toLowerCase().includes(ql) ||
-        p.contenido.toLowerCase().includes(ql) ||
-        p.autor.toLowerCase().includes(ql) ||
-        p.etiquetas?.some(e => e.toLowerCase().includes(ql))
-      );
+  // Desktop nav
+  nd.innerHTML = items.map(n => `
+    <button class="nav-btn ${secActual===n.id?'active':''}"
+      onclick="showSec('${n.id}')">${esc(n.lbl)}</button>
+  `).join("") + `
+    <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>
+    ${esAdmin
+      ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
+      : `<button class="nav-btn" onclick="openModal('modal-login')" style="border:1px solid var(--accent);color:var(--accent2);margin-left:4px">🔐 Admin</button>`
     }
-    return lista;
-  }, [pubsActivas, filtroCat, filtroPrioridad, filtroEtiqueta, filtroFechaD, filtroFechaH, q]);
+  `;
 
-  const prox = useMemo(() =>
-    eventos.filter(e => e.fecha >= HOY).sort((a,b) => a.fecha.localeCompare(b.fecha))
-  , [eventos]);
+  // Mobile menu
+  mm.innerHTML = items.map(n => `
+    <button class="mob-item" onclick="showSec('${n.id}');closeMobMenu()">${esc(n.lbl)}</button>
+  `).join("") + (esAdmin
+    ? `<button class="mob-item" onclick="doLogout()" style="color:var(--danger)">Cerrar sesión</button>`
+    : `<button class="mob-item" onclick="openModal('modal-login');closeMobMenu()" style="color:var(--accent2)">🔐 Acceso Admin</button>`
+  );
+}
 
-  const avisoTop = pubs.find(p => p.prioridad === "critico" && p.activa && p.fijada);
+function showSec(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const el = document.getElementById("sec-" + id);
+  if (el) { el.classList.add("active"); secActual = id; }
+  buildNav();
+  renderSection(id);
+  window.scrollTo(0, 0);
+}
+
+function renderSection(id) {
+  if (id === "inicio")        renderInicio();
+  if (id === "publicaciones") { initFiltros(); renderPubs(); }
+  if (id === "calendario")    renderCalendario();
+  if (id === "documentos")    renderDocumentos();
+  if (id === "admin")         renderAdmin();
+  if (id === "servicios")     renderServicios();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════
+function toggleDark() {
+  darkMode = !darkMode;
+  document.body.classList.toggle("dark", darkMode);
+  buildNav();
+  const mb = document.getElementById("dark-btn-mob");
+  if (mb) mb.textContent = darkMode ? "☀" : "◑";
+}
+
+function toggleMobMenu() {
+  document.getElementById("mob-menu").classList.toggle("open");
+}
+function closeMobMenu() {
+  document.getElementById("mob-menu").classList.remove("open");
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALES
+// ═══════════════════════════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).style.display = "flex";
+}
+function closeModal(id, e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById(id).style.display = "none";
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════
+function doLogin() {
+  const p = document.getElementById("inp-pass").value;
+  if (p === ADMIN_PASS) {
+    esAdmin = true;
+    closeModal("modal-login");
+    document.getElementById("inp-pass").value = "";
+    document.getElementById("pass-err").style.display = "none";
+    buildNav();
+    showSec("admin");
+  } else {
+    document.getElementById("pass-err").style.display = "block";
+  }
+}
+function doLogout() {
+  esAdmin = false;
+  buildNav();
+  showSec("inicio");
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER INICIO
+// ═══════════════════════════════════════════════════════════
+function renderInicio() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+
+  // Barra crítica
+  const critico = pubs.find(p => p.prioridad === "critico" && p.activa && p.fijada);
+  const bar = document.getElementById("crit-bar");
+  if (critico) {
+    document.getElementById("crit-txt").textContent = "▲ CRÍTICO — " + critico.titulo;
+    bar.classList.remove("hidden");
+  }
 
   // Métricas
-  const metricas = useMemo(() => ({
-    total:    pubsActivas.length,
-    noticias: pubsActivas.filter(p => p.categoria === "noticias").length,
-    proxEvs:  prox.length,
-    urgentes: pubsActivas.filter(p => p.prioridad === "urgente" || p.prioridad === "critico").length,
-    docs:     pubsActivas.filter(p => p.categoria === "documentos").length,
-  }), [pubsActivas, prox]);
-
-  // ── CRUD ──
-  const login = () => {
-    if (pass === ADMIN_PASS) { setEsAdmin(true); setMLogin(false); setPass(""); setPassErr(""); setSec("admin"); }
-    else setPassErr("Contraseña incorrecta.");
-  };
-
-  const guardarPub = async () => {
-    if (!fPub.titulo || !fPub.contenido) return;
-    const saved = await DB.savePub(editId ? { ...fPub, id: editId } : fPub);
-    setPubs(prev => editId ? prev.map(p => p.id === editId ? saved : p) : [saved, ...prev]);
-    setMPub(false); setFPub(pubZ); setEditId(null);
-  };
-
-  const eliminarPub = async (id) => {
-    if (!confirm("¿Eliminar publicación?")) return;
-    await DB.deletePub(id);
-    setPubs(prev => prev.filter(p => p.id !== id));
-  };
-
-  const togglePub = (id, campo) =>
-    setPubs(prev => prev.map(p => p.id === id ? { ...p, [campo]: !p[campo] } : p));
-
-  const guardarEv = async () => {
-    if (!fEv.titulo || !fEv.fecha) return;
-    const saved = await DB.saveEvento(editId === "ev" ? fEv : fEv);
-    setEventos(prev => editId === "ev" ? prev.map(e => e.id === fEv.id ? saved : e) : [...prev, saved]);
-    setMEvento(false); setFEv(evZ); setEditId(null);
-  };
-
-  const eliminarEv = async (id) => {
-    if (!confirm("¿Eliminar evento?")) return;
-    await DB.deleteEvento(id);
-    setEventos(prev => prev.filter(e => e.id !== id));
-  };
-
-  const abrirEditPub = (p) => { setFPub({...p}); setEditId(p.id); setMPub(true); };
-  const abrirEditEv  = (e) => { setFEv({...e});  setEditId("ev"); setMEvento(true); };
-
-  // ── CRUD Servicios ──
-  const guardarSvc = () => {
-    if (!fSvc.nombre) return;
-    if (editSvcId) {
-      setServicios(prev => prev.map(s => s.id === editSvcId ? {...fSvc, id:editSvcId} : s));
-    } else {
-      setServicios(prev => [...prev, {...fSvc, id:Date.now()}]);
-    }
-    setMSvc(false); setFSvc(svcZ); setEditSvcId(null);
-  };
-  const eliminarSvc = (id) => { if (confirm("¿Eliminar servicio?")) setServicios(prev=>prev.filter(s=>s.id!==id)); };
-  const abrirEditSvc = (s) => { setFSvc({...s}); setEditSvcId(s.id); setMSvc(true); };
-
-  // ── CRUD Documentos Servicios ──
-  const guardarDocSvc = () => {
-    if (!fDocSvc.titulo || !fDocSvc.archivo) return;
-    setDocsSvc(prev => [...prev, { ...fDocSvc, id: Date.now() }]);
-    setMDocSvc(false); setFDocSvc(docSvcZ);
-  };
-  const eliminarDocSvc = (id) => { if (confirm('¿Eliminar documento?')) setDocsSvc(prev => prev.filter(d => d.id !== id)); };
-
-  const svcFiltrados = useMemo(() => {
-    let lista = servicios;
-    if (filtroEsc !== "todos")  lista = lista.filter(s => s.escuadron === filtroEsc);
-    if (filtroTipo !== "todos") lista = lista.filter(s => s.tipoServicio === filtroTipo);
-    return lista;
-  }, [servicios, filtroEsc, filtroTipo]);
-
-  const toggleEtiqueta = (et) =>
-    setFPub(p => ({ ...p, etiquetas: p.etiquetas.includes(et)
-      ? p.etiquetas.filter(x => x !== et)
-      : [...p.etiquetas, et]
-    }));
-
-  const filtrosActivos = filtroCat !== "todas" || filtroPrioridad !== "todas" || filtroEtiqueta || filtroFechaD || filtroFechaH || q;
-  const limpiarFiltros = () => { setQ(""); setFiltroCat("todas"); setFiltroPrioridad("todas"); setFiltroEtiqueta(""); setFiltroFechaD(""); setFiltroFechaH(""); };
-
-  const NAV = [
-    { id:"inicio", lbl:"Inicio" },
-    { id:"publicaciones", lbl:"Publicaciones" },
-    { id:"calendario", lbl:"Calendario" },
-    { id:"documentos", lbl:"Documentos" },
-    { id:"servicios", lbl:"Servicios" },
+  const mg = document.getElementById("metrics-grid");
+  const urgentes = act.filter(p => p.prioridad === "urgente" || p.prioridad === "critico").length;
+  const metArr = [
+    { v:act.length,                              l:"Publicaciones",     i:"◈", r:false },
+    { v:act.filter(p=>p.categoria==="noticias").length, l:"Noticias",  i:"◎", r:false },
+    { v:prox.length,                             l:"Próximos eventos",  i:"◫", r:false },
+    { v:urgentes,                                l:"Urgentes/Críticos", i:"▲", r:true  },
+    { v:act.filter(p=>p.categoria==="documentos").length, l:"Documentos", i:"▣", r:false },
   ];
-
-  // ═══════════════════════════════════════════════════════════
-  // RENDER
-  // ═══════════════════════════════════════════════════════════
-  return (
-    <div style={{ background:"var(--bg)", color:"var(--text)", minHeight:"100vh", fontFamily:"'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif", transition:"background .25s,color .25s" }}>
-
-      {/* ── BARRA CRÍTICA ── */}
-      {avisoBar && avisoTop && (
-        <div style={{ background:"var(--crit)", color:"#fff", padding:"7px 18px", display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:".78rem", letterSpacing:".06em", fontFamily:"monospace" }}>
-          <span>▲ CRÍTICO — {avisoTop.titulo}</span>
-          <button onClick={()=>setAvisoBar(false)} style={css.iconBtn}>✕</button>
-        </div>
-      )}
-
-      {/* ── HEADER ── */}
-      <header style={{ background:"var(--header-bg)", color:"var(--header-text)", position:"sticky", top:0, zIndex:100, boxShadow:"0 2px 16px var(--shadow)" }}>
-        <div style={{ maxWidth:1140, margin:"0 auto", padding:"0 18px", display:"flex", alignItems:"center", justifyContent:"space-between", height:58 }}>
-
-          {/* Marca */}
-          <div style={{ display:"flex", alignItems:"center", gap:14, cursor:"pointer" }} onClick={()=>setSec("inicio")}>
-            <div style={{
-                width:46, height:46, borderRadius:"50%",
-                background:"var(--accent)", color:"#fff",
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontWeight:900, fontSize:"1.15rem", letterSpacing:".05em",
-                flexShrink:0, border:"2px solid #c9a84c",
-                boxShadow:"0 0 8px rgba(201,168,76,0.35)"
-              }}>EF</div>
-            <div>
-              <div style={{ fontSize:".6rem", letterSpacing:".22em", color:"var(--accent2)", fontFamily:"monospace", lineHeight:1 }}>ESFOCAR · CONCEPCIÓN</div>
-              <div style={{ fontSize:".98rem", fontWeight:700, letterSpacing:".04em", lineHeight:1.2 }}>Diario Mural</div>
-            </div>
-          </div>
-
-          {/* Nav desktop */}
-          <nav style={{ display:"flex", gap:4, alignItems:"center" }} className="nav-d">
-            {NAV.map(n => (
-              <button key={n.id} onClick={()=>setSec(n.id)} style={{
-                ...css.navBtn,
-                background: sec===n.id ? "var(--accent3)" : "transparent",
-                color: sec===n.id ? "var(--accent2)" : "var(--header-text)",
-                border: sec===n.id ? "1px solid var(--accent)" : "1px solid transparent",
-              }}>{n.lbl}</button>
-            ))}
-            {esAdmin && (
-              <button onClick={()=>setSec("admin")} style={{
-                ...css.navBtn,
-                background: sec==="admin" ? "var(--accent3)" : "transparent",
-                color: "var(--accent2)",
-                border:"1px solid var(--accent)"
-              }}>⚙ Admin</button>
-            )}
-            <button onClick={()=>setDark(d=>!d)} title="Modo oscuro" style={{ ...css.iconBtn, marginLeft:6, fontSize:"1rem", opacity:.75 }}>
-              {dark ? "☀" : "◑"}
-            </button>
-            {esAdmin
-              ? <button onClick={()=>setEsAdmin(false)} style={{ ...css.navBtn, color:"var(--danger)", border:"1px solid var(--danger)", marginLeft:4 }}>Salir</button>
-              : <button onClick={()=>setMLogin(true)} style={{ ...css.navBtn, border:"1px solid var(--accent)", color:"var(--accent2)", marginLeft:4 }}>🔐 Admin</button>
-            }
-          </nav>
-
-          {/* Hamburguesa */}
-          <div style={{ display:"flex", gap:8 }} className="nav-m">
-            <button onClick={()=>setDark(d=>!d)} style={{ ...css.iconBtn, fontSize:"1rem" }}>{dark?"☀":"◑"}</button>
-            <button onClick={()=>setMenuOpen(o=>!o)} style={{ ...css.navBtn, border:"1px solid var(--accent)" }}>☰</button>
-          </div>
-        </div>
-
-        {/* Menú móvil */}
-        {menuOpen && (
-          <div style={{ background:"var(--header-bg)", borderTop:"1px solid var(--border)", padding:"8px 18px 14px" }}>
-            {[...NAV, ...(esAdmin?[{id:"admin",lbl:"⚙ Admin"}]:[])].map(n => (
-              <button key={n.id} onClick={()=>{setSec(n.id);setMenuOpen(false);}} style={{ display:"block", width:"100%", textAlign:"left", background:"none", border:"none", color:"var(--header-text)", padding:"10px 4px", cursor:"pointer", fontSize:".88rem", borderBottom:"1px solid var(--border)" }}>
-                {n.lbl}
-              </button>
-            ))}
-            {esAdmin
-              ? <button onClick={()=>setEsAdmin(false)} style={{ display:"block", padding:"10px 4px", background:"none", border:"none", color:"var(--danger)", cursor:"pointer", fontSize:".88rem" }}>Cerrar sesión</button>
-              : <button onClick={()=>{setMLogin(true);setMenuOpen(false);}} style={{ display:"block", padding:"10px 4px", background:"none", border:"none", color:"var(--accent2)", cursor:"pointer", fontSize:".88rem" }}>🔐 Acceso Admin</button>
-            }
-          </div>
-        )}
-      </header>
-
-      {/* ── CONTENIDO ── */}
-      <main style={{ maxWidth:1140, margin:"0 auto", padding:"26px 16px 60px" }}>
-
-        {/* ═══ INICIO ═══ */}
-        {sec === "inicio" && (
-          <>
-            {/* Hero */}
-            <div style={{ background:"var(--header-bg)", color:"var(--header-text)", borderRadius:4, padding:"36px 36px 32px", marginBottom:24, position:"relative", overflow:"hidden" }}>
-              <div style={{ position:"absolute", right:-40, top:-40, width:220, height:220, borderRadius:"50%", background:"var(--accent)", opacity:.06, pointerEvents:"none" }} />
-              <div style={{ fontSize:".62rem", letterSpacing:".28em", color:"var(--accent2)", fontFamily:"monospace", marginBottom:10 }}>
-                ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN
-              </div>
-              <h1 style={{ fontSize:"1.9rem", fontWeight:700, margin:"0 0 8px", lineHeight:1.2 }}>
-                Diario Mural<br />
-                <span style={{ fontSize:"1rem", fontWeight:400, color:"var(--accent)" }}>Grupo Concepción</span>
-              </h1>
-              <p style={{ fontSize:".88rem", color:"var(--text2)", lineHeight:1.7, maxWidth:480, margin:"0 0 22px" }}>
-                Espacio oficial de información institucional para los alumnos de la Escuela de Formación de Carabineros.
-              </p>
-              <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                <button onClick={()=>setSec("publicaciones")} style={css.btnP}>Ver publicaciones</button>
-                <button onClick={()=>setSec("calendario")} style={css.btnS}>Calendario →</button>
-              </div>
-            </div>
-
-            {/* Métricas */}
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:12, marginBottom:26 }} className="grid-5">
-              {[
-                { v:metricas.total,    l:"Publicaciones",    i:"◈" },
-                { v:metricas.noticias, l:"Noticias",         i:"◎" },
-                { v:metricas.proxEvs,  l:"Próximos eventos", i:"◫" },
-                { v:metricas.urgentes, l:"Urgentes/Críticos",i:"▲", red:true },
-                { v:metricas.docs,     l:"Documentos",       i:"▣" },
-              ].map(m => (
-                <div key={m.l} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, padding:"16px 14px", textAlign:"center", borderTop:`3px solid ${m.red?"var(--danger)":"var(--accent)"}` }}>
-                  <div style={{ fontSize:"1.1rem", color:m.red?"var(--danger)":"var(--accent)" }}>{m.i}</div>
-                  <div style={{ fontSize:"1.7rem", fontWeight:700, color:m.red?"var(--danger)":"var(--text)", lineHeight:1.2 }}>{m.v}</div>
-                  <div style={{ fontSize:".68rem", color:"var(--text3)", letterSpacing:".05em", marginTop:2 }}>{m.l}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Dos columnas */}
-            <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:20 }} className="grid-21">
-              <div>
-                <SecTitle>Publicaciones recientes</SecTitle>
-                <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-                  {pubsActivas.slice(0,6).map(p => (
-                    <PubCard key={p.id} pub={p} onClick={()=>{setDetalle(p);setSec("detalle");}} />
-                  ))}
-                </div>
-                <button onClick={()=>setSec("publicaciones")} style={{ ...css.btnS, marginTop:14, width:"100%", textAlign:"center" }}>
-                  Ver todas →
-                </button>
-              </div>
-              <div>
-                <SecTitle>Próximos eventos</SecTitle>
-                <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
-                  {prox.slice(0,6).map(e => <EvCard key={e.id} ev={e} />)}
-                  {prox.length === 0 && <Vacio />}
-                </div>
-                <button onClick={()=>setSec("calendario")} style={{ ...css.btnS, marginTop:14, width:"100%", textAlign:"center" }}>
-                  Ver calendario →
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ═══ PUBLICACIONES ═══ */}
-        {sec === "publicaciones" && (
-          <>
-            <SecTitle>Publicaciones</SecTitle>
-
-            {/* Barra de búsqueda */}
-            <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, padding:"16px 18px", marginBottom:18 }}>
-              <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center", marginBottom:12 }}>
-                <input
-                  placeholder="Buscar por título, contenido, autor o etiqueta…"
-                  value={q} onChange={e=>setQ(e.target.value)}
-                  style={{ ...css.inp, flex:1, minWidth:200 }}
-                />
-                <select value={filtroCat} onChange={e=>setFiltroCat(e.target.value)} style={css.sel}>
-                  <option value="todas">Todas las categorías</option>
-                  {CATS.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
-                </select>
-                <select value={filtroPrioridad} onChange={e=>setFiltroPrioridad(e.target.value)} style={css.sel}>
-                  <option value="todas">Todas las prioridades</option>
-                  {PRIORIDADES.map(p=><option key={p.id} value={p.id}>{p.label}</option>)}
-                </select>
-              </div>
-              <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
-                <span style={{ fontSize:".72rem", color:"var(--text3)", fontFamily:"monospace" }}>FECHA:</span>
-                <input type="date" value={filtroFechaD} onChange={e=>setFiltroFechaD(e.target.value)} style={{ ...css.inp, width:140 }} placeholder="Desde" />
-                <span style={{ color:"var(--text3)", fontSize:".8rem" }}>—</span>
-                <input type="date" value={filtroFechaH} onChange={e=>setFiltroFechaH(e.target.value)} style={{ ...css.inp, width:140 }} placeholder="Hasta" />
-                <span style={{ fontSize:".72rem", color:"var(--text3)", fontFamily:"monospace", marginLeft:8 }}>ETIQUETA:</span>
-                <select value={filtroEtiqueta} onChange={e=>setFiltroEtiqueta(e.target.value)} style={css.sel}>
-                  <option value="">Todas</option>
-                  {ETIQUETAS_PRESET.map(e=><option key={e} value={e}>{e}</option>)}
-                </select>
-                {filtrosActivos && (
-                  <button onClick={limpiarFiltros} style={{ ...css.btnS, padding:"6px 12px", fontSize:".75rem" }}>
-                    ✕ Limpiar filtros
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Resultados */}
-            <div style={{ fontSize:".7rem", color:"var(--text3)", fontFamily:"monospace", marginBottom:12 }}>
-              {pubsFiltradas.length} RESULTADO{pubsFiltradas.length !== 1 ? "S" : ""}
-            </div>
-
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(310px,1fr))", gap:14 }}>
-              {pubsFiltradas.map(p => (
-                <PubCard key={p.id} pub={p} onClick={()=>{setDetalle(p);setSec("detalle");}} />
-              ))}
-            </div>
-            {pubsFiltradas.length === 0 && <Vacio msg="No se encontraron publicaciones con los filtros seleccionados." />}
-          </>
-        )}
-
-        {/* ═══ DETALLE ═══ */}
-        {sec === "detalle" && detalle && (
-          <>
-            <button onClick={()=>setSec("publicaciones")} style={{ ...css.btnS, marginBottom:18 }}>← Volver</button>
-            <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"32px 36px", borderLeft:`4px solid ${priColor(detalle.prioridad)}` }}>
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:14, alignItems:"center" }}>
-                <CatBadge cat={detalle.categoria} />
-                <PriBadge pri={detalle.prioridad} />
-                {detalle.fijada && <Tag>#Fijada</Tag>}
-                {detalle.etiquetas?.map(e=><Tag key={e}>#{e}</Tag>)}
-              </div>
-              <h2 style={{ fontSize:"1.45rem", margin:"0 0 10px", color:"var(--text)", lineHeight:1.3 }}>{detalle.titulo}</h2>
-              <div style={{ fontSize:".76rem", color:"var(--text3)", marginBottom:26, fontFamily:"monospace" }}>
-                {fmt(detalle.fecha)} · {detalle.autor}
-              </div>
-              <div style={{ fontSize:".92rem", lineHeight:1.85, color:"var(--text2)", whiteSpace:"pre-wrap" }}>{detalle.contenido}</div>
-
-              {/* Adjuntos del detalle */}
-              {detalle.adjuntos?.length > 0 && (
-                <div style={{ marginTop:22, borderTop:"1px solid var(--border)", paddingTop:16 }}>
-                  <div style={{ fontSize:".68rem", letterSpacing:".12em", color:"var(--text3)", fontFamily:"monospace", marginBottom:10 }}>
-                    DOCUMENTOS ADJUNTOS ({detalle.adjuntos.length})
-                  </div>
-                  <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
-                    {detalle.adjuntos.map((a, i) => (
-                      <a key={i} href={a.data} download={a.nombre}
-                        style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 14px", background:"var(--bg3)", border:"1px solid var(--border)", borderRadius:3, color:"var(--text)", fontSize:".82rem", textDecoration:"none", cursor:"pointer" }}>
-                        <span style={{ fontSize:"1.2rem" }}>
-                          {a.tipo?.includes("pdf") ? "📄" : a.tipo?.includes("image") ? "🖼️" : a.tipo?.includes("word") || a.nombre?.endsWith(".docx") || a.nombre?.endsWith(".doc") ? "📝" : a.tipo?.includes("sheet") || a.nombre?.endsWith(".xlsx") ? "📊" : "📎"}
-                        </span>
-                        <span style={{ flex:1 }}>{a.nombre}</span>
-                        <span style={{ color:"var(--text3)", fontSize:".72rem" }}>{(a.tamaño/1024).toFixed(0)} KB</span>
-                        <span style={{ color:"var(--accent)", fontSize:".72rem", fontFamily:"monospace" }}>↓ Descargar</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* ═══ CALENDARIO ═══ */}
-        {sec === "calendario" && (
-          <>
-            <SecTitle>Calendario de Actividades</SecTitle>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }} className="grid-21">
-              <div>
-                <div style={css.subLabel}>PRÓXIMOS</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {prox.length > 0 ? prox.map(e=><EvCard key={e.id} ev={e} />)
-                   : <Vacio msg="Sin próximos eventos." />}
-                </div>
-              </div>
-              <div>
-                <div style={css.subLabel}>PASADOS</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {eventos.filter(e=>e.fecha<HOY).sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(e=>
-                    <EvCard key={e.id} ev={e} pasado />
-                  )}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ═══ DOCUMENTOS ═══ */}
-        {sec === "documentos" && (
-          <>
-            <SecTitle>Biblioteca de Documentos</SecTitle>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:14 }}>
-              {pubsActivas.filter(p=>p.categoria==="documentos").map(p=>(
-                <div key={p.id} onClick={()=>{setDetalle(p);setSec("detalle");}}
-                  style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, padding:"18px 20px", cursor:"pointer", borderLeft:"3px solid var(--text3)" }}>
-                  <div style={{ fontSize:"1.6rem", marginBottom:8, color:"var(--text3)" }}>▣</div>
-                  <div style={{ fontSize:".88rem", fontWeight:600, color:"var(--text)", marginBottom:4, lineHeight:1.35 }}>{p.titulo}</div>
-                  <div style={{ fontSize:".7rem", color:"var(--text3)", fontFamily:"monospace" }}>{fmt(p.fecha)} · {p.autor}</div>
-                  <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:8 }}>
-                    {p.etiquetas?.map(e=><Tag key={e}>#{e}</Tag>)}
-                  </div>
-                </div>
-              ))}
-              {pubsActivas.filter(p=>p.categoria==="documentos").length === 0 && <Vacio />}
-            </div>
-          </>
-        )}
-
-        {/* ═══ ADMIN ═══ */}
-        {sec === "admin" && esAdmin && (
-          <>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:22, flexWrap:"wrap", gap:10 }}>
-              <SecTitle>Panel de Administración</SecTitle>
-              <div style={{ display:"flex", gap:10 }}>
-                <button onClick={()=>{setFPub(pubZ);setEditId(null);setMPub(true);}} style={css.btnP}>+ Publicación</button>
-                <button onClick={()=>{setFEv(evZ);setEditId(null);setMEvento(true);}} style={css.btnS}>+ Evento</button>
-              </div>
-            </div>
-
-            {/* Métricas admin */}
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:26 }} className="grid-5">
-              {[
-                { v:pubs.length,               l:"Total publicaciones", c:"var(--accent)" },
-                { v:pubs.filter(p=>p.activa).length, l:"Activas",       c:"var(--accent)" },
-                { v:pubs.filter(p=>!p.activa).length,l:"Inactivas",     c:"var(--text3)" },
-                { v:pubs.filter(p=>p.fijada).length, l:"Fijadas",       c:"var(--accent)" },
-              ].map(m=>(
-                <div key={m.l} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, padding:"14px 16px", textAlign:"center", borderTop:`3px solid ${m.c}` }}>
-                  <div style={{ fontSize:"1.6rem", fontWeight:700, color:m.c }}>{m.v}</div>
-                  <div style={{ fontSize:".68rem", color:"var(--text3)", letterSpacing:".05em" }}>{m.l}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Tabla publicaciones */}
-            <div style={{ marginBottom:32 }}>
-              <div style={css.subLabel}>PUBLICACIONES</div>
-              <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, overflowX:"auto" }}>
-                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:".8rem" }}>
-                  <thead>
-                    <tr style={{ background:"var(--bg3)", borderBottom:"1px solid var(--border)" }}>
-                      {["Título","Categoría","Prioridad","Fecha","Etiquetas","Estado","Acciones"].map(h=>(
-                        <th key={h} style={{ padding:"9px 13px", textAlign:"left", fontSize:".65rem", letterSpacing:".1em", color:"var(--text3)", fontFamily:"monospace", fontWeight:600 }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pubs.map(p=>(
-                      <tr key={p.id} style={{ borderBottom:"1px solid var(--border)", opacity:p.activa?1:.55 }}>
-                        <td style={{ padding:"9px 13px", color:"var(--text)", fontWeight:p.fijada?600:400, maxWidth:220 }}>
-                          {p.fijada && <span style={{ color:"var(--accent)", marginRight:4 }}>📌</span>}
-                          {p.titulo}
-                        </td>
-                        <td style={{ padding:"9px 13px" }}><CatBadge cat={p.categoria} /></td>
-                        <td style={{ padding:"9px 13px" }}><PriBadge pri={p.prioridad} /></td>
-                        <td style={{ padding:"9px 13px", fontFamily:"monospace", fontSize:".7rem", color:"var(--text3)" }}>{fmt(p.fecha)}</td>
-                        <td style={{ padding:"9px 13px" }}>
-                          <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                            {p.etiquetas?.slice(0,2).map(e=><Tag key={e}>#{e}</Tag>)}
-                            {p.etiquetas?.length > 2 && <Tag>+{p.etiquetas.length-2}</Tag>}
-                          </div>
-                        </td>
-                        <td style={{ padding:"9px 13px" }}>
-                          <span style={{ background:p.activa?"var(--accent3)":"var(--bg3)", color:p.activa?"var(--accent)":"var(--text3)", padding:"2px 8px", borderRadius:2, fontSize:".68rem", fontWeight:600, fontFamily:"monospace" }}>
-                            {p.activa?"ACTIVA":"INACTIVA"}
-                          </span>
-                        </td>
-                        <td style={{ padding:"9px 13px" }}>
-                          <div style={{ display:"flex", gap:5 }}>
-                            <button onClick={()=>abrirEditPub(p)} style={css.mini} title="Editar">✏</button>
-                            <button onClick={()=>togglePub(p.id,"activa")} style={css.mini} title={p.activa?"Desactivar":"Activar"}>{p.activa?"⊘":"✓"}</button>
-                            <button onClick={()=>togglePub(p.id,"fijada")} style={css.mini} title={p.fijada?"Desfijar":"Fijar"}>📌</button>
-                            <button onClick={()=>eliminarPub(p.id)} style={{ ...css.mini, color:"var(--danger)" }} title="Eliminar">✕</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Tabla eventos */}
-            <div>
-              <div style={css.subLabel}>EVENTOS ({eventos.length})</div>
-              <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, overflowX:"auto" }}>
-                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:".8rem" }}>
-                  <thead>
-                    <tr style={{ background:"var(--bg3)", borderBottom:"1px solid var(--border)" }}>
-                      {["Título","Fecha","Hora","Lugar","Acciones"].map(h=>(
-                        <th key={h} style={{ padding:"9px 13px", textAlign:"left", fontSize:".65rem", letterSpacing:".1em", color:"var(--text3)", fontFamily:"monospace", fontWeight:600 }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eventos.map(e=>(
-                      <tr key={e.id} style={{ borderBottom:"1px solid var(--border)", opacity:e.fecha<HOY?.7:1 }}>
-                        <td style={{ padding:"9px 13px", color:"var(--text)" }}>{e.titulo}</td>
-                        <td style={{ padding:"9px 13px", fontFamily:"monospace", fontSize:".7rem", color:"var(--text3)" }}>{fmt(e.fecha)}</td>
-                        <td style={{ padding:"9px 13px", fontFamily:"monospace", fontSize:".7rem", color:"var(--text3)" }}>{e.hora}</td>
-                        <td style={{ padding:"9px 13px", fontSize:".78rem", color:"var(--text2)" }}>{e.lugar}</td>
-                        <td style={{ padding:"9px 13px" }}>
-                          <div style={{ display:"flex", gap:5 }}>
-                            <button onClick={()=>abrirEditEv(e)} style={css.mini}>✏</button>
-                            <button onClick={()=>eliminarEv(e.id)} style={{ ...css.mini, color:"var(--danger)" }}>✕</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ═══ SERVICIOS Y ORDEN DEL DÍA ═══ */}
-        {sec === "servicios" && (
-          <>
-            {/* ── DOCUMENTOS PUBLICADOS ── */}
-            <div style={{ marginBottom:28 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10 }}>
-                <SecTitle>Documentos Publicados</SecTitle>
-                {esAdmin && (
-                  <button onClick={()=>{ setFDocSvc(docSvcZ); setMDocSvc(true); }} style={css.btnP}>
-                    + Subir documento
-                  </button>
-                )}
-              </div>
-
-              {docsSvc.length === 0 ? (
-                <Vacio msg={esAdmin ? "Sin documentos. Presiona «+ Subir documento» para publicar un PDF o Word." : "No hay documentos publicados aún."} />
-              ) : (
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(260px,1fr))", gap:14 }}>
-                  {docsSvc.map(d => {
-                    const esPDF  = d.archivo?.tipo?.includes("pdf") || d.archivo?.nombre?.endsWith(".pdf");
-                    const esWord = d.archivo?.tipo?.includes("word") || d.archivo?.nombre?.endsWith(".docx") || d.archivo?.nombre?.endsWith(".doc");
-                    const icono  = esPDF ? "📄" : esWord ? "📝" : "📎";
-                    const color  = esPDF ? "var(--danger)" : esWord ? "var(--accent)" : "var(--text2)";
-                    const etiq   = esPDF ? "PDF" : esWord ? "WORD" : "DOC";
-                    return (
-                      <div key={d.id} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"16px 18px", display:"flex", flexDirection:"column", gap:8 }}>
-                        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                          <span style={{ fontSize:"1.6rem" }}>{icono}</span>
-                          <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ fontSize:".62rem", letterSpacing:".1em", fontFamily:"monospace", color, fontWeight:700, marginBottom:2 }}>{etiq}</div>
-                            <div style={{ fontSize:".88rem", fontWeight:700, color:"var(--text)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{d.titulo}</div>
-                          </div>
-                        </div>
-                        {d.descripcion && (
-                          <div style={{ fontSize:".78rem", color:"var(--text2)", lineHeight:1.5 }}>{d.descripcion}</div>
-                        )}
-                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:4 }}>
-                          <div style={{ fontSize:".68rem", color:"var(--text3)", fontFamily:"monospace" }}>
-                            {fmt(d.fecha)}{d.autor ? ` · ${d.autor}` : ""}
-                          </div>
-                          <div style={{ display:"flex", gap:6 }}>
-                            <a href={d.archivo.data} download={d.archivo.nombre}
-                              style={{ fontSize:".72rem", background:"var(--accent3)", color:"var(--accent)", border:"1px solid var(--accent)", borderRadius:3, padding:"3px 10px", textDecoration:"none", fontFamily:"monospace", fontWeight:600 }}>
-                              ⬇ Descargar
-                            </a>
-                            {esAdmin && (
-                              <button onClick={()=>eliminarDocSvc(d.id)} style={{ ...css.mini, color:"var(--danger)", fontSize:".72rem" }}>✕</button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* ── ORDEN DEL DÍA ── */}
-            <div style={{ marginBottom:28 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10 }}>
-                <SecTitle>Orden del Día</SecTitle>
-                <div style={{ display:"flex", gap:8 }}>
-                  {!editOrden && (ordenDia.instruccion || ordenDia.firmante) && (
-                    <button onClick={()=>{
-                      const html = `<html><head><title>Orden del Día</title><style>body{font-family:'Palatino Linotype',serif;max-width:700px;margin:40px auto;padding:0 30px;color:#1c1f18} h1{font-size:1.1rem;letter-spacing:.1em;text-align:center;border-bottom:2px solid #4a7c59;padding-bottom:10px;margin-bottom:20px} .row{display:flex;gap:40px;margin-bottom:14px} .lbl{font-size:.65rem;letter-spacing:.1em;color:#7a8070;font-family:monospace;margin-bottom:3px} .val{font-size:.9rem;font-weight:700} .instruccion{white-space:pre-wrap;font-size:.88rem;line-height:1.75;margin:16px 0;padding:14px;border-left:3px solid #4a7c59;background:#f5f7f2} .firma{border-top:1px solid #ccc;padding-top:14px;margin-top:20px;font-size:.85rem} .header{text-align:center;margin-bottom:24px;font-size:.7rem;letter-spacing:.15em;color:#4a7c59}</style></head><body><div class="header">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div><h1>ORDEN DEL DÍA</h1><div class="row"><div><div class="lbl">FECHA</div><div class="val">${fmt(ordenDia.fecha)||'—'}</div></div><div><div class="lbl">HORA DE ENCUADRE</div><div class="val">${ordenDia.encuadre||'—'} HRS</div></div><div><div class="lbl">NOVEDAD</div><div class="val">${ordenDia.novedad||'Sin novedad.'}</div></div></div>${ordenDia.instruccion?`<div class="lbl">INSTRUCCIÓN</div><div class="instruccion">${ordenDia.instruccion}</div>`:''}<div class="firma"><strong>${ordenDia.grado||''} ${ordenDia.firmante||''}</strong><br><span style="font-size:.75rem;color:#7a8070">Oficial/Suboficial Firmante</span></div></body></html>`;
-                      const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.print();
-                    }} style={css.btnS}>
-                      🖨 Imprimir / Guardar PDF
-                    </button>
-                  )}
-                  {esAdmin && (
-                    <button onClick={()=>setEditOrden(o=>!o)} style={editOrden ? css.btnP : css.btnS}>
-                      {editOrden ? "✓ Guardar orden" : "✏ Editar"}
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"22px 26px", borderLeft:"4px solid var(--accent)" }}>
-                {editOrden ? (
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                    <div>
-                      <div style={css.subLabel}>FECHA</div>
-                      <input type="date" value={ordenDia.fecha}
-                        onChange={e=>setOrdenDia(o=>({...o,fecha:e.target.value}))}
-                        style={{ ...css.inp, width:"100%" }} />
-                    </div>
-                    <div>
-                      <div style={css.subLabel}>HORA DE ENCUADRE</div>
-                      <input placeholder="07:30" value={ordenDia.encuadre}
-                        onChange={e=>setOrdenDia(o=>({...o,encuadre:e.target.value}))}
-                        style={{ ...css.inp, width:"100%" }} />
-                    </div>
-                    <div style={{ gridColumn:"1/-1" }}>
-                      <div style={css.subLabel}>INSTRUCCIÓN DEL DÍA</div>
-                      <textarea placeholder="Detallar actividades e instrucciones para el día…"
-                        value={ordenDia.instruccion}
-                        onChange={e=>setOrdenDia(o=>({...o,instruccion:e.target.value}))}
-                        style={{ ...css.inp, width:"100%", minHeight:90, resize:"vertical" }} />
-                    </div>
-                    <div style={{ gridColumn:"1/-1" }}>
-                      <div style={css.subLabel}>NOVEDAD</div>
-                      <input placeholder="Sin novedad." value={ordenDia.novedad}
-                        onChange={e=>setOrdenDia(o=>({...o,novedad:e.target.value}))}
-                        style={{ ...css.inp, width:"100%" }} />
-                    </div>
-                    <div>
-                      <div style={css.subLabel}>OFICIAL / SUBOFICIAL FIRMANTE</div>
-                      <input placeholder="Nombre completo" value={ordenDia.firmante}
-                        onChange={e=>setOrdenDia(o=>({...o,firmante:e.target.value}))}
-                        style={{ ...css.inp, width:"100%" }} />
-                    </div>
-                    <div>
-                      <div style={css.subLabel}>GRADO</div>
-                      <input placeholder="Sgto. 1° / Cbo. / Ofic." value={ordenDia.grado}
-                        onChange={e=>setOrdenDia(o=>({...o,grado:e.target.value}))}
-                        style={{ ...css.inp, width:"100%" }} />
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <div style={{ display:"flex", gap:24, flexWrap:"wrap", marginBottom:16 }}>
-                      <div>
-                        <div style={css.subLabel}>FECHA</div>
-                        <div style={{ fontSize:".95rem", fontWeight:700, color:"var(--text)" }}>{fmt(ordenDia.fecha) || "—"}</div>
-                      </div>
-                      <div>
-                        <div style={css.subLabel}>ENCUADRE</div>
-                        <div style={{ fontSize:".95rem", fontWeight:700, color:"var(--accent)" }}>{ordenDia.encuadre || "—"} HRS</div>
-                      </div>
-                      <div>
-                        <div style={css.subLabel}>NOVEDAD</div>
-                        <div style={{ fontSize:".88rem", color:"var(--text2)" }}>{ordenDia.novedad || "—"}</div>
-                      </div>
-                    </div>
-                    {ordenDia.instruccion && (
-                      <div style={{ marginBottom:14 }}>
-                        <div style={css.subLabel}>INSTRUCCIÓN</div>
-                        <div style={{ fontSize:".88rem", color:"var(--text2)", lineHeight:1.75, whiteSpace:"pre-wrap" }}>{ordenDia.instruccion}</div>
-                      </div>
-                    )}
-                    {ordenDia.firmante && (
-                      <div style={{ borderTop:"1px solid var(--border)", paddingTop:12, display:"flex", gap:8, alignItems:"center" }}>
-                        <span style={{ fontSize:".72rem", color:"var(--text3)", fontFamily:"monospace" }}>FIRMA:</span>
-                        <span style={{ fontSize:".88rem", fontWeight:600, color:"var(--text)" }}>{ordenDia.grado} {ordenDia.firmante}</span>
-                      </div>
-                    )}
-                    {!ordenDia.instruccion && !ordenDia.firmante && (
-                      <div style={{ color:"var(--text3)", fontSize:".82rem" }}>
-                        {esAdmin ? "Sin contenido — presiona «✏ Editar» para completar." : "Sin publicar aún."}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ── SERVICIOS ── */}
-            <div>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10 }}>
-                <SecTitle>Servicios del Personal</SecTitle>
-                {esAdmin && (
-                  <button onClick={()=>{setFSvc(svcZ);setEditSvcId(null);setMSvc(true);}} style={css.btnP}>
-                    + Agregar servicio
-                  </button>
-                )}
-              </div>
-
-              {/* Filtros servicios */}
-              <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
-                <select value={filtroEsc} onChange={e=>setFiltroEsc(e.target.value)} style={css.sel}>
-                  <option value="todos">Todos los escuadrones</option>
-                  {ESCUADRONES.map(e=><option key={e} value={e}>{e}</option>)}
-                </select>
-                <select value={filtroTipo} onChange={e=>setFiltroTipo(e.target.value)} style={css.sel}>
-                  <option value="todos">Todos los tipos</option>
-                  {TIPOS_SERVICIO.map(t=><option key={t} value={t}>{t}</option>)}
-                </select>
-                <div style={{ fontSize:".72rem", color:"var(--text3)", fontFamily:"monospace", alignSelf:"center" }}>
-                  {svcFiltrados.length} PERSONAL EN SERVICIO
-                </div>
-              </div>
-
-              {/* Tabla servicios */}
-              {svcFiltrados.length > 0 ? (
-                <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, overflowX:"auto" }}>
-                  <table style={{ width:"100%", borderCollapse:"collapse", fontSize:".82rem" }}>
-                    <thead>
-                      <tr style={{ background:"var(--bg3)", borderBottom:"1px solid var(--border)" }}>
-                        {["Nombre / Apellido","RUT","Escuadrón","Tipo de servicio","Horario","Lugar","Obs.",""].map(h=>(
-                          <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:".63rem", letterSpacing:".1em", color:"var(--text3)", fontFamily:"monospace", fontWeight:600, whiteSpace:"nowrap" }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {svcFiltrados.map(s=>(
-                        <tr key={s.id} style={{ borderBottom:"1px solid var(--border)" }}>
-                          <td style={{ padding:"9px 12px", fontWeight:600, color:"var(--text)" }}>{s.nombre}</td>
-                          <td style={{ padding:"9px 12px", fontFamily:"monospace", fontSize:".72rem", color:"var(--text3)" }}>{s.rut||"—"}</td>
-                          <td style={{ padding:"9px 12px" }}>
-                            <span style={{ background:"var(--accent3)", color:"var(--accent)", border:"1px solid var(--accent)", borderRadius:2, fontSize:".62rem", padding:"2px 6px", fontFamily:"monospace", fontWeight:600 }}>
-                              {s.escuadron}
-                            </span>
-                          </td>
-                          <td style={{ padding:"9px 12px" }}>
-                            <TipoBadge tipo={s.tipoServicio} />
-                          </td>
-                          <td style={{ padding:"9px 12px", fontFamily:"monospace", fontSize:".72rem", color:"var(--text2)", whiteSpace:"nowrap" }}>
-                            {s.horaInicio} — {s.horaTermino}
-                          </td>
-                          <td style={{ padding:"9px 12px", fontSize:".78rem", color:"var(--text2)" }}>{s.lugar||"—"}</td>
-                          <td style={{ padding:"9px 12px", fontSize:".75rem", color:"var(--text3)", maxWidth:140 }}>{s.obs||"—"}</td>
-                          {esAdmin && (
-                            <td style={{ padding:"9px 12px" }}>
-                              <div style={{ display:"flex", gap:5 }}>
-                                <button onClick={()=>abrirEditSvc(s)} style={css.mini}>✏</button>
-                                <button onClick={()=>eliminarSvc(s.id)} style={{ ...css.mini, color:"var(--danger)" }}>✕</button>
-                              </div>
-                            </td>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <Vacio msg={esAdmin ? "Sin servicios registrados. Presiona «+ Agregar servicio» para comenzar." : "No hay servicios registrados para hoy."} />
-              )}
-
-              {/* Resumen por tipo */}
-              {servicios.length > 0 && (
-                <div style={{ marginTop:20 }}>
-                  <div style={css.subLabel}>RESUMEN POR TIPO DE SERVICIO</div>
-                  <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                    {TIPOS_SERVICIO.map(t => {
-                      const n = servicios.filter(s=>s.tipoServicio===t).length;
-                      if (!n) return null;
-                      return (
-                        <div key={t} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:3, padding:"10px 16px", textAlign:"center", minWidth:100 }}>
-                          <div style={{ fontSize:"1.4rem", fontWeight:700, color:"var(--accent)" }}>{n}</div>
-                          <div style={{ fontSize:".65rem", color:"var(--text3)", fontFamily:"monospace" }}>{t.toUpperCase()}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-      {/* ── MODAL DOCUMENTO SERVICIOS ── */}
-      {mDocSvc && (
-        <Modal onClose={()=>{setMDocSvc(false);setFDocSvc(docSvcZ);}}>
-          <h3 style={{ margin:"0 0 18px", fontSize:"1rem", color:"var(--text)" }}>Publicar Documento (PDF / Word)</h3>
-          <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
-            <div>
-              <div style={css.subLabel}>TÍTULO DEL DOCUMENTO *</div>
-              <input placeholder="Ej: Orden del Día — 29 Abril 2026" value={fDocSvc.titulo}
-                onChange={e=>setFDocSvc(v=>({...v,titulo:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-            </div>
-            <div>
-              <div style={css.subLabel}>DESCRIPCIÓN (opcional)</div>
-              <input placeholder="Breve descripción del contenido" value={fDocSvc.descripcion}
-                onChange={e=>setFDocSvc(v=>({...v,descripcion:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <div style={{ flex:1 }}>
-                <div style={css.subLabel}>FECHA</div>
-                <input type="date" value={fDocSvc.fecha}
-                  onChange={e=>setFDocSvc(v=>({...v,fecha:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-              </div>
-              <div style={{ flex:1 }}>
-                <div style={css.subLabel}>AUTOR / UNIDAD</div>
-                <input placeholder="Ej: Oficial de Cuartel" value={fDocSvc.autor}
-                  onChange={e=>setFDocSvc(v=>({...v,autor:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-              </div>
-            </div>
-            <div>
-              <div style={css.subLabel}>ARCHIVO (PDF o Word) *</div>
-              <input type="file" accept=".pdf,.doc,.docx"
-                onChange={e=>{
-                  const f = e.target.files[0];
-                  if (!f) return;
-                  const reader = new FileReader();
-                  reader.onload = ev => setFDocSvc(v=>({...v, archivo:{ nombre:f.name, tipo:f.type, tamano:f.size, data:ev.target.result }}));
-                  reader.readAsDataURL(f);
-                }}
-                style={{ ...css.inp, width:"100%", cursor:"pointer" }} />
-              {fDocSvc.archivo && (
-                <div style={{ marginTop:6, fontSize:".75rem", color:"var(--accent)", fontFamily:"monospace" }}>
-                  ✓ {fDocSvc.archivo.nombre} ({(fDocSvc.archivo.tamano/1024).toFixed(0)} KB)
-                </div>
-              )}
-            </div>
-            <div style={{ display:"flex", gap:8, marginTop:6 }}>
-              <button onClick={guardarDocSvc}
-                style={{ ...css.btnP, opacity: (!fDocSvc.titulo || !fDocSvc.archivo) ? .5 : 1 }}
-                disabled={!fDocSvc.titulo || !fDocSvc.archivo}>
-                📤 Publicar documento
-              </button>
-              <button onClick={()=>{setMDocSvc(false);setFDocSvc(docSvcZ);}} style={css.btnS}>Cancelar</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* ── MODAL SERVICIO ── */}
-      {mSvc && (
-        <Modal onClose={()=>{setMSvc(false);setFSvc(svcZ);setEditSvcId(null);}}>
-          <h3 style={{ margin:"0 0 18px", fontSize:"1rem", color:"var(--text)" }}>{editSvcId?"Editar servicio":"Nuevo servicio"}</h3>
-          <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
-            <div style={{ display:"flex", gap:10 }}>
-              <input placeholder="Nombre y apellido *" value={fSvc.nombre}
-                onChange={e=>setFSvc(v=>({...v,nombre:e.target.value}))}
-                style={{ ...css.inp, flex:2 }} />
-              <input placeholder="RUT (opcional)" value={fSvc.rut}
-                onChange={e=>setFSvc(v=>({...v,rut:e.target.value}))}
-                style={{ ...css.inp, flex:1 }} />
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <select value={fSvc.escuadron} onChange={e=>setFSvc(v=>({...v,escuadron:e.target.value}))} style={{ ...css.sel, flex:1 }}>
-                {ESCUADRONES.map(e=><option key={e} value={e}>{e}</option>)}
-              </select>
-              <select value={fSvc.tipoServicio} onChange={e=>setFSvc(v=>({...v,tipoServicio:e.target.value}))} style={{ ...css.sel, flex:1 }}>
-                {TIPOS_SERVICIO.map(t=><option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:".65rem", color:"var(--text3)", fontFamily:"monospace", marginBottom:4 }}>HORA INICIO</div>
-                <input type="time" value={fSvc.horaInicio}
-                  onChange={e=>setFSvc(v=>({...v,horaInicio:e.target.value}))}
-                  style={{ ...css.inp, width:"100%" }} />
-              </div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:".65rem", color:"var(--text3)", fontFamily:"monospace", marginBottom:4 }}>HORA TÉRMINO</div>
-                <input type="time" value={fSvc.horaTermino}
-                  onChange={e=>setFSvc(v=>({...v,horaTermino:e.target.value}))}
-                  style={{ ...css.inp, width:"100%" }} />
-              </div>
-            </div>
-            <input placeholder="Lugar (ej: Portería, Pabellón A…)" value={fSvc.lugar}
-              onChange={e=>setFSvc(v=>({...v,lugar:e.target.value}))}
-              style={{ ...css.inp, width:"100%" }} />
-            <textarea placeholder="Observaciones (opcional)" value={fSvc.obs}
-              onChange={e=>setFSvc(v=>({...v,obs:e.target.value}))}
-              style={{ ...css.inp, minHeight:60, resize:"vertical", width:"100%" }} />
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={guardarSvc} style={{ ...css.btnP, flex:1 }}>Guardar</button>
-              <button onClick={()=>{setMSvc(false);setFSvc(svcZ);setEditSvcId(null);}} style={{ ...css.btnS, flex:1 }}>Cancelar</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* FOOTER */}
-      <footer style={{ background:"var(--header-bg)", color:"var(--text3)", padding:"22px 20px", textAlign:"center" }}>
-        <div style={{ fontSize:".62rem", letterSpacing:".2em", fontFamily:"monospace", marginBottom:4 }}>
-          ESCUELA DE FORMACIÓN DE CARABINEROS — GRUPO CONCEPCIÓN
-        </div>
-        <div style={{ fontSize:".62rem", fontFamily:"monospace" }}>
-          Diario Mural Institucional · {new Date().getFullYear()}
-        </div>
-      </footer>
-
-      {/* ═══ MODAL LOGIN ═══ */}
-      {mLogin && (
-        <Modal onClose={()=>{setMLogin(false);setPass("");setPassErr("");}}>
-          <h3 style={{ margin:"0 0 16px", fontSize:"1rem", color:"var(--text)" }}>🔐 Acceso Administrador</h3>
-          <p style={{ fontSize:".8rem", color:"var(--text3)", marginBottom:14 }}>Ingrese la contraseña institucional.</p>
-          <input type="password" placeholder="Contraseña" value={pass}
-            onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&login()}
-            style={{ ...css.inp, width:"100%", marginBottom:10 }} autoFocus />
-          {passErr && <div style={{ color:"var(--danger)", fontSize:".78rem", marginBottom:10 }}>{passErr}</div>}
-          <div style={{ display:"flex", gap:10 }}>
-            <button onClick={login} style={{ ...css.btnP, flex:1 }}>Ingresar</button>
-            <button onClick={()=>{setMLogin(false);setPass("");setPassErr("");}} style={{ ...css.btnS, flex:1 }}>Cancelar</button>
-          </div>
-        </Modal>
-      )}
-
-      {/* ═══ MODAL PUBLICACIÓN ═══ */}
-      {mPub && (
-        <Modal onClose={()=>{setMPub(false);setFPub(pubZ);setEditId(null);}}>
-          <h3 style={{ margin:"0 0 18px", fontSize:"1rem", color:"var(--text)" }}>{editId?"Editar publicación":"Nueva publicación"}</h3>
-          <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
-            <input placeholder="Título *" value={fPub.titulo} onChange={e=>setFPub(p=>({...p,titulo:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-            <div style={{ display:"flex", gap:10 }}>
-              <select value={fPub.categoria} onChange={e=>setFPub(p=>({...p,categoria:e.target.value}))} style={{ ...css.sel, flex:1 }}>
-                {CATS.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
-              </select>
-              <select value={fPub.prioridad} onChange={e=>setFPub(p=>({...p,prioridad:e.target.value}))} style={{ ...css.sel, flex:1 }}>
-                {PRIORIDADES.map(p=><option key={p.id} value={p.id}>{p.label}</option>)}
-              </select>
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <input placeholder="Autor" value={fPub.autor} onChange={e=>setFPub(p=>({...p,autor:e.target.value}))} style={{ ...css.inp, flex:1 }} />
-              <input type="date" value={fPub.fecha} onChange={e=>setFPub(p=>({...p,fecha:e.target.value}))} style={{ ...css.inp, flex:1 }} />
-            </div>
-            <textarea placeholder="Contenido *" value={fPub.contenido} onChange={e=>setFPub(p=>({...p,contenido:e.target.value}))}
-              style={{ ...css.inp, minHeight:110, resize:"vertical", width:"100%" }} />
-
-            {/* Etiquetas */}
-            <div>
-              <div style={{ fontSize:".7rem", color:"var(--text3)", fontFamily:"monospace", marginBottom:7 }}>ETIQUETAS</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-                {ETIQUETAS_PRESET.map(et=>(
-                  <button key={et} onClick={()=>toggleEtiqueta(et)} style={{
-                    padding:"3px 10px", borderRadius:2, fontSize:".72rem", cursor:"pointer",
-                    background: fPub.etiquetas.includes(et) ? "var(--accent)" : "var(--bg3)",
-                    color: fPub.etiquetas.includes(et) ? "#fff" : "var(--text2)",
-                    border: `1px solid ${fPub.etiquetas.includes(et) ? "var(--accent2)" : "var(--border)"}`,
-                  }}>{et}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Adjuntos */}
-            <div>
-              <div style={{ fontSize:".7rem", color:"var(--text3)", fontFamily:"monospace", marginBottom:7 }}>ADJUNTOS (PDF, Word, Imágenes, etc.)</div>
-              <input
-                type="file"
-                multiple
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.webp,.gif"
-                onChange={e => {
-                  const archivos = Array.from(e.target.files);
-                  const promesas = archivos.map(f => new Promise(res => {
-                    const reader = new FileReader();
-                    reader.onload = ev => res({ nombre: f.name, tipo: f.type, tamaño: f.size, data: ev.target.result });
-                    reader.readAsDataURL(f);
-                  }));
-                  Promise.all(promesas).then(nuevos =>
-                    setFPub(p => ({ ...p, adjuntos: [...(p.adjuntos || []), ...nuevos] }))
-                  );
-                  e.target.value = "";
-                }}
-                style={{ ...css.inp, width:"100%", cursor:"pointer" }}
-              />
-              {fPub.adjuntos?.length > 0 && (
-                <div style={{ marginTop:8, display:"flex", flexDirection:"column", gap:5 }}>
-                  {fPub.adjuntos.map((a, i) => (
-                    <div key={i} style={{ display:"flex", alignItems:"center", gap:8, background:"var(--bg3)", padding:"5px 10px", borderRadius:3, fontSize:".75rem" }}>
-                      <span style={{ fontSize:"1rem" }}>
-                        {a.tipo?.includes("pdf") ? "📄" : a.tipo?.includes("image") ? "🖼️" : a.tipo?.includes("word") || a.nombre?.endsWith(".docx") || a.nombre?.endsWith(".doc") ? "📝" : "📎"}
-                      </span>
-                      <span style={{ flex:1, color:"var(--text2)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{a.nombre}</span>
-                      <span style={{ color:"var(--text3)", marginRight:4 }}>{(a.tamaño/1024).toFixed(0)} KB</span>
-                      <button onClick={() => setFPub(p => ({ ...p, adjuntos: p.adjuntos.filter((_,j)=>j!==i) }))}
-                        style={{ background:"none", border:"none", color:"var(--danger)", cursor:"pointer", fontSize:".85rem", padding:0 }}>✕</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Checks */}
-            <div style={{ display:"flex", gap:18, flexWrap:"wrap" }}>
-              {[["fijada","📌 Fijar"],["activa","✅ Activa"]].map(([k,l])=>(
-                <label key={k} style={{ display:"flex", alignItems:"center", gap:5, fontSize:".82rem", color:"var(--text2)", cursor:"pointer" }}>
-                  <input type="checkbox" checked={fPub[k]} onChange={e=>setFPub(p=>({...p,[k]:e.target.checked}))} />
-                  {l}
-                </label>
-              ))}
-            </div>
-
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={guardarPub} style={{ ...css.btnP, flex:1 }}>Guardar</button>
-              <button onClick={()=>{setMPub(false);setFPub(pubZ);setEditId(null);}} style={{ ...css.btnS, flex:1 }}>Cancelar</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* ═══ MODAL EVENTO ═══ */}
-      {mEvento && (
-        <Modal onClose={()=>{setMEvento(false);setFEv(evZ);setEditId(null);}}>
-          <h3 style={{ margin:"0 0 18px", fontSize:"1rem", color:"var(--text)" }}>{editId==="ev"?"Editar evento":"Nuevo evento"}</h3>
-          <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
-            <input placeholder="Título *" value={fEv.titulo} onChange={e=>setFEv(v=>({...v,titulo:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-            <div style={{ display:"flex", gap:10 }}>
-              <input type="date" value={fEv.fecha} onChange={e=>setFEv(v=>({...v,fecha:e.target.value}))} style={{ ...css.inp, flex:1 }} />
-              <input placeholder="Hora" value={fEv.hora} onChange={e=>setFEv(v=>({...v,hora:e.target.value}))} style={{ ...css.inp, flex:1 }} />
-            </div>
-            <input placeholder="Lugar" value={fEv.lugar} onChange={e=>setFEv(v=>({...v,lugar:e.target.value}))} style={{ ...css.inp, width:"100%" }} />
-            <textarea placeholder="Descripción" value={fEv.descripcion} onChange={e=>setFEv(v=>({...v,descripcion:e.target.value}))}
-              style={{ ...css.inp, minHeight:80, resize:"vertical", width:"100%" }} />
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={guardarEv} style={{ ...css.btnP, flex:1 }}>Guardar</button>
-              <button onClick={()=>{setMEvento(false);setFEv(evZ);setEditId(null);}} style={{ ...css.btnS, flex:1 }}>Cancelar</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* Responsive CSS */}
-      <style>{`
-        *{box-sizing:border-box;}
-        .nav-m{display:none!important;}
-        @media(max-width:680px){
-          .nav-d{display:none!important;}
-          .nav-m{display:flex!important;}
-          .grid-5{grid-template-columns:1fr 1fr!important;}
-          .grid-21{grid-template-columns:1fr!important;}
-        }
-        @media(max-width:900px){
-          .grid-21{grid-template-columns:1fr!important;}
-          .grid-5{grid-template-columns:1fr 1fr 1fr!important;}
-        }
-        button:hover{opacity:.85;}
-        input,select,textarea{transition:border-color .15s;}
-        input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
-        ::-webkit-scrollbar{width:6px;height:6px;}
-        ::-webkit-scrollbar-track{background:var(--bg);}
-        ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-      `}</style>
+  mg.innerHTML = metArr.map(m => `
+    <div class="metric-card" style="border-top:3px solid ${m.r?"var(--danger)":"var(--accent)"}">
+      <div class="metric-icon" style="color:${m.r?"var(--danger)":"var(--accent)"}">${m.i}</div>
+      <div class="metric-val" style="color:${m.r?"var(--danger)":"var(--text)"}">${m.v}</div>
+      <div class="metric-label">${esc(m.l)}</div>
     </div>
-  );
+  `).join("");
+
+  // Publicaciones recientes
+  document.getElementById("home-pubs").innerHTML = act.slice(0,6).map(p => pubCardHTML(p)).join("");
+
+  // Eventos próximos
+  const ep = document.getElementById("home-evs");
+  ep.innerHTML = prox.slice(0,6).map(e => evCardHTML(e)).join("") || `<div class="vacio">Sin próximos eventos.</div>`;
 }
 
 // ═══════════════════════════════════════════════════════════
-// SUB-COMPONENTES
+// HTML HELPERS
 // ═══════════════════════════════════════════════════════════
-function SecTitle({ children }) {
-  return (
-    <div style={{ marginBottom:16 }}>
-      <h2 style={{ fontSize:"1rem", margin:0, color:"var(--text)", fontWeight:700, letterSpacing:".04em" }}>{children}</h2>
-      <div style={{ height:2, background:"linear-gradient(to right,var(--accent),transparent)", marginTop:5, width:60 }} />
-    </div>
-  );
-}
-
-function PubCard({ pub, onClick }) {
-  const leftColor = priColor(pub.prioridad);
-  return (
-    <div onClick={onClick} style={{
-      background:"var(--surface)", border:"1px solid var(--border)",
-      borderLeft:`3px solid ${leftColor}`, borderRadius:3,
-      padding:"14px 16px", cursor:"pointer", transition:"box-shadow .15s, transform .1s",
-    }}
-    onMouseEnter={e=>{e.currentTarget.style.boxShadow="0 3px 12px var(--shadow)";e.currentTarget.style.transform="translateY(-1px)";}}
-    onMouseLeave={e=>{e.currentTarget.style.boxShadow="none";e.currentTarget.style.transform="none";}}>
-      <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:7, alignItems:"center" }}>
-        <CatBadge cat={pub.categoria} />
-        <PriBadge pri={pub.prioridad} />
-        {pub.fijada && <span style={{ fontSize:".62rem", fontFamily:"monospace", color:"var(--accent)" }}>📌 FIJADA</span>}
+function pubCardHTML(p, onclick) {
+  const lc = priColor(p.prioridad);
+  const tags = (p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`).join("");
+  const cb = onclick || `showDetalle(${p.id})`;
+  return `
+    <div class="pub-card" style="border-left:3px solid ${lc}" onclick="${cb}">
+      <div class="pub-card-meta">
+        <span class="badge badge-cat">${catLabel(p.categoria)}</span>
+        ${priBadge(p.prioridad)}
+        ${p.fijada?'<span style="font-size:.62rem;font-family:monospace;color:var(--accent)">📌 FIJADA</span>':''}
       </div>
-      <div style={{ fontSize:".9rem", fontWeight:600, color:"var(--text)", marginBottom:5, lineHeight:1.35 }}>{pub.titulo}</div>
-      <div style={{ fontSize:".7rem", color:"var(--text3)", marginBottom:8, fontFamily:"monospace" }}>{fmt(pub.fecha)} · {pub.autor}</div>
-      <div style={{ fontSize:".8rem", color:"var(--text2)", lineHeight:1.6,
-        overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-        {pub.contenido}
+      <div class="pub-card-title">${esc(p.titulo)}</div>
+      <div class="pub-card-date">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div class="pub-card-body">${esc(p.contenido)}</div>
+      ${tags?`<div class="pub-card-tags">${tags}</div>`:''}
+    </div>`;
+}
+
+function evCardHTML(e, pasado) {
+  return `
+    <div class="ev-card" style="border-left:3px solid ${pasado?"var(--border2)":"var(--accent)"};opacity:${pasado?.65:1}">
+      <div class="ev-card-title">${esc(e.titulo)}</div>
+      <div class="ev-card-date">${fmt(e.fecha)}${e.hora&&e.hora!=="—"?" · "+esc(e.hora):""}</div>
+      ${e.lugar&&e.lugar!=="—"?`<div class="ev-card-lugar">◎ ${esc(e.lugar)}</div>`:""}
+      ${e.descripcion?`<div class="ev-card-desc">${esc(e.descripcion)}</div>`:""}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DETALLE
+// ═══════════════════════════════════════════════════════════
+function showDetalle(id) {
+  const p = pubs.find(x => x.id === id);
+  if (!p) return;
+  const tags = [
+    `<span class="badge badge-cat">${catLabel(p.categoria)}</span>`,
+    priBadge(p.prioridad),
+    p.fijada ? `<span class="tag">#Fijada</span>` : "",
+    ...(p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`)
+  ].filter(Boolean).join("");
+
+  const adjHTML = (p.adjuntos||[]).length > 0 ? `
+    <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
+      <div class="sub-lbl">DOCUMENTOS ADJUNTOS (${p.adjuntos.length})</div>
+      <div class="adj-list">
+        ${p.adjuntos.map(a=>`
+          <a href="${a.data}" download="${esc(a.nombre)}" class="adj-item" style="text-decoration:none;color:var(--text)">
+            <span style="font-size:1.2rem">${iconAdj(a.tipo,a.nombre)}</span>
+            <span style="flex:1">${esc(a.nombre)}</span>
+            <span style="color:var(--text3);font-size:.72rem">${(a.tamaño/1024).toFixed(0)} KB</span>
+            <span style="color:var(--accent);font-size:.72rem;font-family:monospace">↓ Descargar</span>
+          </a>`).join("")}
       </div>
-      {pub.etiquetas?.length > 0 && (
-        <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginTop:8 }}>
-          {pub.etiquetas.map(e=><Tag key={e}>#{e}</Tag>)}
-        </div>
-      )}
-    </div>
-  );
+    </div>` : "";
+
+  document.getElementById("detalle-content").innerHTML = `
+    <div style="border-left:4px solid ${priColor(p.prioridad)};padding-left:20px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">${tags}</div>
+      <h2 style="font-size:1.45rem;margin:0 0 10px;color:var(--text);line-height:1.3">${esc(p.titulo)}</h2>
+      <div style="font-size:.76rem;color:var(--text3);margin-bottom:26px;font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div style="font-size:.92rem;line-height:1.85;color:var(--text2);white-space:pre-wrap">${esc(p.contenido)}</div>
+      ${adjHTML}
+    </div>`;
+  showSec("detalle");
 }
 
-function EvCard({ ev, pasado }) {
-  return (
-    <div style={{
-      background:"var(--surface)", border:"1px solid var(--border)",
-      borderLeft:`3px solid ${pasado?"var(--border2)":"var(--accent)"}`,
-      borderRadius:3, padding:"12px 14px", opacity:pasado?.65:1
-    }}>
-      <div style={{ fontSize:".86rem", fontWeight:600, color:"var(--text)", marginBottom:3 }}>{ev.titulo}</div>
-      <div style={{ fontSize:".7rem", color:"var(--text3)", fontFamily:"monospace" }}>
-        {fmt(ev.fecha)}{ev.hora&&ev.hora!=="—"&&` · ${ev.hora}`}
-      </div>
-      {ev.lugar&&ev.lugar!=="—"&&<div style={{ fontSize:".73rem", color:"var(--text2)", marginTop:3 }}>◎ {ev.lugar}</div>}
-      {ev.descripcion&&<div style={{ fontSize:".76rem", color:"var(--text3)", marginTop:4, lineHeight:1.5 }}>{ev.descripcion}</div>}
-    </div>
-  );
+// ═══════════════════════════════════════════════════════════
+// PUBLICACIONES
+// ═══════════════════════════════════════════════════════════
+function initFiltros() {
+  const catSel = document.getElementById("f-cat");
+  if (catSel.options.length <= 1) {
+    CATS.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c.id; o.textContent = c.icon + " " + c.label;
+      catSel.appendChild(o);
+    });
+  }
+  const etqSel = document.getElementById("f-etq");
+  if (etqSel.options.length <= 1) {
+    ETIQUETAS.forEach(e => {
+      const o = document.createElement("option");
+      o.value = e; o.textContent = e;
+      etqSel.appendChild(o);
+    });
+  }
 }
 
-function CatBadge({ cat }) {
-  const c = CATS.find(x=>x.id===cat);
-  if (!c) return null;
-  return (
-    <span style={{ background:"var(--accent3)", color:"var(--accent)", border:"1px solid var(--accent)", borderRadius:2, fontSize:".65rem", fontWeight:700, padding:"2px 7px", letterSpacing:".06em", fontFamily:"monospace" }}>
-      {c.icon} {c.label.toUpperCase()}
-    </span>
+function applyFilters() {
+  const q    = document.getElementById("f-q").value.toLowerCase().trim();
+  const cat  = document.getElementById("f-cat").value;
+  const pri  = document.getElementById("f-pri").value;
+  const etq  = document.getElementById("f-etq").value;
+  const desd = document.getElementById("f-desde").value;
+  const hast = document.getElementById("f-hasta").value;
+
+  let lista = pubsActivas();
+  if (cat !== "todas") lista = lista.filter(p => p.categoria === cat);
+  if (pri !== "todas") lista = lista.filter(p => p.prioridad === pri);
+  if (etq) lista = lista.filter(p => (p.etiquetas||[]).includes(etq));
+  if (desd) lista = lista.filter(p => p.fecha >= desd);
+  if (hast) lista = lista.filter(p => p.fecha <= hast);
+  if (q) lista = lista.filter(p =>
+    p.titulo.toLowerCase().includes(q) ||
+    p.contenido.toLowerCase().includes(q) ||
+    p.autor.toLowerCase().includes(q) ||
+    (p.etiquetas||[]).some(e => e.toLowerCase().includes(q))
   );
+
+  const activos = cat !== "todas" || pri !== "todas" || etq || desd || hast || q;
+  document.getElementById("btn-limpiar").style.display = activos ? "inline-block" : "none";
+  document.getElementById("res-count").textContent = lista.length + " RESULTADO" + (lista.length !== 1 ? "S" : "");
+
+  const grid = document.getElementById("pub-grid");
+  grid.innerHTML = lista.length
+    ? lista.map(p => pubCardHTML(p)).join("")
+    : `<div class="vacio" style="grid-column:1/-1">No se encontraron publicaciones con los filtros seleccionados.</div>`;
 }
 
-function PriBadge({ pri }) {
-  const p = PRIORIDADES.find(x=>x.id===pri);
-  if (!p || pri==="normal") return null;
-  const colors = { importante:"var(--accent)", urgente:"var(--danger)", critico:"var(--crit)" };
-  return (
-    <span style={{ background:colors[pri]+"22", color:colors[pri], border:`1px solid ${colors[pri]}`, borderRadius:2, fontSize:".62rem", fontWeight:700, padding:"2px 7px", letterSpacing:".08em", fontFamily:"monospace" }}>
-      {p.label.toUpperCase()}
-    </span>
-  );
+function renderPubs() { applyFilters(); }
+
+function limpiarFiltros() {
+  ["f-q","f-desde","f-hasta"].forEach(id => document.getElementById(id).value = "");
+  ["f-cat","f-pri","f-etq"].forEach(id => document.getElementById(id).selectedIndex = 0);
+  applyFilters();
 }
 
-function TipoBadge({ tipo }) {
-  const colores = {
-    "Guardia":            "var(--accent)",
-    "Facción":            "var(--accent2)",
-    "Servicio de Cuartel":"var(--text3)",
-    "Turno Especial":     "var(--warn)",
-    "Instrucción":        "var(--crit)",
-    "Comisión":           "var(--danger)",
+// ═══════════════════════════════════════════════════════════
+// CALENDARIO
+// ═══════════════════════════════════════════════════════════
+function renderCalendario() {
+  const prox = proxEventos();
+  const pas  = eventos.filter(e => e.fecha < HOY).sort((a,b) => b.fecha.localeCompare(a.fecha));
+  document.getElementById("cal-prox").innerHTML = prox.length
+    ? prox.map(e => evCardHTML(e)).join("")
+    : `<div class="vacio">Sin próximos eventos.</div>`;
+  document.getElementById("cal-pasados").innerHTML = pas.map(e => evCardHTML(e, true)).join("") || `<div class="vacio">Sin eventos pasados.</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOCUMENTOS
+// ═══════════════════════════════════════════════════════════
+function renderDocumentos() {
+  const docs = pubsActivas().filter(p => p.categoria === "documentos");
+  const grid = document.getElementById("docs-grid");
+  grid.innerHTML = docs.length ? docs.map(p => `
+    <div onclick="showDetalle(${p.id})" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--text3);border-radius:3px;padding:18px 20px;cursor:pointer">
+      <div style="font-size:1.6rem;margin-bottom:8px;color:var(--text3)">▣</div>
+      <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.35">${esc(p.titulo)}</div>
+      <div style="font-size:.7rem;color:var(--text3);font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${(p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`).join("")}</div>
+    </div>`).join("")
+  : `<div class="vacio">Sin documentos disponibles.</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════
+function renderAdmin() {
+  // Métricas
+  const am = document.getElementById("admin-metrics");
+  const metArr = [
+    { v:pubs.length, l:"Total publicaciones" },
+    { v:pubs.filter(p=>p.activa).length, l:"Activas" },
+    { v:pubs.filter(p=>!p.activa).length, l:"Inactivas" },
+    { v:pubs.filter(p=>p.fijada).length, l:"Fijadas" },
+  ];
+  am.innerHTML = metArr.map(m => `
+    <div class="metric-card" style="border-top:3px solid var(--accent)">
+      <div class="metric-val" style="color:var(--accent)">${m.v}</div>
+      <div class="metric-label">${esc(m.l)}</div>
+    </div>`).join("");
+
+  // Tabla pubs
+  const pt = document.getElementById("admin-pub-tbl");
+  pt.innerHTML = `
+    <thead><tr>
+      ${["Título","Categoría","Prioridad","Fecha","Etiquetas","Estado","Acciones"].map(h=>`<th>${esc(h)}</th>`).join("")}
+    </tr></thead>
+    <tbody>
+      ${pubs.map(p=>`
+        <tr style="border-bottom:1px solid var(--border);opacity:${p.activa?1:.55}">
+          <td style="padding:9px 13px;font-weight:${p.fijada?600:400};max-width:220px;color:var(--text)">
+            ${p.fijada?'<span style="color:var(--accent);margin-right:4px">📌</span>':''}${esc(p.titulo)}
+          </td>
+          <td style="padding:9px 13px"><span class="badge badge-cat">${catLabel(p.categoria)}</span></td>
+          <td style="padding:9px 13px">${priBadge(p.prioridad)||'<span style="font-size:.7rem;color:var(--text3)">Normal</span>'}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${fmt(p.fecha)}</td>
+          <td style="padding:9px 13px"><div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${(p.etiquetas||[]).slice(0,2).map(e=>`<span class="tag">#${esc(e)}</span>`).join("")}
+            ${(p.etiquetas||[]).length>2?`<span class="tag">+${p.etiquetas.length-2}</span>`:''}
+          </div></td>
+          <td style="padding:9px 13px"><span class="${p.activa?'active-badge':'inactive-badge'}">${p.activa?"ACTIVA":"INACTIVA"}</span></td>
+          <td style="padding:9px 13px">
+            <div style="display:flex;gap:5px">
+              <button class="mini-btn" onclick="abrirEditPub(${p.id})" title="Editar">✏</button>
+              <button class="mini-btn" onclick="togglePub(${p.id},'activa')" title="${p.activa?'Desactivar':'Activar'}">${p.activa?"⊘":"✓"}</button>
+              <button class="mini-btn" onclick="togglePub(${p.id},'fijada')" title="Fijar">📌</button>
+              <button class="mini-btn" onclick="eliminarPub(${p.id})" style="color:var(--danger)" title="Eliminar">✕</button>
+            </div>
+          </td>
+        </tr>`).join("")}
+    </tbody>`;
+
+  // Tabla eventos
+  document.getElementById("admin-ev-lbl").textContent = `EVENTOS (${eventos.length})`;
+  const et = document.getElementById("admin-ev-tbl");
+  et.innerHTML = `
+    <thead><tr>${["Título","Fecha","Hora","Lugar","Acciones"].map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
+    <tbody>
+      ${eventos.map(e=>`
+        <tr style="border-bottom:1px solid var(--border);opacity:${e.fecha<HOY?.7:1}">
+          <td style="padding:9px 13px;color:var(--text)">${esc(e.titulo)}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${fmt(e.fecha)}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${esc(e.hora||"—")}</td>
+          <td style="padding:9px 13px;font-size:.78rem;color:var(--text2)">${esc(e.lugar||"—")}</td>
+          <td style="padding:9px 13px">
+            <div style="display:flex;gap:5px">
+              <button class="mini-btn" onclick="abrirEditEv(${e.id})">✏</button>
+              <button class="mini-btn" onclick="eliminarEv(${e.id})" style="color:var(--danger)">✕</button>
+            </div>
+          </td>
+        </tr>`).join("")}
+    </tbody>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD PUBLICACIONES
+// ═══════════════════════════════════════════════════════════
+function openModalPub() {
+  editPubId = null;
+  adjuntosTemp = [];
+  etqSeleccionadas = [];
+  document.getElementById("modal-pub-title").textContent = "Nueva publicación";
+  ["fp-titulo","fp-autor","fp-contenido"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fp-cat").innerHTML = CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  document.getElementById("fp-pri").value = "normal";
+  document.getElementById("fp-fecha").value = HOY;
+  document.getElementById("fp-fijada").checked = false;
+  document.getElementById("fp-activa").checked = true;
+  renderEtqBtns();
+  renderAdjPreview();
+  openModal("modal-pub");
+}
+
+function abrirEditPub(id) {
+  const p = pubs.find(x => x.id === id);
+  if (!p) return;
+  editPubId = id;
+  adjuntosTemp = [...(p.adjuntos||[])];
+  etqSeleccionadas = [...(p.etiquetas||[])];
+  document.getElementById("modal-pub-title").textContent = "Editar publicación";
+  document.getElementById("fp-titulo").value    = p.titulo;
+  document.getElementById("fp-contenido").value = p.contenido;
+  document.getElementById("fp-autor").value     = p.autor;
+  document.getElementById("fp-fecha").value     = p.fecha;
+  document.getElementById("fp-cat").innerHTML   = CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  document.getElementById("fp-cat").value       = p.categoria;
+  document.getElementById("fp-pri").value       = p.prioridad;
+  document.getElementById("fp-fijada").checked  = p.fijada;
+  document.getElementById("fp-activa").checked  = p.activa;
+  renderEtqBtns();
+  renderAdjPreview();
+  openModal("modal-pub");
+}
+
+function renderEtqBtns() {
+  document.getElementById("etq-btns").innerHTML = ETIQUETAS.map(e =>
+    `<button class="etq-btn ${etqSeleccionadas.includes(e)?'sel':''}" onclick="toggleEtq('${e}')">${esc(e)}</button>`
+  ).join("");
+}
+
+function toggleEtq(e) {
+  etqSeleccionadas = etqSeleccionadas.includes(e)
+    ? etqSeleccionadas.filter(x => x !== e)
+    : [...etqSeleccionadas, e];
+  renderEtqBtns();
+}
+
+function handleAdjuntos(inp) {
+  const files = Array.from(inp.files);
+  const proms = files.map(f => new Promise(res => {
+    const r = new FileReader();
+    r.onload = ev => res({ nombre:f.name, tipo:f.type, tamaño:f.size, data:ev.target.result });
+    r.readAsDataURL(f);
+  }));
+  Promise.all(proms).then(nuevos => {
+    adjuntosTemp = [...adjuntosTemp, ...nuevos];
+    renderAdjPreview();
+    inp.value = "";
+  });
+}
+
+function renderAdjPreview() {
+  document.getElementById("adj-preview").innerHTML = adjuntosTemp.map((a,i) => `
+    <div class="adj-item">
+      <span style="font-size:1rem">${iconAdj(a.tipo,a.nombre)}</span>
+      <span style="flex:1;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.nombre)}</span>
+      <span style="color:var(--text3);margin-right:4px">${(a.tamaño/1024).toFixed(0)} KB</span>
+      <button onclick="removeAdj(${i})" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:.85rem;padding:0">✕</button>
+    </div>`).join("");
+}
+
+function removeAdj(i) {
+  adjuntosTemp.splice(i,1);
+  renderAdjPreview();
+}
+
+function guardarPub() {
+  const titulo    = document.getElementById("fp-titulo").value.trim();
+  const contenido = document.getElementById("fp-contenido").value.trim();
+  if (!titulo || !contenido) return alert("Título y contenido son obligatorios.");
+  const pub = {
+    id:       editPubId || Date.now(),
+    titulo,
+    contenido,
+    categoria: document.getElementById("fp-cat").value,
+    prioridad: document.getElementById("fp-pri").value,
+    autor:     document.getElementById("fp-autor").value.trim(),
+    fecha:     document.getElementById("fp-fecha").value || HOY,
+    fijada:    document.getElementById("fp-fijada").checked,
+    activa:    document.getElementById("fp-activa").checked,
+    etiquetas: [...etqSeleccionadas],
+    adjuntos:  [...adjuntosTemp],
   };
-  const c = colores[tipo] || "var(--text3)";
-  return (
-    <span style={{ background:c+"22", color:c, border:`1px solid ${c}`, borderRadius:2, fontSize:".62rem", fontWeight:700, padding:"2px 7px", letterSpacing:".06em", fontFamily:"monospace" }}>
-      {tipo?.toUpperCase()}
-    </span>
-  );
+  if (editPubId) {
+    pubs = pubs.map(p => p.id === editPubId ? pub : p);
+  } else {
+    pubs = [pub, ...pubs];
+  }
+  closeModal("modal-pub");
+  renderAdmin();
 }
 
-function Tag({ children }) {
-  return (
-    <span style={{ background:"var(--bg3)", color:"var(--text3)", border:"1px solid var(--border)", borderRadius:2, fontSize:".65rem", padding:"1px 6px", fontFamily:"monospace" }}>
-      {children}
-    </span>
-  );
+function eliminarPub(id) {
+  if (!confirm("¿Eliminar publicación?")) return;
+  pubs = pubs.filter(p => p.id !== id);
+  renderAdmin();
 }
 
-function Modal({ children, onClose }) {
-  return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}
-      onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"26px 26px", maxWidth:520, width:"100%", maxHeight:"90vh", overflowY:"auto", boxShadow:"0 12px 40px var(--shadow)" }}>
-        {children}
+function togglePub(id, campo) {
+  pubs = pubs.map(p => p.id === id ? { ...p, [campo]: !p[campo] } : p);
+  renderAdmin();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD EVENTOS
+// ═══════════════════════════════════════════════════════════
+function openModalEv() {
+  editEvId = null;
+  document.getElementById("modal-ev-title").textContent = "Nuevo evento";
+  ["fe-titulo","fe-hora","fe-lugar","fe-desc"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fe-fecha").value = HOY;
+  openModal("modal-ev");
+}
+
+function abrirEditEv(id) {
+  const e = eventos.find(x => x.id === id);
+  if (!e) return;
+  editEvId = id;
+  document.getElementById("modal-ev-title").textContent = "Editar evento";
+  document.getElementById("fe-titulo").value = e.titulo;
+  document.getElementById("fe-fecha").value  = e.fecha;
+  document.getElementById("fe-hora").value   = e.hora||"";
+  document.getElementById("fe-lugar").value  = e.lugar||"";
+  document.getElementById("fe-desc").value   = e.descripcion||"";
+  openModal("modal-ev");
+}
+
+function guardarEv() {
+  const titulo = document.getElementById("fe-titulo").value.trim();
+  const fecha  = document.getElementById("fe-fecha").value;
+  if (!titulo || !fecha) return alert("Título y fecha son obligatorios.");
+  const ev = {
+    id:          editEvId || Date.now(),
+    titulo,
+    fecha,
+    hora:        document.getElementById("fe-hora").value,
+    lugar:       document.getElementById("fe-lugar").value.trim(),
+    descripcion: document.getElementById("fe-desc").value.trim(),
+  };
+  if (editEvId) {
+    eventos = eventos.map(e => e.id === editEvId ? ev : e);
+  } else {
+    eventos = [...eventos, ev];
+  }
+  closeModal("modal-ev");
+  renderAdmin();
+}
+
+function eliminarEv(id) {
+  if (!confirm("¿Eliminar evento?")) return;
+  eventos = eventos.filter(e => e.id !== id);
+  renderAdmin();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SERVICIOS
+// ═══════════════════════════════════════════════════════════
+function renderServicios() {
+  // Botones admin
+  document.getElementById("btn-add-svc").style.display = esAdmin ? "inline-block" : "none";
+  document.getElementById("btn-doc-svc").style.display = esAdmin ? "inline-block" : "none";
+
+  // Documentos
+  renderDocsSvc();
+
+  // Orden del día
+  renderOrdenDia();
+
+  // Servicios
+  const fEsc  = document.getElementById("f-esc").value;
+  const fTipo = document.getElementById("f-tipo-svc").value;
+  let lista = servicios;
+  if (fEsc  !== "todos") lista = lista.filter(s => s.escuadron === fEsc);
+  if (fTipo !== "todos") lista = lista.filter(s => s.tipoServicio === fTipo);
+
+  document.getElementById("svc-count").textContent = lista.length + " PERSONAL EN SERVICIO";
+
+  const tw = document.getElementById("svc-tbl-wrap");
+  if (lista.length === 0) {
+    tw.innerHTML = `<div class="vacio">${esAdmin?"Sin servicios registrados. Presiona «+ Agregar servicio» para comenzar.":"No hay servicios registrados para hoy."}</div>`;
+  } else {
+    tw.innerHTML = `
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>${["Nombre / Apellido","RUT","Escuadrón","Tipo de servicio","Horario","Lugar","Obs.",esAdmin?"":""].filter(h=>h||!esAdmin?true:false).map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
+          <tbody>
+            ${lista.map(s=>`
+              <tr>
+                <td style="padding:9px 12px;font-weight:600;color:var(--text)">${esc(s.nombre)}</td>
+                <td style="padding:9px 12px;font-family:monospace;font-size:.72rem;color:var(--text3)">${esc(s.rut||"—")}</td>
+                <td style="padding:9px 12px"><span style="background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:2px;font-size:.62rem;padding:2px 6px;font-family:monospace;font-weight:600">${esc(s.escuadron)}</span></td>
+                <td style="padding:9px 12px">${tipoBadge(s.tipoServicio)}</td>
+                <td style="padding:9px 12px;font-family:monospace;font-size:.72rem;color:var(--text2);white-space:nowrap">${esc(s.horaInicio)} — ${esc(s.horaTermino)}</td>
+                <td style="padding:9px 12px;font-size:.78rem;color:var(--text2)">${esc(s.lugar||"—")}</td>
+                <td style="padding:9px 12px;font-size:.75rem;color:var(--text3);max-width:140px">${esc(s.obs||"—")}</td>
+                ${esAdmin?`<td style="padding:9px 12px"><div style="display:flex;gap:5px">
+                  <button class="mini-btn" onclick="abrirEditSvc(${s.id})">✏</button>
+                  <button class="mini-btn" onclick="eliminarSvc(${s.id})" style="color:var(--danger)">✕</button>
+                </div></td>`:""}
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // Resumen por tipo
+  const tipos = ["Guardia","Facción","Servicio de Cuartel","Turno Especial","Instrucción","Comisión"];
+  const res = document.getElementById("svc-resumen");
+  if (servicios.length > 0) {
+    res.innerHTML = tipos.map(t => {
+      const n = servicios.filter(s => s.tipoServicio === t).length;
+      if (!n) return "";
+      return `<div class="svc-sum-card"><div style="font-size:1.4rem;font-weight:700;color:var(--accent)">${n}</div><div style="font-size:.65rem;color:var(--text3);font-family:monospace">${esc(t.toUpperCase())}</div></div>`;
+    }).join("");
+  } else {
+    res.innerHTML = "";
+  }
+}
+
+function openModalSvc() {
+  editSvcId = null;
+  document.getElementById("modal-svc-title").textContent = "Nuevo servicio";
+  ["fs-nombre","fs-rut","fs-lugar","fs-obs"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fs-esc").selectedIndex  = 0;
+  document.getElementById("fs-tipo").selectedIndex = 0;
+  document.getElementById("fs-hi").value = "08:00";
+  document.getElementById("fs-ht").value = "16:00";
+  openModal("modal-svc");
+}
+
+function abrirEditSvc(id) {
+  const s = servicios.find(x => x.id === id);
+  if (!s) return;
+  editSvcId = id;
+  document.getElementById("modal-svc-title").textContent = "Editar servicio";
+  document.getElementById("fs-nombre").value = s.nombre;
+  document.getElementById("fs-rut").value    = s.rut||"";
+  document.getElementById("fs-esc").value    = s.escuadron;
+  document.getElementById("fs-tipo").value   = s.tipoServicio;
+  document.getElementById("fs-hi").value     = s.horaInicio;
+  document.getElementById("fs-ht").value     = s.horaTermino;
+  document.getElementById("fs-lugar").value  = s.lugar||"";
+  document.getElementById("fs-obs").value    = s.obs||"";
+  openModal("modal-svc");
+}
+
+function guardarSvc() {
+  const nombre = document.getElementById("fs-nombre").value.trim();
+  if (!nombre) return alert("El nombre es obligatorio.");
+  const svc = {
+    id:           editSvcId || Date.now(),
+    nombre,
+    rut:          document.getElementById("fs-rut").value.trim(),
+    escuadron:    document.getElementById("fs-esc").value,
+    tipoServicio: document.getElementById("fs-tipo").value,
+    horaInicio:   document.getElementById("fs-hi").value,
+    horaTermino:  document.getElementById("fs-ht").value,
+    lugar:        document.getElementById("fs-lugar").value.trim(),
+    obs:          document.getElementById("fs-obs").value.trim(),
+  };
+  if (editSvcId) {
+    servicios = servicios.map(s => s.id === editSvcId ? svc : s);
+  } else {
+    servicios = [...servicios, svc];
+  }
+  closeModal("modal-svc");
+  renderServicios();
+}
+
+function eliminarSvc(id) {
+  if (!confirm("¿Eliminar servicio?")) return;
+  servicios = servicios.filter(s => s.id !== id);
+  renderServicios();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ORDEN DEL DÍA
+// ═══════════════════════════════════════════════════════════
+function renderOrdenDia() {
+  const ob = document.getElementById("orden-btns");
+  const oc = document.getElementById("orden-content");
+
+  ob.innerHTML = (!ordenEditando && (ordenDia.instruccion || ordenDia.firmante)) ? `
+    <button class="btn-s" onclick="imprimirOrden()">🖨 Imprimir / Guardar PDF</button>
+    ${esAdmin?`<button class="btn-s" onclick="toggleOrdenEdicion()">✏ Editar</button>`:''}
+  ` : esAdmin ? `
+    <button class="btn-p" onclick="toggleOrdenEdicion()">${ordenEditando?"✓ Guardar orden":"✏ Editar"}</button>
+  ` : "";
+
+  if (ordenEditando) {
+    oc.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="sub-lbl">FECHA</div>
+          <input type="date" value="${ordenDia.fecha}" oninput="ordenDia.fecha=this.value">
+        </div>
+        <div><div class="sub-lbl">HORA DE ENCUADRE</div>
+          <input placeholder="07:30" value="${esc(ordenDia.encuadre)}" oninput="ordenDia.encuadre=this.value">
+        </div>
+        <div style="grid-column:1/-1"><div class="sub-lbl">INSTRUCCIÓN DEL DÍA</div>
+          <textarea style="min-height:90px" placeholder="Detallar actividades…" oninput="ordenDia.instruccion=this.value">${esc(ordenDia.instruccion)}</textarea>
+        </div>
+        <div style="grid-column:1/-1"><div class="sub-lbl">NOVEDAD</div>
+          <input placeholder="Sin novedad." value="${esc(ordenDia.novedad)}" oninput="ordenDia.novedad=this.value">
+        </div>
+        <div><div class="sub-lbl">OFICIAL / SUBOFICIAL FIRMANTE</div>
+          <input placeholder="Nombre completo" value="${esc(ordenDia.firmante)}" oninput="ordenDia.firmante=this.value">
+        </div>
+        <div><div class="sub-lbl">GRADO</div>
+          <input placeholder="Sgto. 1° / Cbo." value="${esc(ordenDia.grado)}" oninput="ordenDia.grado=this.value">
+        </div>
+      </div>`;
+  } else {
+    const sinContenido = !ordenDia.instruccion && !ordenDia.firmante;
+    oc.innerHTML = `
+      <div class="orden-meta">
+        <div class="orden-field"><div class="sub-lbl">FECHA</div>
+          <div style="font-size:.95rem;font-weight:700;color:var(--text)">${fmt(ordenDia.fecha)||"—"}</div>
+        </div>
+        <div class="orden-field"><div class="sub-lbl">ENCUADRE</div>
+          <div style="font-size:.95rem;font-weight:700;color:var(--accent)">${esc(ordenDia.encuadre)||"—"} HRS</div>
+        </div>
+        <div class="orden-field"><div class="sub-lbl">NOVEDAD</div>
+          <div style="font-size:.88rem;color:var(--text2)">${esc(ordenDia.novedad)||"—"}</div>
+        </div>
       </div>
+      ${ordenDia.instruccion?`<div class="mb-12"><div class="sub-lbl">INSTRUCCIÓN</div>
+        <div class="orden-instruccion">${esc(ordenDia.instruccion)}</div></div>`:''}
+      ${ordenDia.firmante?`<div class="orden-firma">
+        <span style="font-size:.72rem;color:var(--text3);font-family:monospace">FIRMA:</span>
+        <span style="font-size:.88rem;font-weight:600;color:var(--text)">${esc(ordenDia.grado)} ${esc(ordenDia.firmante)}</span>
+      </div>`:''}
+      ${sinContenido?`<div style="color:var(--text3);font-size:.82rem">${esAdmin?"Sin contenido — presiona «✏ Editar» para completar.":"Sin publicar aún."}</div>`:''}`;
+  }
+}
+
+function toggleOrdenEdicion() {
+  ordenEditando = !ordenEditando;
+  renderOrdenDia();
+}
+
+function imprimirOrden() {
+  const html = `<html><head><title>Orden del Día</title><style>
+    body{font-family:'Palatino Linotype',serif;max-width:700px;margin:40px auto;padding:0 30px;color:#1c1f18}
+    h1{font-size:1.1rem;letter-spacing:.1em;text-align:center;border-bottom:2px solid #4a7c59;padding-bottom:10px;margin-bottom:20px}
+    .row{display:flex;gap:40px;margin-bottom:14px}.lbl{font-size:.65rem;letter-spacing:.1em;color:#7a8070;font-family:monospace;margin-bottom:3px}
+    .val{font-size:.9rem;font-weight:700}.instruccion{white-space:pre-wrap;font-size:.88rem;line-height:1.75;margin:16px 0;padding:14px;border-left:3px solid #4a7c59;background:#f5f7f2}
+    .firma{border-top:1px solid #ccc;padding-top:14px;margin-top:20px;font-size:.85rem}
+    .header{text-align:center;margin-bottom:24px;font-size:.7rem;letter-spacing:.15em;color:#4a7c59}
+  </style></head><body>
+    <div class="header">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div>
+    <h1>ORDEN DEL DÍA</h1>
+    <div class="row">
+      <div><div class="lbl">FECHA</div><div class="val">${fmt(ordenDia.fecha)||"—"}</div></div>
+      <div><div class="lbl">HORA DE ENCUADRE</div><div class="val">${ordenDia.encuadre||"—"} HRS</div></div>
+      <div><div class="lbl">NOVEDAD</div><div class="val">${ordenDia.novedad||"Sin novedad."}</div></div>
     </div>
-  );
-}
-
-function Vacio({ msg = "Sin contenido disponible." }) {
-  return <div style={{ color:"var(--text3)", fontSize:".84rem", padding:"20px 0", textAlign:"center" }}>{msg}</div>;
+    ${ordenDia.instruccion?`<div class="lbl">INSTRUCCIÓN</div><div class="instruccion">${ordenDia.instruccion}</div>`:''}
+    <div class="firma"><strong>${ordenDia.grado||""} ${ordenDia.firmante||""}</strong><br>
+    <span style="font-size:.75rem;color:#7a8070">Oficial/Suboficial Firmante</span></div>
+  </body></html>`;
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
 }
 
 // ═══════════════════════════════════════════════════════════
-// ESTILOS BASE
+// DOCUMENTOS SERVICIOS
 // ═══════════════════════════════════════════════════════════
-const css = {
-  btnP: { background:"var(--accent)", color:"#fff", border:"none", padding:"8px 18px", cursor:"pointer", borderRadius:2, fontSize:".8rem", letterSpacing:".05em", fontFamily:"inherit" },
-  btnS: { background:"transparent", color:"var(--accent)", border:"1px solid var(--accent)", padding:"8px 18px", cursor:"pointer", borderRadius:2, fontSize:".8rem", letterSpacing:".05em", fontFamily:"inherit" },
-  navBtn: { background:"transparent", border:"none", padding:"6px 14px", cursor:"pointer", fontSize:".78rem", letterSpacing:".06em", borderRadius:2, fontFamily:"inherit", transition:"background .15s" },
-  iconBtn: { background:"none", border:"none", cursor:"pointer", color:"inherit", padding:"4px 8px", borderRadius:2 },
-  inp: { border:"1px solid var(--border2)", borderRadius:2, padding:"8px 11px", fontSize:".82rem", fontFamily:"inherit", background:"var(--bg)", color:"var(--text)" },
-  sel: { border:"1px solid var(--border2)", borderRadius:2, padding:"8px 11px", fontSize:".82rem", fontFamily:"inherit", background:"var(--bg)", color:"var(--text)", cursor:"pointer" },
-  mini: { background:"var(--bg3)", border:"1px solid var(--border)", padding:"3px 8px", cursor:"pointer", borderRadius:2, fontSize:".8rem", color:"var(--text2)" },
-  subLabel: { fontSize:".65rem", letterSpacing:".18em", color:"var(--text3)", marginBottom:10, fontFamily:"monospace" },
-};
+function renderDocsSvc() {
+  const grid = document.getElementById("docs-svc-grid");
+  if (docsSvc.length === 0) {
+    grid.innerHTML = `<div class="vacio">${esAdmin?"Sin documentos. Presiona «+ Subir documento» para publicar.":"No hay documentos publicados aún."}</div>`;
+    return;
+  }
+  grid.innerHTML = docsSvc.map(d => {
+    const esPDF  = d.archivo?.tipo?.includes("pdf") || d.archivo?.nombre?.endsWith(".pdf");
+    const esWord = d.archivo?.tipo?.includes("word") || d.archivo?.nombre?.endsWith(".docx");
+    const icono  = esPDF ? "📄" : esWord ? "📝" : "📎";
+    const color  = esPDF ? "var(--danger)" : esWord ? "var(--accent)" : "var(--text2)";
+    const etiq   = esPDF ? "PDF" : esWord ? "WORD" : "DOC";
+    return `
+      <div class="doc-card">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.6rem">${icono}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.62rem;letter-spacing:.1em;font-family:monospace;color:${color};font-weight:700;margin-bottom:2px">${etiq}</div>
+            <div style="font-size:.88rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.titulo)}</div>
+          </div>
+        </div>
+        ${d.descripcion?`<div style="font-size:.78rem;color:var(--text2);line-height:1.5">${esc(d.descripcion)}</div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <div style="font-size:.68rem;color:var(--text3);font-family:monospace">${fmt(d.fecha)}${d.autor?" · "+esc(d.autor):""}</div>
+          <div style="display:flex;gap:6px">
+            <a href="${d.archivo.data}" download="${esc(d.archivo.nombre)}"
+              style="font-size:.72rem;background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:3px 10px;text-decoration:none;font-family:monospace;font-weight:600">
+              ⬇ Descargar
+            </a>
+            ${esAdmin?`<button class="mini-btn" onclick="eliminarDocSvc(${d.id})" style="color:var(--danger);font-size:.72rem">✕</button>`:''}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
 
+function openModalDocSvc() {
+  docSvcTemp = null;
+  ["fd-titulo","fd-desc","fd-autor"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fd-fecha").value = HOY;
+  document.getElementById("fd-preview").textContent = "";
+  document.getElementById("fd-archivo").value = "";
+  openModal("modal-doc-svc");
+}
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(DiarioMural));
+function handleDocSvc(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    docSvcTemp = { nombre:f.name, tipo:f.type, tamano:f.size, data:ev.target.result };
+    document.getElementById("fd-preview").textContent = "✓ " + f.name + " (" + (f.size/1024).toFixed(0) + " KB)";
+  };
+  r.readAsDataURL(f);
+}
 
-  </script>
+function guardarDocSvc() {
+  const titulo = document.getElementById("fd-titulo").value.trim();
+  if (!titulo || !docSvcTemp) return alert("Título y archivo son obligatorios.");
+  docsSvc = [...docsSvc, {
+    id:          Date.now(),
+    titulo,
+    descripcion: document.getElementById("fd-desc").value.trim(),
+    fecha:       document.getElementById("fd-fecha").value || HOY,
+    autor:       document.getElementById("fd-autor").value.trim(),
+    archivo:     docSvcTemp,
+  }];
+  closeModal("modal-doc-svc");
+  renderDocsSvc();
+}
+
+function eliminarDocSvc(id) {
+  if (!confirm("¿Eliminar documento?")) return;
+  docsSvc = docsSvc.filter(d => d.id !== id);
+  renderDocsSvc();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.getElementById("footer-year").textContent = new Date().getFullYear();
+buildNav();
+renderInicio();
+</script>
 </body>
 </html>
