@@ -371,6 +371,47 @@
     }
     .etq-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent2); }
 
+
+    /* ── Cumpleaños ── */
+    .bday-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
+    .bday-tab-btn {
+      padding:7px 18px; border-radius:2px; font-size:.78rem; cursor:pointer;
+      border:1px solid var(--border); background:var(--bg3); color:var(--text2);
+      font-family:inherit; letter-spacing:.05em; transition:background .15s;
+    }
+    .bday-tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent2); }
+    .bday-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:3px; padding:14px 16px;
+      display:flex; align-items:center; gap:14px;
+    }
+    .bday-card.hoy { border-left:4px solid #c9a84c; background:rgba(201,168,76,.07); }
+    .bday-card.este-mes { border-left:4px solid var(--accent); }
+    .bday-avatar {
+      width:42px; height:42px; border-radius:50%;
+      background:var(--accent3); color:var(--accent);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; font-weight:700; flex-shrink:0;
+      border:2px solid var(--border);
+    }
+    .bday-card.hoy .bday-avatar { background:rgba(201,168,76,.18); color:#9a7a1a; border-color:#c9a84c; }
+    .bday-name { font-size:.9rem; font-weight:600; color:var(--text); line-height:1.3; }
+    .bday-meta { font-size:.72rem; color:var(--text3); font-family:monospace; margin-top:2px; }
+    .bday-badge-hoy {
+      background:rgba(201,168,76,.2); color:#8a6a10; border:1px solid #c9a84c;
+      border-radius:2px; font-size:.62rem; font-weight:700; padding:2px 7px;
+      font-family:monospace; letter-spacing:.06em; white-space:nowrap;
+    }
+    .bday-badge-mes {
+      background:var(--accent3); color:var(--accent); border:1px solid var(--accent);
+      border-radius:2px; font-size:.62rem; font-weight:700; padding:2px 7px;
+      font-family:monospace; letter-spacing:.06em; white-space:nowrap;
+    }
+    .bday-dias {
+      font-size:.68rem; color:var(--text3); font-family:monospace;
+      margin-left:auto; text-align:right; white-space:nowrap;
+    }
+
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -598,6 +639,17 @@
     </div>
   </div>
 
+
+  <!-- ═══ CUMPLEAÑOS ═══ -->
+  <div id="sec-cumpleanos" class="section">
+    <div class="flex-sb mb-16">
+      <div class="sec-title" style="margin:0"><h2>🎂 Cumpleaños</h2><div class="sec-title-bar"></div></div>
+      <button class="btn-p" id="btn-add-bday" style="display:none" onclick="openModalBday()">+ Agregar</button>
+    </div>
+    <div class="bday-tabs" id="bday-tabs"></div>
+    <div id="bday-content"></div>
+  </div>
+
 </main>
 
 <footer>
@@ -732,6 +784,43 @@
       <div class="form-btns">
         <button class="btn-p" onclick="guardarDocSvc()">📤 Publicar</button>
         <button class="btn-s" onclick="closeModal('modal-doc-svc')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="modal-bday" class="modal-overlay" style="display:none" onclick="closeModal('modal-bday',event)">
+  <div class="modal-box">
+    <h3 id="modal-bday-title">Agregar Cumpleaños</h3>
+    <div class="form-col">
+      <input id="fb-nombre" placeholder="Nombre completo *">
+      <div class="form-row">
+        <div><div class="sub-lbl">GRADO / CARGO</div><input id="fb-grado" placeholder="Ej: Sgto. 1°, Instructor, Administrativo"></div>
+        <div><div class="sub-lbl">CATEGORÍA</div>
+          <select id="fb-cat">
+            <option value="alumnos">Alumnos</option>
+            <option value="instructores">Instructores</option>
+            <option value="administrativo">Personal Administrativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><div class="sub-lbl">DÍA</div><input id="fb-dia" type="number" min="1" max="31" placeholder="DD"></div>
+        <div><div class="sub-lbl">MES</div>
+          <select id="fb-mes">
+            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+            <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+          </select>
+        </div>
+        <div><div class="sub-lbl">AÑO (opc.)</div><input id="fb-anio" type="number" min="1940" max="2010" placeholder="AAAA"></div>
+      </div>
+      <input id="fb-escuadron" placeholder="Escuadrón / Sección (opcional)">
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarBday()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-bday')">Cancelar</button>
       </div>
     </div>
   </div>
@@ -872,6 +961,7 @@ const NAV_ITEMS = [
   { id:"calendario", lbl:"Calendario" },
   { id:"documentos", lbl:"Documentos" },
   { id:"servicios", lbl:"Servicios" },
+  { id:"cumpleanos", lbl:"🎂 Cumpleaños" },
 ];
 
 function buildNav() {
@@ -918,6 +1008,7 @@ function renderSection(id) {
   if (id === "documentos")    renderDocumentos();
   if (id === "admin")         renderAdmin();
   if (id === "servicios")     renderServicios();
+  if (id === "cumpleanos")    renderCumpleanos();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1701,6 +1792,181 @@ function eliminarDocSvc(id) {
   if (!confirm("¿Eliminar documento?")) return;
   docsSvc = docsSvc.filter(d => d.id !== id);
   renderDocsSvc();
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// CUMPLEAÑOS
+// ═══════════════════════════════════════════════════════════
+let bdayTab = "alumnos";
+let editBdayId = null;
+
+let cumpleanos = [
+  // Alumnos de ejemplo
+  { id:101, nombre:"Carlos Fuentes Mora",      grado:"Alumno",         cat:"alumnos",       dia:1,  mes:5,  anio:2003, escuadron:"Escuadrón A" },
+  { id:102, nombre:"Andrea Soto Pizarro",      grado:"Alumna",         cat:"alumnos",       dia:15, mes:5,  anio:2002, escuadron:"Escuadrón B" },
+  { id:103, nombre:"Pablo Rojas Sepúlveda",    grado:"Alumno",         cat:"alumnos",       dia:22, mes:6,  anio:2003, escuadron:"Escuadrón A" },
+  { id:104, nombre:"Valentina Castro Ibáñez",  grado:"Alumna",         cat:"alumnos",       dia:8,  mes:7,  anio:2002, escuadron:"Escuadrón C" },
+  { id:105, nombre:"Diego Muñoz Flores",       grado:"Alumno",         cat:"alumnos",       dia:30, mes:4,  anio:2003, escuadron:"Escuadrón B" },
+  // Instructores de ejemplo
+  { id:201, nombre:"Juan Arriagada Vega",      grado:"Sgto. 1°",       cat:"instructores",  dia:12, mes:5,  anio:1985, escuadron:"" },
+  { id:202, nombre:"Marcela Ríos Contreras",   grado:"Cabo 1°",        cat:"instructores",  dia:3,  mes:8,  anio:1990, escuadron:"" },
+  { id:203, nombre:"Rodrigo Pino Salinas",     grado:"Suboficial",     cat:"instructores",  dia:19, mes:11, anio:1982, escuadron:"" },
+  // Personal Administrativo de ejemplo
+  { id:301, nombre:"Patricia Salas Mardones",  grado:"Administrativa", cat:"administrativo",dia:27, mes:9,  anio:1978, escuadron:"" },
+  { id:302, nombre:"Felipe Araya Cárdenas",    grado:"Administrativo", cat:"administrativo",dia:5,  mes:12, anio:1980, escuadron:"" },
+];
+
+const BDAY_CATS = [
+  { id:"alumnos",       lbl:"Alumnos",                icon:"🎓" },
+  { id:"instructores",  lbl:"Instructores",            icon:"⭐" },
+  { id:"administrativo",lbl:"Personal Administrativo", icon:"🏢" },
+];
+
+const MESES_L = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+function diasParaCumple(dia, mes) {
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  let cumple = new Date(anioActual, mes - 1, dia);
+  if (cumple < hoy) cumple = new Date(anioActual + 1, mes - 1, dia);
+  const diff = Math.round((cumple - hoy) / (1000*60*60*24));
+  return diff;
+}
+
+function esCumpleHoy(dia, mes) {
+  const hoy = new Date();
+  return hoy.getDate() === dia && (hoy.getMonth() + 1) === mes;
+}
+
+function esCumpleMes(dia, mes) {
+  const hoy = new Date();
+  return (hoy.getMonth() + 1) === mes && !esCumpleHoy(dia, mes);
+}
+
+function renderCumpleanos() {
+  document.getElementById("btn-add-bday").style.display = esAdmin ? "inline-block" : "none";
+
+  // Tabs
+  const tabsEl = document.getElementById("bday-tabs");
+  tabsEl.innerHTML = BDAY_CATS.map(c => `
+    <button class="bday-tab-btn ${bdayTab===c.id?'active':''}" onclick="setBdayTab('${c.id}')">
+      ${c.icon} ${esc(c.lbl)}
+      <span style="margin-left:5px;font-size:.65rem;opacity:.8">(${cumpleanos.filter(b=>b.cat===c.id).length})</span>
+    </button>
+  `).join("");
+
+  // Content
+  const lista = cumpleanos
+    .filter(b => b.cat === bdayTab)
+    .sort((a, b) => {
+      const da = diasParaCumple(a.dia, a.mes);
+      const db = diasParaCumple(b.dia, b.mes);
+      return da - db;
+    });
+
+  const hoyCount = lista.filter(b => esCumpleHoy(b.dia, b.mes)).length;
+  const mesCount  = lista.filter(b => esCumpleMes(b.dia, b.mes)).length;
+
+  let header = "";
+  if (hoyCount) {
+    header += `<div style="background:rgba(201,168,76,.12);border:1px solid #c9a84c;border-radius:3px;padding:10px 16px;margin-bottom:16px;font-size:.84rem;color:#7a5a10;">
+      🎉 ¡Hay ${hoyCount} cumpleaños hoy! Recuerda felicitarles.
+    </div>`;
+  }
+  if (mesCount) {
+    header += `<div style="background:var(--accent3);border:1px solid var(--accent);border-radius:3px;padding:10px 16px;margin-bottom:16px;font-size:.84rem;color:var(--accent2);">
+      📅 ${mesCount} cumpleaños este mes.
+    </div>`;
+  }
+
+  const cards = lista.length ? lista.map(b => {
+    const hoy = esCumpleHoy(b.dia, b.mes);
+    const mes  = esCumpleMes(b.dia, b.mes);
+    const dias = diasParaCumple(b.dia, b.mes);
+    const initials = b.nombre.split(" ").slice(0,2).map(n=>n[0]).join("").toUpperCase();
+    const edadStr  = b.anio ? ` · ${new Date().getFullYear() - b.anio + (hoy ? 0 : (dias < 366 && new Date().getMonth()+1 > b.mes ? 1 : 0))} años` : "";
+    const diasStr  = hoy ? "¡Hoy! 🎂" : (dias === 1 ? "Mañana" : "En " + dias + " días");
+    return `
+      <div class="bday-card${hoy?' hoy':mes?' este-mes':''}">
+        <div class="bday-avatar">${hoy ? "🎂" : initials}</div>
+        <div style="flex:1;min-width:0">
+          <div class="bday-name">${esc(b.nombre)}</div>
+          <div class="bday-meta">
+            ${esc(b.grado)}${b.escuadron?" · "+esc(b.escuadron):""}
+            · ${b.dia} de ${MESES_L[b.mes-1]}${b.anio?" "+b.anio:""}${edadStr}
+          </div>
+        </div>
+        ${hoy ? `<span class="bday-badge-hoy">¡HOY!</span>` : mes ? `<span class="bday-badge-mes">ESTE MES</span>` : ""}
+        <div class="bday-dias">${diasStr}</div>
+        ${esAdmin ? `<div style="display:flex;gap:4px;margin-left:8px">
+          <button class="mini-btn" onclick="abrirEditBday(${b.id})">✏</button>
+          <button class="mini-btn" onclick="eliminarBday(${b.id})" style="color:var(--danger)">✕</button>
+        </div>` : ""}
+      </div>`;
+  }).join("") : `<div class="vacio">Sin registros en esta categoría.${esAdmin?" Presiona «+ Agregar» para añadir.":""}</div>`;
+
+  document.getElementById("bday-content").innerHTML = header + `<div class="flex-col">${cards}</div>`;
+}
+
+function setBdayTab(id) {
+  bdayTab = id;
+  renderCumpleanos();
+}
+
+function openModalBday() {
+  editBdayId = null;
+  document.getElementById("modal-bday-title").textContent = "Agregar Cumpleaños";
+  ["fb-nombre","fb-grado","fb-escuadron","fb-anio"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fb-dia").value = "";
+  document.getElementById("fb-mes").value = "1";
+  document.getElementById("fb-cat").value = bdayTab;
+  openModal("modal-bday");
+}
+
+function abrirEditBday(id) {
+  const b = cumpleanos.find(x => x.id === id);
+  if (!b) return;
+  editBdayId = id;
+  document.getElementById("modal-bday-title").textContent = "Editar Cumpleaños";
+  document.getElementById("fb-nombre").value    = b.nombre;
+  document.getElementById("fb-grado").value     = b.grado;
+  document.getElementById("fb-cat").value       = b.cat;
+  document.getElementById("fb-dia").value       = b.dia;
+  document.getElementById("fb-mes").value       = b.mes;
+  document.getElementById("fb-anio").value      = b.anio||"";
+  document.getElementById("fb-escuadron").value = b.escuadron||"";
+  openModal("modal-bday");
+}
+
+function guardarBday() {
+  const nombre = document.getElementById("fb-nombre").value.trim();
+  const dia    = parseInt(document.getElementById("fb-dia").value);
+  const mes    = parseInt(document.getElementById("fb-mes").value);
+  if (!nombre || !dia || !mes) return alert("Nombre, día y mes son obligatorios.");
+  const bday = {
+    id:        editBdayId || Date.now(),
+    nombre,
+    grado:     document.getElementById("fb-grado").value.trim(),
+    cat:       document.getElementById("fb-cat").value,
+    dia,
+    mes,
+    anio:      parseInt(document.getElementById("fb-anio").value)||null,
+    escuadron: document.getElementById("fb-escuadron").value.trim(),
+  };
+  if (editBdayId) {
+    cumpleanos = cumpleanos.map(b => b.id === editBdayId ? bday : b);
+  } else {
+    cumpleanos = [...cumpleanos, bday];
+  }
+  closeModal("modal-bday");
+  renderCumpleanos();
+}
+
+function eliminarBday(id) {
+  if (!confirm("¿Eliminar cumpleaños?")) return;
+  cumpleanos = cumpleanos.filter(b => b.id !== id);
+  renderCumpleanos();
 }
 
 // ═══════════════════════════════════════════════════════════
