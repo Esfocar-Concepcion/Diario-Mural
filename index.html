@@ -456,6 +456,108 @@
     .res-count { font-size: .7rem; color: var(--text3); font-family: monospace; margin-bottom: 12px; }
     .active-badge { background: var(--accent3); color: var(--accent); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
     .inactive-badge { background: var(--bg3); color: var(--text3); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
+
+    /* ── Panel de Información Flotante ── */
+    #info-panel {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 8px 32px var(--shadow);
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+      user-select: none;
+      transition: box-shadow .2s;
+      overflow: hidden;
+    }
+    #info-panel.visible { display: flex; }
+    #info-panel.dragging { box-shadow: 0 16px 48px rgba(0,0,0,.3); }
+    #info-panel-header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 10px 14px;
+      font-size: .75rem;
+      letter-spacing: .12em;
+      font-family: monospace;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: grab;
+      border-bottom: 1px solid var(--border);
+    }
+    #info-panel-header:active { cursor: grabbing; }
+    #info-panel-body {
+      padding: 16px;
+      font-size: .8rem;
+      color: var(--text2);
+      line-height: 1.65;
+      overflow-y: auto;
+      max-height: 420px;
+    }
+    .info-section { margin-bottom: 14px; }
+    .info-section:last-child { margin-bottom: 0; }
+    .info-section-title {
+      font-size: .65rem;
+      letter-spacing: .14em;
+      color: var(--accent);
+      font-family: monospace;
+      font-weight: 700;
+      margin-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 3px 0;
+      font-size: .76rem;
+      border-bottom: 1px dotted var(--border);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row-lbl { color: var(--text3); font-family: monospace; font-size: .7rem; }
+    .info-row-val { color: var(--text); font-weight: 600; text-align: right; max-width: 180px; }
+
+    /* ── Botón flotante de información ── */
+    #info-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(74,124,89,.45);
+      z-index: 501;
+      transition: background .2s, transform .15s;
+      font-family: inherit;
+    }
+    #info-fab:hover { background: var(--accent2); transform: scale(1.08); }
+    #info-fab-badge {
+      position: absolute;
+      top: 2px; right: 2px;
+      background: var(--crit);
+      color: #fff;
+      border-radius: 50%;
+      width: 16px; height: 16px;
+      font-size: .55rem;
+      display: flex; align-items: center; justify-content: center;
+      font-family: monospace;
+      font-weight: 700;
+    }
+
   </style>
 </head>
 <body>
@@ -1707,7 +1809,105 @@ function imprimirOrden() {
     ${ordenDia.instruccion?`<div class="lbl">INSTRUCCIÓN</div><div class="instruccion">${ordenDia.instruccion}</div>`:''}
     <div class="firma"><strong>${ordenDia.grado||""} ${ordenDia.firmante||""}</strong><br>
     <span style="font-size:.75rem;color:#7a8070">Oficial/Suboficial Firmante</span></div>
-  </body></html>`;
+  
+<!-- ═══ PANEL DE INFORMACIÓN FLOTANTE ═══ -->
+<div id="info-panel">
+  <div id="info-panel-header">
+    <span>ⓘ INFORMACIÓN RÁPIDA</span>
+    <button onclick="toggleInfoPanel()" style="background:none;border:none;color:var(--header-text);cursor:pointer;font-size:1rem;padding:0;line-height:1">✕</button>
+  </div>
+  <div id="info-panel-body">
+    <div class="info-section">
+      <div class="info-section-title">SISTEMA</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Unidad</span>
+        <span class="info-row-val">ESFOCAR Concepción</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Sistema</span>
+        <span class="info-row-val">Diario Mural Digital</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Versión</span>
+        <span class="info-row-val">v1.0 — 2026</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">ESTADO ACTUAL</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Publicaciones activas</span>
+        <span class="info-row-val" id="ip-pub-count">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Eventos próximos</span>
+        <span class="info-row-val" id="ip-ev-count">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Avisos urgentes/críticos</span>
+        <span class="info-row-val" id="ip-urg-count" style="color:var(--danger)">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Personal en servicio</span>
+        <span class="info-row-val" id="ip-svc-count">—</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">SECCIONES DISPONIBLES</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Publicaciones</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('publicaciones')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Calendario</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('calendario')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Documentos</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('documentos')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Servicios</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('servicios')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Cumpleaños</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('cumpleanos')">Ir →</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">ATAJOS</div>
+      <div style="font-size:.73rem;color:var(--text3);line-height:1.7">
+        <div>🔐 Acceso admin desde el nav superior</div>
+        <div>◑ / ☀ para cambiar modo oscuro</div>
+        <div>📌 Avisos fijados aparecen primero</div>
+        <div>▲ Barra roja = aviso crítico activo</div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">FECHA Y HORA</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Hoy</span>
+        <span class="info-row-val" id="ip-fecha">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Hora</span>
+        <span class="info-row-val" id="ip-hora" style="font-family:monospace">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Botón FAB -->
+<button id="info-fab" onclick="toggleInfoPanel()" title="Información rápida">
+  ⓘ
+  <span id="info-fab-badge" id="info-fab-badge" style="display:none"></span>
+</button>
+
+</body></html>`;
   const w = window.open('','_blank');
   w.document.write(html);
   w.document.close();
@@ -1975,6 +2175,123 @@ function eliminarBday(id) {
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 buildNav();
 renderInicio();
+
+// ═══════════════════════════════════════════════════════════
+// PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
+// ═══════════════════════════════════════════════════════════
+function toggleInfoPanel() {
+  const panel = document.getElementById('info-panel');
+  panel.classList.toggle('visible');
+  if (panel.classList.contains('visible')) updateInfoPanel();
+}
+
+function updateInfoPanel() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+  const urg = act.filter(p => p.prioridad === 'urgente' || p.prioridad === 'critico').length;
+
+  const el = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+  el('ip-pub-count', act.length);
+  el('ip-ev-count', prox.length);
+  el('ip-urg-count', urg || '0');
+  el('ip-svc-count', servicios.length);
+
+  // Fecha y hora
+  const ahora = new Date();
+  const diasSem = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mesesLbl = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fechaStr = diasSem[ahora.getDay()] + ' ' + ahora.getDate() + ' ' + mesesLbl[ahora.getMonth()] + ' ' + ahora.getFullYear();
+  const horaStr  = String(ahora.getHours()).padStart(2,'0') + ':' + String(ahora.getMinutes()).padStart(2,'0') + ':' + String(ahora.getSeconds()).padStart(2,'0');
+  el('ip-fecha', fechaStr);
+  el('ip-hora',  horaStr);
+
+  // Badge FAB
+  const badge = document.getElementById('info-fab-badge');
+  if (badge) { badge.style.display = urg > 0 ? 'flex' : 'none'; badge.textContent = urg; }
+}
+
+// Reloj en tiempo real
+setInterval(() => {
+  const panel = document.getElementById('info-panel');
+  if (panel && panel.classList.contains('visible')) {
+    const ahora = new Date();
+    const mesesLbl = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const diasSem  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const fechaStr = diasSem[ahora.getDay()] + ' ' + ahora.getDate() + ' ' + mesesLbl[ahora.getMonth()] + ' ' + ahora.getFullYear();
+    const horaStr  = String(ahora.getHours()).padStart(2,'0') + ':' + String(ahora.getMinutes()).padStart(2,'0') + ':' + String(ahora.getSeconds()).padStart(2,'0');
+    const ef = document.getElementById('ip-fecha'); if(ef) ef.textContent = fechaStr;
+    const eh = document.getElementById('ip-hora');  if(eh) eh.textContent = horaStr;
+  }
+}, 1000);
+
+// Badge urgentes al iniciar
+(function initFabBadge() {
+  const act = pubsActivas();
+  const urg = act.filter(p => p.prioridad === 'urgente' || p.prioridad === 'critico').length;
+  const badge = document.getElementById('info-fab-badge');
+  if (badge && urg > 0) { badge.style.display = 'flex'; badge.textContent = urg; }
+})();
+
+// ── Drag ──
+(function initDrag() {
+  const panel  = document.getElementById('info-panel');
+  const header = document.getElementById('info-panel-header');
+  if (!panel || !header) return;
+
+  let isDragging = false, startX, startY, startLeft, startTop;
+
+  header.addEventListener('mousedown', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    isDragging = true;
+    panel.classList.add('dragging');
+    const rect = panel.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    startLeft = rect.left; startTop = rect.top;
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    panel.style.left = startLeft + 'px'; panel.style.top = startTop + 'px';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    let newLeft = startLeft + dx;
+    let newTop  = startTop  + dy;
+    newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  newLeft));
+    newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, newTop));
+    panel.style.left = newLeft + 'px'; panel.style.top = newTop + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) { isDragging = false; panel.classList.remove('dragging'); }
+  });
+
+  // Touch support
+  header.addEventListener('touchstart', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    isDragging = true;
+    const rect = panel.getBoundingClientRect();
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    startLeft = rect.left; startTop = rect.top;
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    panel.style.left = startLeft + 'px'; panel.style.top = startTop + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    let newLeft = startLeft + dx;
+    let newTop  = startTop  + dy;
+    newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  newLeft));
+    newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, newTop));
+    panel.style.left = newLeft + 'px'; panel.style.top = newTop + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => { isDragging = false; panel.classList.remove('dragging'); });
+})();
+
 </script>
 </body>
 </html>
