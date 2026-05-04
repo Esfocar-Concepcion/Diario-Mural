@@ -1,10 +1,343 @@
 {
   "version": 1,
-  "updatedAt": "",
-  "pubs": [],
-  "eventos": [],
+  "updatedAt": "2026-05-04T14:56:01.312Z",
+  "pubs": [
+    {
+      "id": 1,
+      "titulo": "Formación Extraordinaria — 1 de Mayo",
+      "categoria": "avisos",
+      "autor": "Inspectoría General",
+      "fecha": "2026-04-28",
+      "prioridad": "critico",
+      "fijada": true,
+      "activa": true,
+      "etiquetas": [
+        "Ceremonial",
+        "Formación",
+        "Disciplina"
+      ],
+      "adjuntos": [],
+      "contenido": "Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada."
+    },
+    {
+      "id": 2,
+      "titulo": "Instrucciones Revista de Dormitorio — Semana 28 Abril",
+      "categoria": "instrucciones",
+      "autor": "Oficial de Cuartel",
+      "fecha": "2026-04-27",
+      "prioridad": "importante",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Disciplina",
+        "Uniforme"
+      ],
+      "adjuntos": [],
+      "contenido": "Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados."
+    },
+    {
+      "id": 3,
+      "titulo": "Comunicado: Normas de Presentación Personal",
+      "categoria": "comunicados",
+      "autor": "Comandancia ESFOCAR",
+      "fecha": "2026-04-25",
+      "prioridad": "importante",
+      "fijada": true,
+      "activa": true,
+      "etiquetas": [
+        "Disciplina",
+        "Uniforme"
+      ],
+      "adjuntos": [],
+      "contenido": "Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios."
+    },
+    {
+      "id": 4,
+      "titulo": "Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente",
+      "categoria": "noticias",
+      "autor": "Secretaría ESFOCAR",
+      "fecha": "2026-04-22",
+      "prioridad": "normal",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Formación",
+        "Académico"
+      ],
+      "adjuntos": [],
+      "contenido": "Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad."
+    },
+    {
+      "id": 5,
+      "titulo": "Calendario Semanal — 28 Abril al 4 Mayo",
+      "categoria": "actividades",
+      "autor": "Coordinación Académica",
+      "fecha": "2026-04-27",
+      "prioridad": "normal",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Académico",
+        "Formación"
+      ],
+      "adjuntos": [],
+      "contenido": "Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A."
+    },
+    {
+      "id": 6,
+      "titulo": "Resultados Torneo Deportivo Interno 2026",
+      "categoria": "vida-estudiantil",
+      "autor": "Bienestar Estudiantil",
+      "fecha": "2026-04-20",
+      "prioridad": "normal",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Deportes"
+      ],
+      "adjuntos": [],
+      "contenido": "Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes."
+    },
+    {
+      "id": 7,
+      "titulo": "Reglamento de Convivencia Estudiantil 2026",
+      "categoria": "documentos",
+      "autor": "Secretaría",
+      "fecha": "2026-04-15",
+      "prioridad": "normal",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Administrativo",
+        "Disciplina"
+      ],
+      "adjuntos": [],
+      "contenido": "Se publica el Reglamento de Convivencia Estudiantil actualizado para 2026. Incluye modificaciones en artículos 12, 23 y 45 referentes a dispositivos electrónicos, permisos de salida y licencias médicas. Lectura obligatoria."
+    },
+    {
+      "id": 8,
+      "titulo": "Cambio Horario Comedor — Semana 28 Abril",
+      "categoria": "avisos",
+      "autor": "Administración",
+      "fecha": "2026-04-26",
+      "prioridad": "urgente",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Administrativo"
+      ],
+      "adjuntos": [],
+      "contenido": "Por mantención de equipos el comedor operará en horario especial: Desayuno 06:45. Almuerzo 12:30 (escuadrón A primero). Once 18:00. Cena 20:30. Respetar los horarios asignados."
+    },
+    {
+      "id": 9,
+      "titulo": "Charla Salud Mental y Bienestar Estudiantil",
+      "categoria": "actividades",
+      "autor": "Área de Salud",
+      "fecha": "2026-04-18",
+      "prioridad": "normal",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Salud",
+        "Académico"
+      ],
+      "adjuntos": [],
+      "contenido": "Se realizará una charla sobre salud mental y técnicas de manejo del estrés para los alumnos del Grupo Concepción. Participación voluntaria pero recomendada. Auditorio principal, 15:00 hrs."
+    },
+    {
+      "id": 10,
+      "titulo": "Instrucciones para Salida Fin de Semana",
+      "categoria": "instrucciones",
+      "autor": "Oficial de Servicio",
+      "fecha": "2026-04-24",
+      "prioridad": "importante",
+      "fijada": false,
+      "activa": true,
+      "etiquetas": [
+        "Permiso",
+        "Disciplina"
+      ],
+      "adjuntos": [],
+      "contenido": "Para la salida reglamentaria del próximo fin de semana: presentar libreta de permisos al oficial de guardia. Hora límite de regreso: domingo 21:00 hrs. Cualquier novedad debe ser reportada inmediatamente."
+    }
+  ],
+  "eventos": [
+    {
+      "id": 1,
+      "titulo": "Formación Extraordinaria",
+      "fecha": "2026-05-01",
+      "hora": "07:30",
+      "lugar": "Patio Central",
+      "descripcion": "Uniforme de gala obligatorio."
+    },
+    {
+      "id": 2,
+      "titulo": "Evaluación Derecho Procesal",
+      "fecha": "2026-05-02",
+      "hora": "09:00",
+      "lugar": "Sala A",
+      "descripcion": "Evaluación parcial semestre I."
+    },
+    {
+      "id": 3,
+      "titulo": "Tiro en Polígono",
+      "fecha": "2026-04-29",
+      "hora": "14:00",
+      "lugar": "Polígono ESFOCAR",
+      "descripcion": "Escuadrón B."
+    },
+    {
+      "id": 4,
+      "titulo": "Revista de Dormitorios",
+      "fecha": "2026-04-30",
+      "hora": "06:00",
+      "lugar": "Pabellones A y B",
+      "descripcion": "Revista semanal."
+    },
+    {
+      "id": 5,
+      "titulo": "Instrucción Orden Cerrado",
+      "fecha": "2026-05-05",
+      "hora": "08:00",
+      "lugar": "Cancha Principal",
+      "descripcion": "Práctica formaciones y desfiles."
+    },
+    {
+      "id": 6,
+      "titulo": "Charla: Ética Policial",
+      "fecha": "2026-05-06",
+      "hora": "10:00",
+      "lugar": "Auditorio",
+      "descripcion": "A cargo del Coronel de la Prefectura."
+    },
+    {
+      "id": 7,
+      "titulo": "Salida Fin de Semana — Esc. A",
+      "fecha": "2026-05-08",
+      "hora": "17:00",
+      "lugar": "Portería",
+      "descripcion": "Salida reglamentaria."
+    },
+    {
+      "id": 8,
+      "titulo": "Instrucción de Armas",
+      "fecha": "2026-04-28",
+      "hora": "08:00",
+      "lugar": "Sala Armas",
+      "descripcion": "Limpieza y mantenimiento."
+    }
+  ],
   "servicios": [],
   "docsSvc": [],
-  "ordenDia": {},
-  "cumpleanos": []
+  "ordenDia": {
+    "fecha": "2026-05-04",
+    "encuadre": "07:30",
+    "instruccion": "",
+    "novedad": "Sin novedad.",
+    "firmante": "",
+    "grado": ""
+  },
+  "cumpleanos": [
+    {
+      "id": 101,
+      "nombre": "Carlos Fuentes Mora",
+      "grado": "Alumno",
+      "cat": "alumnos",
+      "dia": 1,
+      "mes": 5,
+      "anio": 2003,
+      "escuadron": "Escuadrón A"
+    },
+    {
+      "id": 102,
+      "nombre": "Andrea Soto Pizarro",
+      "grado": "Alumna",
+      "cat": "alumnos",
+      "dia": 15,
+      "mes": 5,
+      "anio": 2002,
+      "escuadron": "Escuadrón B"
+    },
+    {
+      "id": 103,
+      "nombre": "Pablo Rojas Sepúlveda",
+      "grado": "Alumno",
+      "cat": "alumnos",
+      "dia": 22,
+      "mes": 6,
+      "anio": 2003,
+      "escuadron": "Escuadrón A"
+    },
+    {
+      "id": 104,
+      "nombre": "Valentina Castro Ibáñez",
+      "grado": "Alumna",
+      "cat": "alumnos",
+      "dia": 8,
+      "mes": 7,
+      "anio": 2002,
+      "escuadron": "Escuadrón C"
+    },
+    {
+      "id": 105,
+      "nombre": "Diego Muñoz Flores",
+      "grado": "Alumno",
+      "cat": "alumnos",
+      "dia": 30,
+      "mes": 4,
+      "anio": 2003,
+      "escuadron": "Escuadrón B"
+    },
+    {
+      "id": 201,
+      "nombre": "Juan Arriagada Vega",
+      "grado": "Sgto. 1°",
+      "cat": "instructores",
+      "dia": 12,
+      "mes": 5,
+      "anio": 1985,
+      "escuadron": ""
+    },
+    {
+      "id": 202,
+      "nombre": "Marcela Ríos Contreras",
+      "grado": "Cabo 1°",
+      "cat": "instructores",
+      "dia": 3,
+      "mes": 8,
+      "anio": 1990,
+      "escuadron": ""
+    },
+    {
+      "id": 203,
+      "nombre": "Rodrigo Pino Salinas",
+      "grado": "Suboficial",
+      "cat": "instructores",
+      "dia": 19,
+      "mes": 11,
+      "anio": 1982,
+      "escuadron": ""
+    },
+    {
+      "id": 301,
+      "nombre": "Patricia Salas Mardones",
+      "grado": "Administrativa",
+      "cat": "administrativo",
+      "dia": 27,
+      "mes": 9,
+      "anio": 1978,
+      "escuadron": ""
+    },
+    {
+      "id": 302,
+      "nombre": "Felipe Araya Cárdenas",
+      "grado": "Administrativo",
+      "cat": "administrativo",
+      "dia": 5,
+      "mes": 12,
+      "anio": 1980,
+      "escuadron": ""
+    }
+  ]
 }
