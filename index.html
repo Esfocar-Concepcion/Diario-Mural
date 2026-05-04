@@ -840,6 +840,48 @@
       color: #24482c;
     }
 
+  
+    /* ── Modo práctico interno ── */
+    .hero p,
+    .hero .hero-sub,
+    .feature-desc,
+    .feature-meta,
+    .empty,
+    .sub-lbl,
+    .sec-title-bar,
+    .ticker-sep {
+      opacity: .92;
+    }
+    .feature-card,
+    .pub-card,
+    .metric-card {
+      transition: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .feature-card:hover,
+    .pub-card:hover,
+    .metric-card:hover {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    #sec-destacados .feature-meta::after,
+    #sec-galeria .feature-meta::after {
+      content: '';
+    }
+    .btn-p, .btn-s {
+      font-size: .78rem;
+      padding: 7px 12px;
+    }
+    .nav-btn, .icon-btn {
+      font-size: .74rem;
+    }
+    .hero {
+      padding: 30px 30px 26px;
+    }
+    .hero h1 {
+      font-size: 1.72rem;
+    }
+
   </style>
 </head>
 <body>
@@ -1034,7 +1076,7 @@
   <!-- ═══ ÁLBUMES ═══ -->
   <div id="sec-galeria" class="section">
     <div class="flex-sb mb-16">
-      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div><div style="font-size:.76rem;color:var(--text3);margin:10px 0 14px;font-family:monospace;letter-spacing:.08em">REGISTRO VISUAL DE ACTIVIDADES E INSTANCIAS INSTITUCIONALES</div>
+      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
       <button class="btn-p" id="btn-add-galeria" style="display:none" onclick="openModalGaleria()">+ Nuevo álbum</button>
     </div>
     <div class="grid-auto-sm" id="album-grid"></div>
@@ -1042,7 +1084,7 @@
 
   <!-- ═══ DESTACADOS ═══ -->
   <div id="sec-destacados" class="section">
-    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button><div style="font-size:.76rem;color:var(--text3);margin:10px 0 14px;font-family:monospace;letter-spacing:.08em">RECONOCIMIENTOS DESTACADOS DEL GRUPO CONCEPCIÓN</div>
+    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button>
     <div class="dest-tabs" id="dest-tabs"></div>
     <div class="grid-auto-sm" id="dest-grid"></div>
   </div>
