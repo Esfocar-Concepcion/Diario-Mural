@@ -1,23 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:44.250Z",
+  "updatedAt": "2026-05-04T14:56:46.036Z",
   "pubs": [
-    {
-      "id": 3,
-      "titulo": "Comunicado: Normas de Presentación Personal",
-      "categoria": "comunicados",
-      "autor": "Comandancia ESFOCAR",
-      "fecha": "2026-04-25",
-      "prioridad": "importante",
-      "fijada": true,
-      "activa": true,
-      "etiquetas": [
-        "Disciplina",
-        "Uniforme"
-      ],
-      "adjuntos": [],
-      "contenido": "Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios."
-    },
     {
       "id": 4,
       "titulo": "Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente",
