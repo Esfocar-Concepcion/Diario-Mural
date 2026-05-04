@@ -563,7 +563,7 @@
   
     /* ── Ticker de noticias ── */
     #ticker-wrap {
-      background: #1a4a1a;
+      background: #214528;
       color: #f5c518;
       padding: 8px 0;
       overflow: hidden;
@@ -730,6 +730,65 @@
       letter-spacing: .12em;
       font-family: monospace;
       font-weight: 700;
+    }
+
+  
+    /* ── Ajuste institucional global ── */
+    :root {
+      --accent: #315f3a;
+      --accent2: #214528;
+      --accent3: #dfeadf;
+      --header-bg: #142214;
+      --header-text: #f3f7ef;
+      --text: #202420;
+      --text2: #4f574e;
+      --text3: #7a8278;
+      --surface: #ffffff;
+      --bg: #f4f6f1;
+      --bg3: #e8ece4;
+      --border: #d6ddd0;
+      --border2: #c4cbbd;
+    }
+    .hero {
+      background: linear-gradient(135deg, #142214 0%, #1c301c 70%, #203620 100%) !important;
+      border-left: 4px solid #c9a84c !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,.10);
+    }
+    .hero .btn-p {
+      background: #315f3a;
+      color: #fff;
+      border: 1px solid #315f3a;
+    }
+    .hero .btn-p:hover {
+      background: #24482c;
+    }
+    .hero .btn-s {
+      color: #fff;
+      border-color: rgba(255,255,255,.75);
+    }
+    .hero .btn-s:hover {
+      background: rgba(255,255,255,.12);
+    }
+    .nav-btn.active {
+      background: #dfeadf;
+      color: #214528;
+      border-color: #315f3a;
+      box-shadow: 0 0 8px rgba(49,95,58,.18);
+    }
+    .pub-card, .feature-card {
+      border-radius: 8px;
+    }
+    .sec-title h2 {
+      letter-spacing: .02em;
+    }
+    .empty {
+      color: var(--text3);
+      font-size: .82rem;
+      font-family: monospace;
+      padding: 16px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      background: rgba(255,255,255,.6);
     }
 
   </style>
