@@ -606,6 +606,43 @@
     }
     .ticker-sep { margin: 0 20px; color: #c9a84c; }
 
+  
+    /* ── Galería / Destacados ── */
+    .section-head {
+      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;
+    }
+    .section-head .sec-title { margin-bottom:0; }
+    .feature-tabs {
+      display:flex; gap:8px; flex-wrap:wrap; margin: 0 0 16px;
+    }
+    .feature-tabs .nav-btn {
+      padding: 7px 12px;
+      font-size: .72rem;
+      border-radius: 4px;
+    }
+    .feature-card {
+      overflow:hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.08);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .feature-cover {
+      height: 190px;
+      background: linear-gradient(135deg, #183018, #2e5a2e);
+      display:flex; align-items:center; justify-content:center; overflow:hidden;
+    }
+    .feature-cover img { width:100%; height:100%; object-fit:cover; display:block; }
+    .feature-body { padding: 14px 15px 16px; }
+    .feature-kicker {
+      display:inline-block; padding:4px 8px; border-radius:999px;
+      background: var(--accent3); color: var(--accent2);
+      font-size:.68rem; font-family:monospace; letter-spacing:.08em; margin-bottom:8px;
+    }
+    .feature-title { font-size:.95rem; font-weight:700; color:var(--text); margin:0 0 6px; }
+    .feature-desc { font-size:.8rem; color:var(--text2); line-height:1.5; margin:0 0 10px; }
+    .feature-meta { font-size:.7rem; color:var(--text3); font-family:monospace; }
+
   </style>
 </head>
 <body>
@@ -2245,15 +2282,13 @@ function renderDestacados() {
   tabs.innerHTML = tipos.map(t => `<button class="nav-btn ${destTab===t.id?'active':''}" onclick="setDestTab('${t.id}')">${t.lbl}</button>`).join('');
   const list = (destacados||[]).filter(d => destTab==='todos' ? true : d.tipo===destTab);
   g.innerHTML = list.map(d => `
-    <div class="pub-card" style="overflow:hidden">
-      <div style="height:170px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden">
-        ${d.foto && d.foto.url ? `<img src="${d.foto.url}" alt="${esc(d.titulo)}" style="width:100%;height:100%;object-fit:cover">` : '<div style="color:var(--text3);font-size:.8rem">Sin foto</div>'}
-      </div>
-      <div style="padding:14px">
-        <div class="pub-title">${esc(d.titulo||'Destacado')}</div>
-        <div style="font-size:.72rem;color:var(--accent);font-family:monospace;margin:4px 0 8px;text-transform:uppercase">${esc(d.tipo||'')}</div>
-        <div style="color:var(--text3);font-size:.8rem;line-height:1.5">${esc(d.motivo||'')}</div>
-        <div style="font-size:.72rem;color:var(--text3);font-family:monospace;margin-top:10px">${esc(d.fecha||'')}</div>
+    <div class="feature-card">
+      <div class="feature-cover">${d.foto && d.foto.url ? `<img src="${d.foto.url}" alt="${esc(d.titulo)}">` : '<div style="color:#fff;opacity:.75;font-size:.8rem">Sin foto</div>'}</div>
+      <div class="feature-body">
+        <div class="feature-kicker">${esc((d.tipo||'').toUpperCase())}</div>
+        <div class="feature-title">${esc(d.titulo||'Destacado')}</div>
+        <div class="feature-desc">${esc(d.motivo||'')}</div>
+        <div class="feature-meta">${esc(d.fecha||'')}</div>
       </div>
     </div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
 }
