@@ -1105,6 +1105,7 @@ function buildNav() {
       onclick="showSec('${n.id}')">${esc(n.lbl)}</button>
   `).join("") + `
     <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>
+    <button class="icon-btn" onclick="openCfg()" title="Configurar nube JSONBin" style="opacity:.75;color:var(--header-text)">☁</button>
     ${esAdmin
       ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
       : `<button class="nav-btn" onclick="openModal('modal-login')" style="border:1px solid var(--accent);color:var(--accent2);margin-left:4px">🔐 Admin</button>`
@@ -2479,5 +2480,6 @@ function testCfg() {
 }
 
 </script>
+<div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
 </html>
