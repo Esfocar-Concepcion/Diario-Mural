@@ -2586,6 +2586,24 @@ function testCfg() {
   });
 }
 
+// ── Ticker de noticias ──
+function buildTicker() {
+  var el = document.getElementById('ticker-inner');
+  if (!el) return;
+  var items = pubs.filter(function(p){ return p.activa; })
+    .sort(function(a,b){
+      var o={critico:0,urgente:1,importante:2,normal:3};
+      return o[a.prioridad]-o[b.prioridad];
+    })
+    .slice(0,12);
+  if (!items.length) { el.textContent='Sin avisos activos.'; return; }
+  var icons={critico:'🔴',urgente:'🟠',importante:'🟡',normal:'🟢'};
+  el.innerHTML = items.map(function(p){
+    return '<span>' + icons[p.prioridad] + ' ' + p.titulo.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span><span class="ticker-sep">◆</span>';
+  }).join('');
+}
+
+
 </script>
 <div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
