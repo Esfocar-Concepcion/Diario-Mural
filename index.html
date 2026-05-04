@@ -2501,11 +2501,6 @@ function eliminarDocSvc(id) {
 
 
 
-function openModalGaleria() {
-  alert('Falta el modal de álbumes. Si quieres, en el siguiente paso lo dejamos completo con carga de imágenes y portada.');
-}
-
-
 function destIcon(tipo) {
   if (tipo === 'alumno') return '🎖️';
   if (tipo === 'seccion') return '🏛️';
@@ -2513,8 +2508,12 @@ function destIcon(tipo) {
   return '🏅';
 }
 
+function openModalGaleria() {
+  if (document.getElementById('modal-galeria')) document.getElementById('modal-galeria').style.display = 'flex';
+}
+
 function openModalDest() {
-  alert('Falta el modal de destacados. Puedo dejarlo implementado completo en el siguiente paso.');
+  if (document.getElementById('modal-destacados')) document.getElementById('modal-destacados').style.display = 'flex';
 }
 
 function renderGaleria() {
