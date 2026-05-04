@@ -1,4 +1,3 @@
-<!-- DIARIO MURAL ESFOCAR v4.1 | JSONBIN FIX EMPTY ARRAYS -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -559,55 +558,6 @@
       font-weight: 700;
     }
 
-
-    /* ── NEWS TICKER ── */
-    #news-ticker{background:linear-gradient(90deg,var(--header-bg),#2a4020 50%,var(--header-bg));color:var(--header-text);height:38px;display:flex;align-items:center;border-bottom:2px solid var(--accent);overflow:hidden;position:relative;z-index:99}
-    #news-ticker .ticker-label{background:var(--accent);color:#fff;padding:0 16px;height:100%;display:flex;align-items:center;font-size:.78rem;font-weight:800;letter-spacing:.18em;font-family:monospace;white-space:nowrap;flex-shrink:0;border-right:2px solid var(--accent2)}
-    #news-ticker .ticker-label span{margin-right:6px;animation:pulse-dot 1.5s infinite}
-    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
-    #news-ticker .ticker-track{flex:1;overflow:hidden;height:100%;display:flex;align-items:center}
-    #news-ticker .ticker-inner{display:flex;align-items:center;animation:ticker-scroll 50s linear infinite;white-space:nowrap;will-change:transform}
-    #news-ticker .ticker-inner:hover{animation-play-state:paused}
-    @keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .ticker-item{display:inline-flex;align-items:center;padding:0 28px;font-size:.82rem;color:var(--header-text);gap:10px}
-    .ticker-item.crit{color:#ff9090}.ticker-item.urg{color:#ffcc80}
-    .ticker-sep{display:inline-block;color:var(--accent);padding:0 8px;opacity:.5}
-
-    /* ── MEJORAS TIPOGRAFÍA ── */
-    .brand-title{font-size:1.15rem!important;font-weight:800!important}
-    .nav-btn{font-size:.88rem!important;padding:7px 16px!important}
-    .hero h1{font-size:2.4rem!important}
-    .hero p{font-size:1rem!important}
-    .sec-title h2{font-size:1.2rem!important}
-    .metric-val{font-size:2.1rem!important}
-    .metric-card{padding:20px 16px!important;border-radius:5px!important}
-    .pub-card-title{font-size:1.02rem!important;font-weight:700!important}
-    .pub-card-body{font-size:.88rem!important}
-    .pub-card{border-radius:5px!important;padding:18px 20px!important}
-    .btn-p,.btn-s{font-size:.88rem!important;padding:10px 22px!important}
-    .header-inner{height:64px!important}
-    .brand-logo{width:52px!important;height:52px!important;font-size:1.3rem!important}
-    footer{border-top:3px solid var(--accent)!important}
-
-    /* ── CLOUD MSG ── */
-    #cloud-msg{position:fixed;left:20px;bottom:24px;z-index:9999;padding:9px 16px;border-radius:4px;color:#fff;font-family:monospace;font-size:.76rem;letter-spacing:.08em;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s;pointer-events:none}
-
-    /* ── PANEL CONFIGURACIÓN ── */
-    #cfg-panel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;padding:30px;overflow-y:auto}
-    #cfg-inner{background:#1e2d1a;border:1px solid #4a7c59;border-radius:6px;max-width:560px;margin:0 auto;padding:28px}
-    #cfg-inner h3{color:#d8e8d0;font-family:monospace;margin:0 0 8px;letter-spacing:.1em}
-    #cfg-inner .cfg-info{font-family:monospace;font-size:.75rem;color:#a8b89a;margin-bottom:18px;line-height:1.8}
-    #cfg-inner .cfg-lbl{font-size:.68rem;color:#6a7a60;font-family:monospace;margin-bottom:5px;letter-spacing:.1em}
-    #cfg-inner .cfg-val{font-family:monospace;font-size:.76rem;color:#d8e8d0;background:#111;padding:8px 12px;border-radius:3px;word-break:break-all;min-height:30px;margin-bottom:14px}
-    #cfg-inner input{width:100%;background:#111;border:1px solid #4a7c59;color:#d8e8d0;padding:9px 12px;font-family:monospace;font-size:.8rem;border-radius:3px;box-sizing:border-box;margin-bottom:6px}
-    #cfg-inner .cfg-hint{font-size:.67rem;color:#6a7a60;font-family:monospace;margin-bottom:16px}
-    #cfg-result{font-family:monospace;font-size:.78rem;padding:10px 12px;border-radius:3px;background:#111;color:#a8b89a;min-height:36px;margin-bottom:16px}
-    .cfg-btn{border:none;padding:9px 16px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.8rem;margin-right:8px;margin-bottom:8px}
-    .cfg-btn-p{background:#4a7c59;color:#fff}
-    .cfg-btn-d{background:#7a1a1a;color:#fff}
-    .cfg-btn-t{background:#3a6147;color:#fff}
-    .cfg-btn-c{background:transparent;color:#6a7a60;border:1px solid #3a4832;width:100%;margin-top:4px}
-
   </style>
 </head>
 <body>
@@ -631,43 +581,24 @@
     <nav class="nav-d" id="nav-desktop"></nav>
     <nav class="nav-m">
       <button class="icon-btn" style="color:var(--header-text)" onclick="toggleDark()" id="dark-btn-mob">◑</button>
-      <button onclick="openCfg()" style="background:var(--accent);color:#fff;border:none;padding:4px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer">⚙</button>
+      <button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer">⚙</button>
       <button class="nav-btn" style="border:1px solid var(--accent)" onclick="toggleMobMenu()">☰</button>
     </nav>
   </div>
   <div id="mob-menu"></div>
 </header>
 
-<!-- BARRA NOTICIAS -->
-<div id="news-ticker">
-  <div class="ticker-label"><span>●</span>NOTICIAS</div>
-  <div class="ticker-track"><div class="ticker-inner" id="ticker-inner"></div></div>
-</div>
-
-<!-- CLOUD MSG -->
-<div id="cloud-msg"></div>
-
-<!-- PANEL CONFIGURACIÓN NUBE -->
-<div id="cfg-panel">
-  <div id="cfg-inner">
-    <h3>⚙ CONFIGURAR GUARDADO EN LA NUBE</h3>
-    <div class="cfg-info">
-      Servicio: <span style="color:#5a9468">JSONBin.io</span> (gratis)<br>
-      Crea una cuenta en <strong style="color:#d8e8d0">jsonbin.io</strong>, crea un Bin y obtén tu API Key.
-    </div>
-    <div class="cfg-lbl">CREDENCIALES ACTUALES</div>
-    <div class="cfg-val" id="cfg-current">Cargando...</div>
-    <div class="cfg-lbl">PEGAR CREDENCIALES NUEVAS</div>
-    <input id="cfg-inp" type="text" placeholder="BIN_ID|$2a$10$...API_KEY...">
-    <div class="cfg-hint">Formato: BIN_ID | API_KEY — separados por el símbolo |</div>
-    <div id="cfg-result"></div>
-    <button class="cfg-btn cfg-btn-p" onclick="cfgGuardar()">💾 Guardar</button>
-    <button class="cfg-btn cfg-btn-t" onclick="cfgProbar()">🔍 Probar conexión</button>
-    <button class="cfg-btn cfg-btn-d" onclick="cfgBorrar()">🗑 Borrar</button>
-    <br>
-    <button class="cfg-btn cfg-btn-c" onclick="document.getElementById('cfg-panel').style.display='none'">✕ Cerrar</button>
+<div id="news-ticker" style="background:linear-gradient(90deg,#1a2d18,#2a4020 50%,#1a2d18);color:#d8e8d0;height:36px;display:flex;align-items:center;overflow:hidden;border-bottom:2px solid var(--accent)">
+  <div style="background:var(--accent);color:#fff;padding:0 16px;height:100%;display:flex;align-items:center;font-size:.76rem;font-weight:800;letter-spacing:.15em;font-family:monospace;white-space:nowrap;flex-shrink:0">● NOTICIAS</div>
+  <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center">
+    <div id="ticker-inner" style="display:flex;animation:ticker-scroll 40s linear infinite;white-space:nowrap"></div>
   </div>
 </div>
+<div id="cloud-msg"></div>
+<style>
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#cloud-msg{position:fixed;bottom:20px;left:20px;z-index:99999;padding:10px 18px;border-radius:4px;color:#fff;font-family:monospace;font-size:.8rem;opacity:0;transition:opacity .3s;pointer-events:none}
+</style>
 
 <!-- CONTENIDO -->
 <main>
@@ -1160,7 +1091,7 @@ function buildNav() {
     <button class="nav-btn ${secActual===n.id?'active':''}"
       onclick="showSec('${n.id}')">${esc(n.lbl)}</button>
   `).join("") + `
-    <button onclick="openCfg()" style="background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:3px;font-size:.72rem;font-family:monospace;cursor:pointer;margin-left:6px;letter-spacing:.06em">⚙ NUBE</button>
+    <button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 14px;border-radius:3px;font-size:.72rem;font-family:monospace;cursor:pointer;margin-left:8px;letter-spacing:.05em">⚙ NUBE</button>
     <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>
     ${esAdmin
       ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
@@ -1623,17 +1554,23 @@ function guardarPub() {
   }
   closeModal("modal-pub");
   renderAdmin();
+
+  jbSave();
 }
 
 function eliminarPub(id) {
   if (!confirm("¿Eliminar publicación?")) return;
   pubs = pubs.filter(p => p.id !== id);
   renderAdmin();
+
+  jbSave();
 }
 
 function togglePub(id, campo) {
   pubs = pubs.map(p => p.id === id ? { ...p, [campo]: !p[campo] } : p);
   renderAdmin();
+
+  jbSave();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1679,12 +1616,16 @@ function guardarEv() {
   }
   closeModal("modal-ev");
   renderAdmin();
+
+  jbSave();
 }
 
 function eliminarEv(id) {
   if (!confirm("¿Eliminar evento?")) return;
   eventos = eventos.filter(e => e.id !== id);
   renderAdmin();
+
+  jbSave();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1800,12 +1741,16 @@ function guardarSvc() {
   }
   closeModal("modal-svc");
   renderServicios();
+
+  jbSave();
 }
 
 function eliminarSvc(id) {
   if (!confirm("¿Eliminar servicio?")) return;
   servicios = servicios.filter(s => s.id !== id);
   renderServicios();
+
+  jbSave();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2069,12 +2014,16 @@ function guardarDocSvc() {
   }];
   closeModal("modal-doc-svc");
   renderDocsSvc();
+
+  jbSave();
 }
 
 function eliminarDocSvc(id) {
   if (!confirm("¿Eliminar documento?")) return;
   docsSvc = docsSvc.filter(d => d.id !== id);
   renderDocsSvc();
+
+  jbSave();
 }
 
 
@@ -2244,18 +2193,24 @@ function guardarBday() {
   }
   closeModal("modal-bday");
   renderCumpleanos();
+
+  jbSave();
 }
 
 function eliminarBday(id) {
   if (!confirm("¿Eliminar cumpleaños?")) return;
   cumpleanos = cumpleanos.filter(b => b.id !== id);
   renderCumpleanos();
+
+  jbSave();
 }
 
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-/* INIT MOVED TO initApp() below */
+document.getElementById("footer-year").textContent = new Date().getFullYear();
+buildNav();
+renderInicio();
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
@@ -2374,39 +2329,50 @@ setInterval(() => {
 })();
 
 
-// ════════════════════════════════════════════════════
-// JSONBIN — PERSISTENCIA EN LA NUBE
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// JSONBIN ENGINE v5 — GUARDADO EN LA NUBE
+// ════════════════════════════════════════════════
 const JB_API = "https://api.jsonbin.io/v3/b";
-
 function jbBinId()  { return localStorage.getItem('dm_bin_id')  || ''; }
 function jbApiKey() { return localStorage.getItem('dm_api_key') || ''; }
 
 function showMsg(ok, txt) {
-  const el = document.getElementById('cloud-msg');
-  if (!el) return;
+  let el = document.getElementById('cloud-msg');
+  if (!el) { el = document.createElement('div'); el.id='cloud-msg';
+    el.style.cssText='position:fixed;bottom:20px;left:20px;z-index:99999;padding:10px 18px;border-radius:4px;color:#fff;font-family:monospace;font-size:.8rem;opacity:0;transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(el); }
   el.textContent = txt;
-  el.style.background = ok ? 'var(--accent)' : 'var(--danger)';
+  el.style.background = ok ? '#3a7a50' : '#8b2020';
   el.style.opacity = '1';
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.style.opacity = '0', 2800);
+  el._t = setTimeout(() => el.style.opacity='0', 3000);
 }
 
 function buildPayload() {
-  return { v:1, ts: new Date().toISOString(), pubs, eventos, servicios, docsSvc, ordenDia, cumpleanos };
+  return { v:2, ts: new Date().toISOString(), pubs, eventos, servicios, docsSvc, ordenDia, cumpleanos };
+}
+
+function jbSave() {
+  const id = jbBinId(), key = jbApiKey();
+  if (!id || !key) { showMsg(false,'⚙ Configura JSONBin — click en NUBE'); return; }
+  fetch(JB_API + '/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type':'application/json', 'X-Master-Key': key },
+    body: JSON.stringify(buildPayload())
+  }).then(r => {
+    if (r.ok) showMsg(true, '✓ Guardado en la nube');
+    else showMsg(false, '✕ Error al guardar (' + r.status + ')');
+  }).catch(() => showMsg(false, '✕ Error de red'));
 }
 
 async function jbLoad() {
   const id = jbBinId(), key = jbApiKey();
-  if (!id || !key) return false;
+  if (!id || !key) return;
+  showMsg(true, '⟳ Cargando datos...');
   try {
-    showMsg(true, '⟳ Cargando datos...');
-    const r = await fetch(JB_API + '/' + id + '/latest', {
-      headers: { 'X-Master-Key': key }
-    });
-    if (!r.ok) { showMsg(false, '✕ Error al cargar'); return false; }
-    const j = await r.json();
-    const d = j.record;
+    const r = await fetch(JB_API + '/' + id + '/latest', { headers: {'X-Master-Key': key} });
+    if (!r.ok) { showMsg(false, '✕ Error al cargar'); return; }
+    const d = (await r.json()).record;
     if (Array.isArray(d.pubs))       pubs       = d.pubs;
     if (Array.isArray(d.eventos))    eventos    = d.eventos;
     if (Array.isArray(d.servicios))  servicios  = d.servicios;
@@ -2414,118 +2380,87 @@ async function jbLoad() {
     if (Array.isArray(d.cumpleanos)) cumpleanos = d.cumpleanos;
     if (d.ordenDia && typeof d.ordenDia === 'object') ordenDia = d.ordenDia;
     showMsg(true, '✓ Datos cargados');
-    return true;
-  } catch(e) { showMsg(false, '✕ Error de red'); return false; }
+  } catch(e) { showMsg(false, '✕ Error de red'); }
 }
 
-async function jbSave() {
-  const id = jbBinId(), key = jbApiKey();
-  if (!id || !key) { showMsg(false, '⚙ Configura JSONBin primero'); return false; }
-  try {
-    const r = await fetch(JB_API + '/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
-      body: JSON.stringify(buildPayload())
-    });
-    if (!r.ok) { showMsg(false, '✕ Error al guardar'); return false; }
-    showMsg(true, '✓ Guardado en la nube ✓');
-    return true;
-  } catch(e) { showMsg(false, '✕ Error de red'); return false; }
-}
-
-// ── PANEL CONFIGURACIÓN ──
+// ── PANEL NUBE ──
 function openCfg() {
-  const id  = jbBinId()  || '(no configurado)';
-  const key = jbApiKey() || '(no configurado)';
-  const keyShow = key !== '(no configurado)' ? key.substring(0,8)+'...' : '(no configurado)';
-  document.getElementById('cfg-current').innerHTML =
-    '<b>BIN ID:</b> ' + id + '<br><b>API KEY:</b> ' + keyShow;
-  document.getElementById('cfg-result').textContent = '';
-  document.getElementById('cfg-inp').value = '';
-  document.getElementById('cfg-panel').style.display = 'block';
+  let panel = document.getElementById('jb-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'jb-panel';
+    panel.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+    panel.innerHTML = `
+      <div style="background:#1e2d1a;border:2px solid #4a7c59;border-radius:8px;width:100%;max-width:500px;padding:28px;font-family:monospace">
+        <h3 style="color:#d8e8d0;margin:0 0 6px;letter-spacing:.1em">⚙ CONFIGURAR GUARDADO EN LA NUBE</h3>
+        <p style="color:#6a8a60;font-size:.75rem;margin:0 0 18px">Servicio: JSONBin.io (gratuito)</p>
+        <div style="color:#8aba8a;font-size:.72rem;margin-bottom:4px">CREDENCIALES GUARDADAS</div>
+        <div id="jb-current" style="background:#111;padding:10px;border-radius:4px;color:#d8e8d0;font-size:.76rem;margin-bottom:16px;word-break:break-all;min-height:40px"></div>
+        <div style="color:#8aba8a;font-size:.72rem;margin-bottom:4px">PEGAR NUEVAS CREDENCIALES</div>
+        <input id="jb-inp" type="text" placeholder="BIN_ID|API_KEY" style="width:100%;background:#111;border:1px solid #4a7c59;color:#d8e8d0;padding:10px;font-size:.8rem;border-radius:4px;box-sizing:border-box;margin-bottom:4px">
+        <div style="color:#5a7a50;font-size:.68rem;margin-bottom:16px">Formato: BIN_ID | API_KEY — separados por |</div>
+        <div id="jb-result" style="background:#111;padding:10px;border-radius:4px;color:#a8b89a;font-size:.78rem;min-height:36px;margin-bottom:16px"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button onclick="cfgGuardar()" style="background:#4a7c59;color:#fff;border:none;padding:10px 18px;border-radius:4px;cursor:pointer;font-family:monospace">💾 Guardar</button>
+          <button onclick="cfgProbar()" style="background:#3a6147;color:#fff;border:none;padding:10px 18px;border-radius:4px;cursor:pointer;font-family:monospace">🔍 Probar</button>
+          <button onclick="cfgBorrar()" style="background:#6a1a1a;color:#fff;border:none;padding:10px 18px;border-radius:4px;cursor:pointer;font-family:monospace">🗑 Borrar</button>
+          <button onclick="document.getElementById('jb-panel').style.display='none'" style="background:transparent;color:#6a8a60;border:1px solid #3a4832;padding:10px 18px;border-radius:4px;cursor:pointer;font-family:monospace;flex:1">✕ Cerrar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(panel);
+  }
+  cfgRefresh();
+  panel.style.display = 'flex';
+}
+function cfgRefresh() {
+  const id=jbBinId(), key=jbApiKey();
+  document.getElementById('jb-current').innerHTML =
+    'BIN ID: <span style="color:#5a9468">'+(id||'(no configurado)')+'</span><br>'+
+    'API KEY: <span style="color:#5a9468">'+(key ? key.slice(0,10)+'...' : '(no configurado)')+'</span>';
 }
 function cfgGuardar() {
-  const v = document.getElementById('cfg-inp').value.trim();
-  const el = document.getElementById('cfg-result');
-  if (!v) { el.style.color='#d45c44'; el.textContent='⚠ Pega las credenciales primero.'; return; }
-  const parts = v.split('|');
-  if (parts.length < 2) { el.style.color='#d45c44'; el.textContent='⚠ Formato incorrecto. Usa: BIN_ID|API_KEY'; return; }
-  localStorage.setItem('dm_bin_id',  parts[0].trim());
-  localStorage.setItem('dm_api_key', parts.slice(1).join('|').trim());
-  el.style.color='#5a9468';
-  el.textContent='✓ Credenciales guardadas. Prueba la conexión.';
-  openCfg();
+  const v = document.getElementById('jb-inp').value.trim();
+  const el = document.getElementById('jb-result');
+  if (!v) { el.style.color='#d45c44'; el.textContent='⚠ Pega las credenciales primero'; return; }
+  const p = v.split('|');
+  if (p.length < 2) { el.style.color='#d45c44'; el.textContent='⚠ Formato: BIN_ID|API_KEY (separados por |)'; return; }
+  localStorage.setItem('dm_bin_id',  p[0].trim());
+  localStorage.setItem('dm_api_key', p.slice(1).join('|').trim());
+  document.getElementById('jb-inp').value = '';
+  el.style.color='#5a9468'; el.textContent='✓ Guardado. Ahora prueba la conexión.';
+  cfgRefresh();
 }
 function cfgBorrar() {
-  localStorage.removeItem('dm_bin_id');
-  localStorage.removeItem('dm_api_key');
-  const el = document.getElementById('cfg-result');
-  el.style.color='#d45c44'; el.textContent='Credenciales borradas.';
-  openCfg();
+  localStorage.removeItem('dm_bin_id'); localStorage.removeItem('dm_api_key');
+  document.getElementById('jb-result').style.color='#d45c44';
+  document.getElementById('jb-result').textContent='Credenciales borradas.';
+  cfgRefresh();
 }
 async function cfgProbar() {
-  const el = document.getElementById('cfg-result');
-  el.style.color='#a8b89a'; el.textContent='⟳ Probando conexión...';
-  const ok = await jbLoad();
-  if (ok) {
-    el.style.color='#5a9468';
-    el.textContent='✓ CONEXIÓN OK — Datos cargados desde la nube correctamente.';
-    buildNav(); renderInicio(); buildTicker();
-  } else {
-    el.style.color='#d45c44';
-    el.textContent='✕ Error. Verifica que el BIN_ID y API_KEY sean correctos.';
-  }
-}
-
-// ── TICKER ──
-function buildTicker() {
-  const act = pubs.filter(p => p.activa);
-  const prox = eventos.filter(e => e.fecha >= new Date().toISOString().split('T')[0]).sort((a,b)=>a.fecha.localeCompare(b.fecha));
-  const items = [];
-  act.filter(p=>p.prioridad==='critico').forEach(p=>items.push({t:p.titulo,i:'▲',c:'crit'}));
-  act.filter(p=>p.prioridad==='urgente').forEach(p=>items.push({t:p.titulo,i:'⚠',c:'urg'}));
-  act.filter(p=>p.prioridad==='importante').forEach(p=>items.push({t:p.titulo,i:'◈',c:''}));
-  prox.slice(0,3).forEach(e=>items.push({t:e.titulo+(e.hora?' — '+e.hora+' hrs':''),i:'◫',c:''}));
-  act.filter(p=>p.prioridad==='normal').slice(0,4).forEach(p=>items.push({t:p.titulo,i:'◎',c:''}));
-  if (!items.length) { document.getElementById('news-ticker').style.display='none'; return; }
-  document.getElementById('news-ticker').style.display='flex';
-  const doubled = [...items,...items];
-  document.getElementById('ticker-inner').innerHTML = doubled.map(x=>
-    `<span class="ticker-item ${x.c}"><span style="color:var(--accent)">${x.i}</span><span>${x.t}</span></span><span class="ticker-sep">◆</span>`
-  ).join('');
-}
-
-// ── WRAPS CRUD ──
-function wrapSaves() {
-  const o = {
-    gp:guardarPub, ge:guardarEv, gs:guardarSvc, gb:guardarBday, gd:guardarDocSvc,
-    ep:eliminarPub, ee:eliminarEv, es_:eliminarSvc, eb:eliminarBday, ed:eliminarDocSvc,
-    tp:togglePub, to:toggleOrdenEdicion
-  };
-  guardarPub         = async function(){o.gp.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
-  guardarEv          = async function(){o.ge.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
-  guardarSvc         = async function(){o.gs.apply(this,arguments);await jbSave();renderServicios();};
-  guardarBday        = async function(){o.gb.apply(this,arguments);await jbSave();renderCumpleanos();};
-  guardarDocSvc      = async function(){o.gd.apply(this,arguments);await jbSave();renderDocsSvc();};
-  eliminarPub        = async function(){o.ep.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
-  eliminarEv         = async function(){o.ee.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
-  eliminarSvc        = async function(){o.es_.apply(this,arguments);await jbSave();renderServicios();};
-  eliminarBday       = async function(){o.eb.apply(this,arguments);await jbSave();renderCumpleanos();};
-  eliminarDocSvc     = async function(){o.ed.apply(this,arguments);await jbSave();renderDocsSvc();};
-  togglePub          = async function(){o.tp.apply(this,arguments);await jbSave();renderInicio();buildTicker();};
-  toggleOrdenEdicion = async function(){o.to.apply(this,arguments);await jbSave();renderOrdenDia();};
+  const el = document.getElementById('jb-result');
+  el.style.color='#a8b89a'; el.textContent='⟳ Probando...';
+  const id=jbBinId(), key=jbApiKey();
+  if (!id||!key) { el.style.color='#d45c44'; el.textContent='⚠ No hay credenciales. Guarda primero.'; return; }
+  try {
+    const r = await fetch(JB_API+'/'+id+'/latest', { headers:{'X-Master-Key':key} });
+    if (r.ok) { el.style.color='#5a9468'; el.textContent='✓ CONEXIÓN OK — Todo funciona correctamente.'; }
+    else { el.style.color='#d45c44'; el.textContent='✕ Error '+r.status+' — Verifica BIN_ID y API_KEY.'; }
+  } catch(e) { el.style.color='#d45c44'; el.textContent='✕ Error de red.'; }
 }
 
 // ── INIT ──
-async function initApp() {
-  document.getElementById('footer-year').textContent = new Date().getFullYear();
-  await jbLoad();
-  buildNav();
-  renderInicio();
-  buildTicker();
-  wrapSaves();
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+jbLoad().then(() => { buildNav(); renderInicio(); buildTicker(); });
+
+
+function buildTicker() {
+  let el = document.getElementById('ticker-inner');
+  if (!el) return;
+  const act = (pubs||[]).filter(p=>p.activa);
+  if (!act.length) { document.getElementById('news-ticker') && (document.getElementById('news-ticker').style.display='none'); return; }
+  const items = [...act].map(p=>`<span style="display:inline-flex;align-items:center;padding:0 24px;gap:8px;font-size:.82rem"><span style="color:var(--accent)">◆</span><span>${p.titulo}</span></span>`);
+  el.innerHTML = [...items,...items].join('');
 }
-initApp();
 
 </script>
 </body>
