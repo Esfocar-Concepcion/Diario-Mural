@@ -1384,6 +1384,28 @@ let esAdmin = false;
 let secActual = 'inicio';
 let galerias = [];
 let destacados = [];
+
+let pubs = [
+  { id:1, titulo:'Bienvenida', contenido:'Sistema restablecido y operativo.', categoria:'noticias', prioridad:'normal', autor:'Sistema', fecha:'2026-05-04', fijada:true, activa:true, etiquetas:['inicio'], adjuntos:[] }
+];
+
+function openModalPub(){ const m=document.getElementById('modal-pub'); if(m) m.style.display='flex'; }
+function guardarPub(){
+  const t=document.getElementById('fp-titulo');
+  const c=document.getElementById('fp-contenido');
+  if(!t || !c) return;
+  const pub={ id:Date.now(), titulo:t.value.trim(), contenido:c.value.trim(), categoria:(document.getElementById('fp-cat')||{}).value||'noticias', prioridad:(document.getElementById('fp-pri')||{}).value||'normal', autor:(document.getElementById('fp-autor')||{}).value||'Admin', fecha:(document.getElementById('fp-fecha')||{}).value||new Date().toISOString().slice(0,10), fijada:(document.getElementById('fp-fijada')||{}).checked||false, activa:(document.getElementById('fp-activa')||{}).checked!==false, etiquetas:[], adjuntos:[] };
+  if(!pub.titulo || !pub.contenido) return;
+  pubs.unshift(pub);
+  const m=document.getElementById('modal-pub'); if(m) m.style.display='none';
+  renderPubs(); buildTicker();
+}
+function renderPubs(){
+  const grid=document.getElementById('pubs-grid');
+  if(!grid) return;
+  grid.innerHTML = pubs.map(p => `<article class="pub-card"><div class="pub-title">${esc(p.titulo)}</div><div style="color:var(--text3);font-size:.8rem;margin:.35rem 0">${esc(p.fecha)} · ${esc(p.autor)}</div><div style="color:var(--text2);font-size:.88rem;line-height:1.5">${esc(p.contenido)}</div></article>`).join('');
+}
+
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showSec(id){
   const secs = document.querySelectorAll('.section');
@@ -1428,7 +1450,7 @@ function renderPubs(){}
 function renderDocsSvc(){}
 function renderBdays(){}
 function buildTicker(){ const el=document.getElementById('ticker-inner'); if(el) el.textContent='SIN AVISOS ACTIVOS'; }
-window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderGaleria(); renderDestacados(); buildTicker(); });
+window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderPubs(); renderGaleria(); renderDestacados(); buildTicker(); });
 </script>
 <div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
