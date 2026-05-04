@@ -796,7 +796,24 @@
   </div>
 
 
-  <!-- ═══ CUMPLEAÑOS ═══ -->
+  
+  <!-- ═══ ÁLBUMES ═══ -->
+  <div id="sec-albumes" class="section">
+    <div class="flex-sb mb-16">
+      <div class="sec-title" style="margin:0"><h2>📷 Álbumes de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
+      <button class="btn-p" id="btn-add-album" style="display:none" onclick="openModalAlbum()">+ Nuevo álbum</button>
+    </div>
+    <div class="grid-auto-sm" id="album-grid"></div>
+  </div>
+
+  <!-- ═══ DESTACADOS ═══ -->
+  <div id="sec-destacados" class="section">
+    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div>
+    <div class="dest-tabs" id="dest-tabs"></div>
+    <div class="grid-auto-sm" id="dest-grid"></div>
+  </div>
+
+<!-- ═══ CUMPLEAÑOS ═══ -->
   <div id="sec-cumpleanos" class="section">
     <div class="flex-sb mb-16">
       <div class="sec-title" style="margin:0"><h2>🎂 Cumpleaños</h2><div class="sec-title-bar"></div></div>
@@ -1035,6 +1052,10 @@ let editSvcId = null;
 let adjuntosTemp = [];
 let docSvcTemp = null;
 let etqSeleccionadas = [];
+let albumTemp = null;
+let destTemp = null;
+let albums = [];
+let destacados = [];
 let ordenEditando = false;
 
 let ordenDia = { fecha: HOY, encuadre: "07:30", instruccion: "", novedad: "Sin novedad.", firmante: "", grado: "" };
@@ -2140,6 +2161,26 @@ function eliminarDocSvc(id) {
 }
 
 
+
+
+function openModalAlbum() {
+  alert('Falta el modal de álbumes. Si quieres, en el siguiente paso lo dejamos completo con carga de imágenes y portada.');
+}
+
+function openModalDest() {
+  alert('Falta el modal de destacados. Puedo dejarlo implementado completo en el siguiente paso.');
+}
+
+function renderAlbums() {
+  const g = document.getElementById('album-grid'); if (!g) return;
+  g.innerHTML = (albums||[]).map(a => `<div class="pub-card"><div class="pub-title">${esc(a.titulo||'Álbum')}</div><div style="color:var(--text3);font-size:.8rem">${esc(a.descripcion||'')}</div></div>`).join('') || '<div class="empty">Sin álbumes aún.</div>';
+}
+
+function renderDestacados() {
+  const g = document.getElementById('dest-grid'); if (!g) return;
+  g.innerHTML = (destacados||[]).map(d => `<div class="pub-card"><div class="pub-title">${esc(d.titulo||'Destacado')}</div><div style="color:var(--text3);font-size:.8rem">${esc(d.motivo||'')}</div></div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
+}
+
 // ═══════════════════════════════════════════════════════════
 // CUMPLEAÑOS
 // ═══════════════════════════════════════════════════════════
@@ -2323,7 +2364,7 @@ document.getElementById("footer-year").textContent = new Date().getFullYear();
 // Cargar credenciales antes de jbLoad
 window._JB_BIN = '69f8bb86856a682189a5cda0';
 try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);if(_c.apiKey)window._JB_KEY=_c.apiKey;if(_c.ghToken)window._GH_TOKEN=_c.ghToken;} } catch(e){}
-jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); });
+jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); renderAlbums(); renderDestacados(); });
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
@@ -2459,6 +2500,8 @@ function jbLoad() {
     if (rec.eventos    && rec.eventos.length)     eventos    = rec.eventos;
     if (rec.servicios)                            servicios  = rec.servicios;
     if (rec.docsSvc)                              docsSvc    = rec.docsSvc;
+    if (rec.albums)                              albums      = rec.albums;
+    if (rec.destacados)                           destacados  = rec.destacados;
     if (rec.ordenDia)                             ordenDia   = rec.ordenDia;
     if (rec.cumpleanos && rec.cumpleanos.length)  cumpleanos = rec.cumpleanos;
     showCloudMsg('✓ Datos cargados desde la nube', '#2a7a3a');
@@ -2470,7 +2513,7 @@ function jbSave() {
   var binId  = window._JB_BIN;
   var apiKey = window._JB_KEY;
   if (!binId || !apiKey) return;
-  var payload = { pubs:pubs, eventos:eventos, servicios:servicios, docsSvc:docsSvc, ordenDia:ordenDia, cumpleanos:cumpleanos };
+  var payload = { pubs:pubs, eventos:eventos, servicios:servicios, docsSvc:docsSvc, albums:albums, destacados:destacados, ordenDia:ordenDia, cumpleanos:cumpleanos };
   fetch('https://api.jsonbin.io/v3/b/' + binId, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey },
