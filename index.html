@@ -798,10 +798,10 @@
 
   
   <!-- ═══ ÁLBUMES ═══ -->
-  <div id="sec-albumes" class="section">
+  <div id="sec-galeria" class="section">
     <div class="flex-sb mb-16">
-      <div class="sec-title" style="margin:0"><h2>📷 Álbumes de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
-      <button class="btn-p" id="btn-add-album" style="display:none" onclick="openModalAlbum()">+ Nuevo álbum</button>
+      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
+      <button class="btn-p" id="btn-add-galeria" style="display:none" onclick="openModalGaleria()">+ Nuevo álbum</button>
     </div>
     <div class="grid-auto-sm" id="album-grid"></div>
   </div>
@@ -1020,28 +1020,28 @@
 </div>
 
 
-<div id="modal-album" class="modal-overlay" style="display:none" onclick="closeModal('modal-album',event)">
+<div id="modal-galeria" class="modal-overlay" style="display:none" onclick="closeModal('modal-galeria',event)">
   <div class="modal-box" style="max-width:560px">
     <h3>📷 Nuevo Álbum</h3>
     <div class="form-col">
-      <div><div class="sub-lbl">TÍTULO *</div><input id="fa-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
-      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fa-desc" placeholder="Breve descripción del álbum"></div>
+      <div><div class="sub-lbl">TÍTULO *</div><input id="fg-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
+      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fg-desc" placeholder="Breve descripción del álbum"></div>
       <div class="form-row">
-        <div><div class="sub-lbl">FECHA</div><input id="fa-fecha" type="date"></div>
-        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fa-autor" placeholder="Ej: Grupo Concepción"></div>
+        <div><div class="sub-lbl">FECHA</div><input id="fg-fecha" type="date"></div>
+        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fg-autor" placeholder="Ej: Grupo Concepción"></div>
       </div>
       <div>
         <div class="sub-lbl">PORTADA</div>
-        <input type="file" id="fa-portada" accept="image/*" onchange="handleAlbumPortada(this)">
-        <div id="fa-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+        <input type="file" id="fg-portada" accept="image/*" onchange="handleAlbumPortada(this)">
+        <div id="fg-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
       </div>
       <div>
         <div class="sub-lbl">FOTOS DEL ÁLBUM</div>
-        <input type="file" id="fa-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
-        <div id="fa-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+        <input type="file" id="fg-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
+        <div id="fg-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
       </div>
       <div class="form-btns">
-        <button class="btn-p" onclick="guardarAlbum()">Guardar Álbum</button>
+        <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
         <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
       </div>
     </div>
@@ -1082,7 +1082,7 @@ let docSvcTemp = null;
 let etqSeleccionadas = [];
 let albumTemp = null;
 let destTemp = null;
-let albums = [];
+let galerias = [];
 let destacados = [];
 let ordenEditando = false;
 
@@ -1185,7 +1185,7 @@ const NAV_ITEMS = [
   { id:"publicaciones", lbl:"Publicaciones" },
   { id:"calendario", lbl:"Calendario" },
   { id:"documentos", lbl:"Documentos" },
-  { id:"albumes", lbl:"Álbumes" },
+  { id:"galeria", lbl:"Galería" },
   { id:"destacados", lbl:"Destacados" },
   { id:"servicios", lbl:"Servicios" },
   { id:"cumpleanos", lbl:"🎂 Cumpleaños" },
@@ -2193,7 +2193,7 @@ function eliminarDocSvc(id) {
 
 
 
-function openModalAlbum() {
+function openModalGaleria() {
   alert('Falta el modal de álbumes. Si quieres, en el siguiente paso lo dejamos completo con carga de imágenes y portada.');
 }
 
@@ -2201,9 +2201,9 @@ function openModalDest() {
   alert('Falta el modal de destacados. Puedo dejarlo implementado completo en el siguiente paso.');
 }
 
-function renderAlbums() {
+function renderGaleria() {
   const g = document.getElementById('album-grid'); if (!g) return;
-  g.innerHTML = (albums||[]).map(a => `<div class="pub-card"><div class="pub-title">${esc(a.titulo||'Álbum')}</div><div style="color:var(--text3);font-size:.8rem">${esc(a.descripcion||'')}</div></div>`).join('') || '<div class="empty">Sin álbumes aún.</div>';
+  g.innerHTML = (galerias||[]).map(a => `<div class="pub-card"><div class="pub-title">${esc(a.titulo||'Álbum')}</div><div style="color:var(--text3);font-size:.8rem">${esc(a.descripcion||'')}</div></div>`).join('') || '<div class="empty">Sin álbumes aún.</div>';
 }
 
 function renderDestacados() {
@@ -2213,20 +2213,20 @@ function renderDestacados() {
 
 
 
-let albumPortadaTemp = null;
-let albumFotosTemp = [];
+let galeriaPortadaTemp = null;
+let galeriaFotosTemp = [];
 
 function openModalAlbum() {
-  albumPortadaTemp = null;
-  albumFotosTemp = [];
+  galeriaPortadaTemp = null;
+  galeriaFotosTemp = [];
   document.getElementById('fa-titulo').value = '';
   document.getElementById('fa-desc').value = '';
   document.getElementById('fa-fecha').value = '';
   document.getElementById('fa-autor').value = '';
   document.getElementById('fa-portada').value = '';
   document.getElementById('fa-fotos').value = '';
-  document.getElementById('fa-portada-prev').textContent = '';
-  document.getElementById('fa-fotos-prev').textContent = '';
+  document.getElementById('fg-portada-prev').textContent = '';
+  document.getElementById('fg-fotos-prev').textContent = '';
   document.getElementById('modal-album').style.display = 'flex';
 }
 
@@ -2254,28 +2254,28 @@ function _uploadImageToGitHub(file) {
 function handleAlbumPortada(inp) {
   const f = inp.files[0];
   if (!f) return;
-  document.getElementById('fa-portada-prev').textContent = '⏳ Subiendo portada...';
+  document.getElementById('fg-portada-prev').textContent = '⏳ Subiendo portada...';
   _uploadImageToGitHub(f).then(u => {
-    albumPortadaTemp = u;
-    document.getElementById('fa-portada-prev').textContent = '✓ ' + u.nombre;
+    galeriaPortadaTemp = u;
+    document.getElementById('fg-portada-prev').textContent = '✓ ' + u.nombre;
   }).catch(err => {
-    document.getElementById('fa-portada-prev').textContent = '✗ ' + err;
+    document.getElementById('fg-portada-prev').textContent = '✗ ' + err;
   });
 }
 
 function handleAlbumFotos(inp) {
   const files = Array.from(inp.files);
   if (!files.length) return;
-  document.getElementById('fa-fotos-prev').textContent = '⏳ Subiendo ' + files.length + ' fotos...';
+  document.getElementById('fg-fotos-prev').textContent = '⏳ Subiendo ' + files.length + ' fotos...';
   Promise.all(files.map(_uploadImageToGitHub)).then(list => {
-    albumFotosTemp = albumFotosTemp.concat(list);
-    document.getElementById('fa-fotos-prev').textContent = '✓ ' + albumFotosTemp.length + ' fotos listas';
+    galeriaFotosTemp = galeriaFotosTemp.concat(list);
+    document.getElementById('fg-fotos-prev').textContent = '✓ ' + galeriaFotosTemp.length + ' fotos listas';
   }).catch(err => {
-    document.getElementById('fa-fotos-prev').textContent = '✗ ' + err;
+    document.getElementById('fg-fotos-prev').textContent = '✗ ' + err;
   });
 }
 
-function guardarAlbum() {
+function guardarGaleria() {
   const titulo = document.getElementById('fa-titulo').value.trim();
   if (!titulo) return alert('El título es obligatorio.');
   const album = {
@@ -2284,20 +2284,20 @@ function guardarAlbum() {
     descripcion: document.getElementById('fa-desc').value.trim(),
     fecha: document.getElementById('fa-fecha').value || HOY,
     autor: document.getElementById('fa-autor').value.trim(),
-    portada: albumPortadaTemp,
-    fotos: albumFotosTemp
+    portada: galeriaPortadaTemp,
+    fotos: galeriaFotosTemp
   };
-  albums = [album].concat(albums || []);
+  galerias = [album].concat(galerias || []);
   closeModal('modal-album');
-  renderAlbums();
+  renderGaleria();
   jbSave();
 }
 
 function renderAlbums() {
   const g = document.getElementById('album-grid');
   if (!g) return;
-  if (!albums || !albums.length) { g.innerHTML = '<div class="empty">Sin álbumes aún.</div>'; return; }
-  g.innerHTML = albums.map(a => `
+  if (!galerias || !galerias.length) { g.innerHTML = '<div class="empty">Sin álbumes aún.</div>'; return; }
+  g.innerHTML = galerias.map(a => `
     <div class="pub-card" style="overflow:hidden">
       <div style="height:180px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden">
         ${a.portada && a.portada.url ? `<img src="${a.portada.url}" alt="${esc(a.titulo)}" style="width:100%;height:100%;object-fit:cover">` : '<div style="color:var(--text3);font-size:.8rem">Sin portada</div>'}
@@ -2494,7 +2494,7 @@ document.getElementById("footer-year").textContent = new Date().getFullYear();
 // Cargar credenciales antes de jbLoad
 window._JB_BIN = '69f8bb86856a682189a5cda0';
 try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);if(_c.apiKey)window._JB_KEY=_c.apiKey;if(_c.ghToken)window._GH_TOKEN=_c.ghToken;} } catch(e){}
-jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); renderAlbums(); renderDestacados(); });
+jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); renderGaleria(); renderDestacados(); });
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
@@ -2630,7 +2630,7 @@ function jbLoad() {
     if (rec.eventos    && rec.eventos.length)     eventos    = rec.eventos;
     if (rec.servicios)                            servicios  = rec.servicios;
     if (rec.docsSvc)                              docsSvc    = rec.docsSvc;
-    if (rec.albums)                              albums      = rec.albums;
+    if (rec.galerias)                              galerias      = rec.galerias;
     if (rec.destacados)                           destacados  = rec.destacados;
     if (rec.ordenDia)                             ordenDia   = rec.ordenDia;
     if (rec.cumpleanos && rec.cumpleanos.length)  cumpleanos = rec.cumpleanos;
@@ -2643,7 +2643,7 @@ function jbSave() {
   var binId  = window._JB_BIN;
   var apiKey = window._JB_KEY;
   if (!binId || !apiKey) return;
-  var payload = { pubs:pubs, eventos:eventos, servicios:servicios, docsSvc:docsSvc, albums:albums, destacados:destacados, ordenDia:ordenDia, cumpleanos:cumpleanos };
+  var payload = { pubs:pubs, eventos:eventos, servicios:servicios, docsSvc:docsSvc, galerias:galerias, destacados:destacados, ordenDia:ordenDia, cumpleanos:cumpleanos };
   fetch('https://api.jsonbin.io/v3/b/' + binId, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey },
