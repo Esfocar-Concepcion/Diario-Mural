@@ -1774,6 +1774,12 @@ function renderAdmin() {
 // ═══════════════════════════════════════════════════════════
 // CRUD PUBLICACIONES
 // ═══════════════════════════════════════════════════════════
+  ['btn-add-pub','btn-add-ev','btn-add-doc','btn-add-galeria','btn-add-dest','btn-add-bday','btn-doc-svc','btn-add-svc','btn-edit-orden'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = esAdmin ? '' : 'none';
+  });
+}
+
 function openModalPub() {
   editPubId = null;
   adjuntosTemp = [];
