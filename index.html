@@ -371,6 +371,7 @@
     }
     .etq-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent2); }
 
+
     /* ── Cumpleaños ── */
     .bday-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
     .bday-tab-btn {
@@ -556,6 +557,7 @@
       font-family: monospace;
       font-weight: 700;
     }
+
   </style>
 </head>
 <body>
@@ -579,24 +581,11 @@
     <nav class="nav-d" id="nav-desktop"></nav>
     <nav class="nav-m">
       <button class="icon-btn" style="color:var(--header-text)" onclick="toggleDark()" id="dark-btn-mob">◑</button>
-      <button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer">⚙</button>
       <button class="nav-btn" style="border:1px solid var(--accent)" onclick="toggleMobMenu()">☰</button>
     </nav>
   </div>
   <div id="mob-menu"></div>
 </header>
-
-<div id="news-ticker" style="background:linear-gradient(90deg,#1a2d18,#2a4020 50%,#1a2d18);color:#d8e8d0;height:36px;display:flex;align-items:center;overflow:hidden;border-bottom:2px solid var(--accent)">
-  <div style="background:var(--accent);color:#fff;padding:0 16px;height:100%;display:flex;align-items:center;font-size:.76rem;font-weight:800;letter-spacing:.15em;font-family:monospace;white-space:nowrap;flex-shrink:0">● NOTICIAS</div>
-  <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center">
-    <div id="ticker-inner" style="display:flex;animation:ticker-scroll 40s linear infinite;white-space:nowrap"></div>
-  </div>
-</div>
-<div id="cloud-msg"></div>
-<style>
-@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-#cloud-msg{position:fixed;bottom:20px;left:20px;z-index:99999;padding:10px 18px;border-radius:4px;color:#fff;font-family:monospace;font-size:.8rem;opacity:0;transition:opacity .3s;pointer-events:none}
-</style>
 
 <!-- CONTENIDO -->
 <main>
@@ -612,7 +601,9 @@
         <button class="btn-s" onclick="showSec('calendario')">Calendario →</button>
       </div>
     </div>
+
     <div class="grid-5 mb-26" id="metrics-grid"></div>
+
     <div class="grid-21">
       <div>
         <div class="sec-title"><h2>Publicaciones recientes</h2><div class="sec-title-bar"></div></div>
@@ -709,6 +700,7 @@
 
   <!-- ═══ SERVICIOS ═══ -->
   <div id="sec-servicios" class="section">
+    <!-- Documentos publicados -->
     <div class="mb-28">
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Documentos Publicados</h2><div class="sec-title-bar"></div></div>
@@ -716,6 +708,7 @@
       </div>
       <div class="grid-auto-sm" id="docs-svc-grid"></div>
     </div>
+    <!-- Orden del Día -->
     <div class="mb-28">
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Orden del Día</h2><div class="sec-title-bar"></div></div>
@@ -723,6 +716,7 @@
       </div>
       <div class="orden-box" id="orden-content"></div>
     </div>
+    <!-- Servicios del personal -->
     <div>
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Servicios del Personal</h2><div class="sec-title-bar"></div></div>
@@ -746,6 +740,7 @@
       <div class="svc-summary" id="svc-resumen"></div>
     </div>
   </div>
+
 
   <!-- ═══ CUMPLEAÑOS ═══ -->
   <div id="sec-cumpleanos" class="section">
@@ -896,6 +891,7 @@
   </div>
 </div>
 
+
 <div id="modal-bday" class="modal-overlay" style="display:none" onclick="closeModal('modal-bday',event)">
   <div class="modal-box">
     <h3 id="modal-bday-title">Agregar Cumpleaños</h3>
@@ -931,55 +927,6 @@
     </div>
   </div>
 </div>
-
-<!-- Panel Info Flotante -->
-<div id="info-panel">
-  <div id="info-panel-header">
-    <span>ⓘ INFORMACIÓN RÁPIDA</span>
-    <button onclick="toggleInfoPanel()" style="background:none;border:none;color:var(--header-text);cursor:pointer;font-size:1rem;padding:0;line-height:1">✕</button>
-  </div>
-  <div id="info-panel-body">
-    <div class="info-section">
-      <div class="info-section-title">SISTEMA</div>
-      <div class="info-row"><span class="info-row-lbl">Unidad</span><span class="info-row-val">ESFOCAR Concepción</span></div>
-      <div class="info-row"><span class="info-row-lbl">Sistema</span><span class="info-row-val">Diario Mural Digital</span></div>
-      <div class="info-row"><span class="info-row-lbl">Versión</span><span class="info-row-val">v1.0 — 2026</span></div>
-    </div>
-    <div class="info-section">
-      <div class="info-section-title">ESTADO ACTUAL</div>
-      <div class="info-row"><span class="info-row-lbl">Publicaciones activas</span><span class="info-row-val" id="ip-pub-count">—</span></div>
-      <div class="info-row"><span class="info-row-lbl">Eventos próximos</span><span class="info-row-val" id="ip-ev-count">—</span></div>
-      <div class="info-row"><span class="info-row-lbl">Avisos urgentes/críticos</span><span class="info-row-val" id="ip-urg-count" style="color:var(--danger)">—</span></div>
-      <div class="info-row"><span class="info-row-lbl">Personal en servicio</span><span class="info-row-val" id="ip-svc-count">—</span></div>
-    </div>
-    <div class="info-section">
-      <div class="info-section-title">SECCIONES DISPONIBLES</div>
-      <div class="info-row"><span class="info-row-lbl">Publicaciones</span><span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('publicaciones')">Ir →</span></div>
-      <div class="info-row"><span class="info-row-lbl">Calendario</span><span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('calendario')">Ir →</span></div>
-      <div class="info-row"><span class="info-row-lbl">Documentos</span><span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('documentos')">Ir →</span></div>
-      <div class="info-row"><span class="info-row-lbl">Servicios</span><span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('servicios')">Ir →</span></div>
-      <div class="info-row"><span class="info-row-lbl">Cumpleaños</span><span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('cumpleanos')">Ir →</span></div>
-    </div>
-    <div class="info-section">
-      <div class="info-section-title">ATAJOS</div>
-      <div style="font-size:.73rem;color:var(--text3);line-height:1.7">
-        <div>🔐 Acceso admin desde el nav superior</div>
-        <div>◑ / ☀ para cambiar modo oscuro</div>
-        <div>📌 Avisos fijados aparecen primero</div>
-        <div>▲ Barra roja = aviso crítico activo</div>
-      </div>
-    </div>
-    <div class="info-section">
-      <div class="info-section-title">FECHA Y HORA</div>
-      <div class="info-row"><span class="info-row-lbl">Hoy</span><span class="info-row-val" id="ip-fecha">—</span></div>
-      <div class="info-row"><span class="info-row-lbl">Hora</span><span class="info-row-val" id="ip-hora" style="font-family:monospace">—</span></div>
-    </div>
-  </div>
-</div>
-<button id="info-fab" onclick="toggleInfoPanel()" title="Información rápida">
-  ⓘ
-  <span id="info-fab-badge" style="display:none"></span>
-</button>
 
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -1020,9 +967,1513 @@ let ordenDia = { fecha: HOY, encuadre: "07:30", instruccion: "", novedad: "Sin n
 let servicios = [];
 let docsSvc = [];
 
-// ── Arrays de datos con ejemplos por defecto ──
-// Estos se SOBREESCRIBEN por jbLoad() si hay datos en la nube
 let pubs = [
   { id:1, titulo:"Formación Extraordinaria — 1 de Mayo", categoria:"avisos", autor:"Inspectoría General", fecha:"2026-04-28", prioridad:"critico", fijada:true, activa:true, etiquetas:["Ceremonial","Formación","Disciplina"], adjuntos:[], contenido:"Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada." },
   { id:2, titulo:"Instrucciones Revista de Dormitorio — Semana 28 Abril", categoria:"instrucciones", autor:"Oficial de Cuartel", fecha:"2026-04-27", prioridad:"importante", fijada:false, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados." },
-  { id:3, titulo:"Comunicado: Normas de Presentación Personal", categoria:"comunicados", autor:"Comandancia ESFOCAR", fecha:"2026-04-25", prioridad:"importante", fijada:true, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas 
+  { id:3, titulo:"Comunicado: Normas de Presentación Personal", categoria:"comunicados", autor:"Comandancia ESFOCAR", fecha:"2026-04-25", prioridad:"importante", fijada:true, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios." },
+  { id:4, titulo:"Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente", categoria:"noticias", autor:"Secretaría ESFOCAR", fecha:"2026-04-22", prioridad:"normal", fijada:false, activa:true, etiquetas:["Formación","Académico"], adjuntos:[], contenido:"Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad." },
+  { id:5, titulo:"Calendario Semanal — 28 Abril al 4 Mayo", categoria:"actividades", autor:"Coordinación Académica", fecha:"2026-04-27", prioridad:"normal", fijada:false, activa:true, etiquetas:["Académico","Formación"], adjuntos:[], contenido:"Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A." },
+  { id:6, titulo:"Resultados Torneo Deportivo Interno 2026", categoria:"vida-estudiantil", autor:"Bienestar Estudiantil", fecha:"2026-04-20", prioridad:"normal", fijada:false, activa:true, etiquetas:["Deportes"], adjuntos:[], contenido:"Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes." },
+  { id:7, titulo:"Reglamento de Convivencia Estudiantil 2026", categoria:"documentos", autor:"Secretaría", fecha:"2026-04-15", prioridad:"normal", fijada:false, activa:true, etiquetas:["Administrativo","Disciplina"], adjuntos:[], contenido:"Se publica el Reglamento de Convivencia Estudiantil actualizado para 2026. Incluye modificaciones en artículos 12, 23 y 45 referentes a dispositivos electrónicos, permisos de salida y licencias médicas. Lectura obligatoria." },
+  { id:8, titulo:"Cambio Horario Comedor — Semana 28 Abril", categoria:"avisos", autor:"Administración", fecha:"2026-04-26", prioridad:"urgente", fijada:false, activa:true, etiquetas:["Administrativo"], adjuntos:[], contenido:"Por mantención de equipos el comedor operará en horario especial: Desayuno 06:45. Almuerzo 12:30 (escuadrón A primero). Once 18:00. Cena 20:30. Respetar los horarios asignados." },
+  { id:9, titulo:"Charla Salud Mental y Bienestar Estudiantil", categoria:"actividades", autor:"Área de Salud", fecha:"2026-04-18", prioridad:"normal", fijada:false, activa:true, etiquetas:["Salud","Académico"], adjuntos:[], contenido:"Se realizará una charla sobre salud mental y técnicas de manejo del estrés para los alumnos del Grupo Concepción. Participación voluntaria pero recomendada. Auditorio principal, 15:00 hrs." },
+  { id:10, titulo:"Instrucciones para Salida Fin de Semana", categoria:"instrucciones", autor:"Oficial de Servicio", fecha:"2026-04-24", prioridad:"importante", fijada:false, activa:true, etiquetas:["Permiso","Disciplina"], adjuntos:[], contenido:"Para la salida reglamentaria del próximo fin de semana: presentar libreta de permisos al oficial de guardia. Hora límite de regreso: domingo 21:00 hrs. Cualquier novedad debe ser reportada inmediatamente." },
+];
+
+let eventos = [
+  { id:1, titulo:"Formación Extraordinaria", fecha:"2026-05-01", hora:"07:30", lugar:"Patio Central", descripcion:"Uniforme de gala obligatorio." },
+  { id:2, titulo:"Evaluación Derecho Procesal", fecha:"2026-05-02", hora:"09:00", lugar:"Sala A", descripcion:"Evaluación parcial semestre I." },
+  { id:3, titulo:"Tiro en Polígono", fecha:"2026-04-29", hora:"14:00", lugar:"Polígono ESFOCAR", descripcion:"Escuadrón B." },
+  { id:4, titulo:"Revista de Dormitorios", fecha:"2026-04-30", hora:"06:00", lugar:"Pabellones A y B", descripcion:"Revista semanal." },
+  { id:5, titulo:"Instrucción Orden Cerrado", fecha:"2026-05-05", hora:"08:00", lugar:"Cancha Principal", descripcion:"Práctica formaciones y desfiles." },
+  { id:6, titulo:"Charla: Ética Policial", fecha:"2026-05-06", hora:"10:00", lugar:"Auditorio", descripcion:"A cargo del Coronel de la Prefectura." },
+  { id:7, titulo:"Salida Fin de Semana — Esc. A", fecha:"2026-05-08", hora:"17:00", lugar:"Portería", descripcion:"Salida reglamentaria." },
+  { id:8, titulo:"Instrucción de Armas", fecha:"2026-04-28", hora:"08:00", lugar:"Sala Armas", descripcion:"Limpieza y mantenimiento." },
+];
+
+// ═══════════════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════════════
+function fmt(s) {
+  if (!s) return "";
+  const [y,m,d] = s.split("-");
+  return parseInt(d) + " " + MESES[parseInt(m)-1] + " " + y;
+}
+
+function priColor(p) {
+  if (p === "critico")    return "var(--crit)";
+  if (p === "urgente")    return "var(--danger)";
+  if (p === "importante") return "var(--accent)";
+  return "var(--border2)";
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function catLabel(id) {
+  const c = CATS.find(x => x.id === id);
+  return c ? c.icon + " " + c.label.toUpperCase() : id;
+}
+
+function priBadge(pri) {
+  if (pri === "normal") return "";
+  const cls = { importante:"badge-imp", urgente:"badge-urg", critico:"badge-crit" };
+  const lbl = { importante:"IMPORTANTE", urgente:"URGENTE", critico:"CRÍTICO" };
+  return `<span class="badge ${cls[pri]}">${lbl[pri]}</span>`;
+}
+
+function tipoBadge(tipo) {
+  const colors = {
+    "Guardia":"var(--accent)", "Facción":"var(--accent2)",
+    "Servicio de Cuartel":"var(--text3)", "Turno Especial":"var(--warn)",
+    "Instrucción":"var(--crit)", "Comisión":"var(--danger)"
+  };
+  const c = colors[tipo] || "var(--text3)";
+  return `<span style="background:${c}22;color:${c};border:1px solid ${c};border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;letter-spacing:.06em;font-family:monospace">${esc(tipo).toUpperCase()}</span>`;
+}
+
+function iconAdj(tipo, nombre) {
+  if (tipo?.includes("pdf") || nombre?.endsWith(".pdf")) return "📄";
+  if (tipo?.includes("image")) return "🖼️";
+  if (tipo?.includes("word") || nombre?.endsWith(".docx") || nombre?.endsWith(".doc")) return "📝";
+  if (nombre?.endsWith(".xlsx") || nombre?.endsWith(".xls")) return "📊";
+  return "📎";
+}
+
+function pubsActivas() {
+  return pubs.filter(p => p.activa).sort((a,b) => {
+    const ord = { critico:0, urgente:1, importante:2, normal:3 };
+    if (a.fijada !== b.fijada) return a.fijada ? -1 : 1;
+    if (ord[a.prioridad] !== ord[b.prioridad]) return ord[a.prioridad] - ord[b.prioridad];
+    return new Date(b.fecha) - new Date(a.fecha);
+  });
+}
+
+function proxEventos() {
+  return eventos.filter(e => e.fecha >= HOY).sort((a,b) => a.fecha.localeCompare(b.fecha));
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════════
+const NAV_ITEMS = [
+  { id:"inicio", lbl:"Inicio" },
+  { id:"publicaciones", lbl:"Publicaciones" },
+  { id:"calendario", lbl:"Calendario" },
+  { id:"documentos", lbl:"Documentos" },
+  { id:"servicios", lbl:"Servicios" },
+  { id:"cumpleanos", lbl:"🎂 Cumpleaños" },
+];
+
+function buildNav() {
+  const nd = document.getElementById("nav-desktop");
+  const mm = document.getElementById("mob-menu");
+
+  const adminItem = esAdmin ? [{ id:"admin", lbl:"⚙ Admin" }] : [];
+  const items = [...NAV_ITEMS, ...adminItem];
+
+  // Desktop nav
+  nd.innerHTML = items.map(n => `
+    <button class="nav-btn ${secActual===n.id?'active':''}"
+      onclick="showSec('${n.id}')">${esc(n.lbl)}</button>
+  `).join("") + `
+    <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>
+    ${esAdmin
+      ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
+      : `<button class="nav-btn" onclick="openModal('modal-login')" style="border:1px solid var(--accent);color:var(--accent2);margin-left:4px">🔐 Admin</button>`
+    }
+  `;
+
+  // Mobile menu
+  mm.innerHTML = items.map(n => `
+    <button class="mob-item" onclick="showSec('${n.id}');closeMobMenu()">${esc(n.lbl)}</button>
+  `).join("") + (esAdmin
+    ? `<button class="mob-item" onclick="doLogout()" style="color:var(--danger)">Cerrar sesión</button>`
+    : `<button class="mob-item" onclick="openModal('modal-login');closeMobMenu()" style="color:var(--accent2)">🔐 Acceso Admin</button>`
+  );
+}
+
+function showSec(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const el = document.getElementById("sec-" + id);
+  if (el) { el.classList.add("active"); secActual = id; }
+  buildNav();
+  renderSection(id);
+  window.scrollTo(0, 0);
+}
+
+function renderSection(id) {
+  if (id === "inicio")        renderInicio();
+  if (id === "publicaciones") { initFiltros(); renderPubs(); }
+  if (id === "calendario")    renderCalendario();
+  if (id === "documentos")    renderDocumentos();
+  if (id === "admin")         renderAdmin();
+  if (id === "servicios")     renderServicios();
+  if (id === "cumpleanos")    renderCumpleanos();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════
+function toggleDark() {
+  darkMode = !darkMode;
+  document.body.classList.toggle("dark", darkMode);
+  buildNav();
+  const mb = document.getElementById("dark-btn-mob");
+  if (mb) mb.textContent = darkMode ? "☀" : "◑";
+}
+
+function toggleMobMenu() {
+  document.getElementById("mob-menu").classList.toggle("open");
+}
+function closeMobMenu() {
+  document.getElementById("mob-menu").classList.remove("open");
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALES
+// ═══════════════════════════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).style.display = "flex";
+}
+function closeModal(id, e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById(id).style.display = "none";
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════
+function doLogin() {
+  const p = document.getElementById("inp-pass").value;
+  if (p === ADMIN_PASS) {
+    esAdmin = true;
+    closeModal("modal-login");
+    document.getElementById("inp-pass").value = "";
+    document.getElementById("pass-err").style.display = "none";
+    buildNav();
+    showSec("admin");
+  } else {
+    document.getElementById("pass-err").style.display = "block";
+  }
+}
+function doLogout() {
+  esAdmin = false;
+  buildNav();
+  showSec("inicio");
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER INICIO
+// ═══════════════════════════════════════════════════════════
+function renderInicio() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+
+  // Barra crítica
+  const critico = pubs.find(p => p.prioridad === "critico" && p.activa && p.fijada);
+  const bar = document.getElementById("crit-bar");
+  if (critico) {
+    document.getElementById("crit-txt").textContent = "▲ CRÍTICO — " + critico.titulo;
+    bar.classList.remove("hidden");
+  }
+
+  // Métricas
+  const mg = document.getElementById("metrics-grid");
+  const urgentes = act.filter(p => p.prioridad === "urgente" || p.prioridad === "critico").length;
+  const metArr = [
+    { v:act.length,                              l:"Publicaciones",     i:"◈", r:false },
+    { v:act.filter(p=>p.categoria==="noticias").length, l:"Noticias",  i:"◎", r:false },
+    { v:prox.length,                             l:"Próximos eventos",  i:"◫", r:false },
+    { v:urgentes,                                l:"Urgentes/Críticos", i:"▲", r:true  },
+    { v:act.filter(p=>p.categoria==="documentos").length, l:"Documentos", i:"▣", r:false },
+  ];
+  mg.innerHTML = metArr.map(m => `
+    <div class="metric-card" style="border-top:3px solid ${m.r?"var(--danger)":"var(--accent)"}">
+      <div class="metric-icon" style="color:${m.r?"var(--danger)":"var(--accent)"}">${m.i}</div>
+      <div class="metric-val" style="color:${m.r?"var(--danger)":"var(--text)"}">${m.v}</div>
+      <div class="metric-label">${esc(m.l)}</div>
+    </div>
+  `).join("");
+
+  // Publicaciones recientes
+  document.getElementById("home-pubs").innerHTML = act.slice(0,6).map(p => pubCardHTML(p)).join("");
+
+  // Eventos próximos
+  const ep = document.getElementById("home-evs");
+  ep.innerHTML = prox.slice(0,6).map(e => evCardHTML(e)).join("") || `<div class="vacio">Sin próximos eventos.</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HTML HELPERS
+// ═══════════════════════════════════════════════════════════
+function pubCardHTML(p, onclick) {
+  const lc = priColor(p.prioridad);
+  const tags = (p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`).join("");
+  const cb = onclick || `showDetalle(${p.id})`;
+  return `
+    <div class="pub-card" style="border-left:3px solid ${lc}" onclick="${cb}">
+      <div class="pub-card-meta">
+        <span class="badge badge-cat">${catLabel(p.categoria)}</span>
+        ${priBadge(p.prioridad)}
+        ${p.fijada?'<span style="font-size:.62rem;font-family:monospace;color:var(--accent)">📌 FIJADA</span>':''}
+      </div>
+      <div class="pub-card-title">${esc(p.titulo)}</div>
+      <div class="pub-card-date">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div class="pub-card-body">${esc(p.contenido)}</div>
+      ${tags?`<div class="pub-card-tags">${tags}</div>`:''}
+    </div>`;
+}
+
+function evCardHTML(e, pasado) {
+  return `
+    <div class="ev-card" style="border-left:3px solid ${pasado?"var(--border2)":"var(--accent)"};opacity:${pasado?.65:1}">
+      <div class="ev-card-title">${esc(e.titulo)}</div>
+      <div class="ev-card-date">${fmt(e.fecha)}${e.hora&&e.hora!=="—"?" · "+esc(e.hora):""}</div>
+      ${e.lugar&&e.lugar!=="—"?`<div class="ev-card-lugar">◎ ${esc(e.lugar)}</div>`:""}
+      ${e.descripcion?`<div class="ev-card-desc">${esc(e.descripcion)}</div>`:""}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DETALLE
+// ═══════════════════════════════════════════════════════════
+function showDetalle(id) {
+  const p = pubs.find(x => x.id === id);
+  if (!p) return;
+  const tags = [
+    `<span class="badge badge-cat">${catLabel(p.categoria)}</span>`,
+    priBadge(p.prioridad),
+    p.fijada ? `<span class="tag">#Fijada</span>` : "",
+    ...(p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`)
+  ].filter(Boolean).join("");
+
+  const adjHTML = (p.adjuntos||[]).length > 0 ? `
+    <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
+      <div class="sub-lbl">DOCUMENTOS ADJUNTOS (${p.adjuntos.length})</div>
+      <div class="adj-list">
+        ${p.adjuntos.map(a=>`
+          <a href="${a.data}" download="${esc(a.nombre)}" class="adj-item" style="text-decoration:none;color:var(--text)">
+            <span style="font-size:1.2rem">${iconAdj(a.tipo,a.nombre)}</span>
+            <span style="flex:1">${esc(a.nombre)}</span>
+            <span style="color:var(--text3);font-size:.72rem">${(a.tamaño/1024).toFixed(0)} KB</span>
+            <span style="color:var(--accent);font-size:.72rem;font-family:monospace">↓ Descargar</span>
+          </a>`).join("")}
+      </div>
+    </div>` : "";
+
+  document.getElementById("detalle-content").innerHTML = `
+    <div style="border-left:4px solid ${priColor(p.prioridad)};padding-left:20px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">${tags}</div>
+      <h2 style="font-size:1.45rem;margin:0 0 10px;color:var(--text);line-height:1.3">${esc(p.titulo)}</h2>
+      <div style="font-size:.76rem;color:var(--text3);margin-bottom:26px;font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div style="font-size:.92rem;line-height:1.85;color:var(--text2);white-space:pre-wrap">${esc(p.contenido)}</div>
+      ${adjHTML}
+    </div>`;
+  showSec("detalle");
+}
+
+// ═══════════════════════════════════════════════════════════
+// PUBLICACIONES
+// ═══════════════════════════════════════════════════════════
+function initFiltros() {
+  const catSel = document.getElementById("f-cat");
+  if (catSel.options.length <= 1) {
+    CATS.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c.id; o.textContent = c.icon + " " + c.label;
+      catSel.appendChild(o);
+    });
+  }
+  const etqSel = document.getElementById("f-etq");
+  if (etqSel.options.length <= 1) {
+    ETIQUETAS.forEach(e => {
+      const o = document.createElement("option");
+      o.value = e; o.textContent = e;
+      etqSel.appendChild(o);
+    });
+  }
+}
+
+function applyFilters() {
+  const q    = document.getElementById("f-q").value.toLowerCase().trim();
+  const cat  = document.getElementById("f-cat").value;
+  const pri  = document.getElementById("f-pri").value;
+  const etq  = document.getElementById("f-etq").value;
+  const desd = document.getElementById("f-desde").value;
+  const hast = document.getElementById("f-hasta").value;
+
+  let lista = pubsActivas();
+  if (cat !== "todas") lista = lista.filter(p => p.categoria === cat);
+  if (pri !== "todas") lista = lista.filter(p => p.prioridad === pri);
+  if (etq) lista = lista.filter(p => (p.etiquetas||[]).includes(etq));
+  if (desd) lista = lista.filter(p => p.fecha >= desd);
+  if (hast) lista = lista.filter(p => p.fecha <= hast);
+  if (q) lista = lista.filter(p =>
+    p.titulo.toLowerCase().includes(q) ||
+    p.contenido.toLowerCase().includes(q) ||
+    p.autor.toLowerCase().includes(q) ||
+    (p.etiquetas||[]).some(e => e.toLowerCase().includes(q))
+  );
+
+  const activos = cat !== "todas" || pri !== "todas" || etq || desd || hast || q;
+  document.getElementById("btn-limpiar").style.display = activos ? "inline-block" : "none";
+  document.getElementById("res-count").textContent = lista.length + " RESULTADO" + (lista.length !== 1 ? "S" : "");
+
+  const grid = document.getElementById("pub-grid");
+  grid.innerHTML = lista.length
+    ? lista.map(p => pubCardHTML(p)).join("")
+    : `<div class="vacio" style="grid-column:1/-1">No se encontraron publicaciones con los filtros seleccionados.</div>`;
+}
+
+function renderPubs() { applyFilters(); }
+
+function limpiarFiltros() {
+  ["f-q","f-desde","f-hasta"].forEach(id => document.getElementById(id).value = "");
+  ["f-cat","f-pri","f-etq"].forEach(id => document.getElementById(id).selectedIndex = 0);
+  applyFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CALENDARIO
+// ═══════════════════════════════════════════════════════════
+function renderCalendario() {
+  const prox = proxEventos();
+  const pas  = eventos.filter(e => e.fecha < HOY).sort((a,b) => b.fecha.localeCompare(a.fecha));
+  document.getElementById("cal-prox").innerHTML = prox.length
+    ? prox.map(e => evCardHTML(e)).join("")
+    : `<div class="vacio">Sin próximos eventos.</div>`;
+  document.getElementById("cal-pasados").innerHTML = pas.map(e => evCardHTML(e, true)).join("") || `<div class="vacio">Sin eventos pasados.</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOCUMENTOS
+// ═══════════════════════════════════════════════════════════
+function renderDocumentos() {
+  const docs = pubsActivas().filter(p => p.categoria === "documentos");
+  const grid = document.getElementById("docs-grid");
+  grid.innerHTML = docs.length ? docs.map(p => `
+    <div onclick="showDetalle(${p.id})" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--text3);border-radius:3px;padding:18px 20px;cursor:pointer">
+      <div style="font-size:1.6rem;margin-bottom:8px;color:var(--text3)">▣</div>
+      <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.35">${esc(p.titulo)}</div>
+      <div style="font-size:.7rem;color:var(--text3);font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${(p.etiquetas||[]).map(e=>`<span class="tag">#${esc(e)}</span>`).join("")}</div>
+    </div>`).join("")
+  : `<div class="vacio">Sin documentos disponibles.</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════
+function renderAdmin() {
+  // Métricas
+  const am = document.getElementById("admin-metrics");
+  const metArr = [
+    { v:pubs.length, l:"Total publicaciones" },
+    { v:pubs.filter(p=>p.activa).length, l:"Activas" },
+    { v:pubs.filter(p=>!p.activa).length, l:"Inactivas" },
+    { v:pubs.filter(p=>p.fijada).length, l:"Fijadas" },
+  ];
+  am.innerHTML = metArr.map(m => `
+    <div class="metric-card" style="border-top:3px solid var(--accent)">
+      <div class="metric-val" style="color:var(--accent)">${m.v}</div>
+      <div class="metric-label">${esc(m.l)}</div>
+    </div>`).join("");
+
+  // Tabla pubs
+  const pt = document.getElementById("admin-pub-tbl");
+  pt.innerHTML = `
+    <thead><tr>
+      ${["Título","Categoría","Prioridad","Fecha","Etiquetas","Estado","Acciones"].map(h=>`<th>${esc(h)}</th>`).join("")}
+    </tr></thead>
+    <tbody>
+      ${pubs.map(p=>`
+        <tr style="border-bottom:1px solid var(--border);opacity:${p.activa?1:.55}">
+          <td style="padding:9px 13px;font-weight:${p.fijada?600:400};max-width:220px;color:var(--text)">
+            ${p.fijada?'<span style="color:var(--accent);margin-right:4px">📌</span>':''}${esc(p.titulo)}
+          </td>
+          <td style="padding:9px 13px"><span class="badge badge-cat">${catLabel(p.categoria)}</span></td>
+          <td style="padding:9px 13px">${priBadge(p.prioridad)||'<span style="font-size:.7rem;color:var(--text3)">Normal</span>'}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${fmt(p.fecha)}</td>
+          <td style="padding:9px 13px"><div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${(p.etiquetas||[]).slice(0,2).map(e=>`<span class="tag">#${esc(e)}</span>`).join("")}
+            ${(p.etiquetas||[]).length>2?`<span class="tag">+${p.etiquetas.length-2}</span>`:''}
+          </div></td>
+          <td style="padding:9px 13px"><span class="${p.activa?'active-badge':'inactive-badge'}">${p.activa?"ACTIVA":"INACTIVA"}</span></td>
+          <td style="padding:9px 13px">
+            <div style="display:flex;gap:5px">
+              <button class="mini-btn" onclick="abrirEditPub(${p.id})" title="Editar">✏</button>
+              <button class="mini-btn" onclick="togglePub(${p.id},'activa')" title="${p.activa?'Desactivar':'Activar'}">${p.activa?"⊘":"✓"}</button>
+              <button class="mini-btn" onclick="togglePub(${p.id},'fijada')" title="Fijar">📌</button>
+              <button class="mini-btn" onclick="eliminarPub(${p.id})" style="color:var(--danger)" title="Eliminar">✕</button>
+            </div>
+          </td>
+        </tr>`).join("")}
+    </tbody>`;
+
+  // Tabla eventos
+  document.getElementById("admin-ev-lbl").textContent = `EVENTOS (${eventos.length})`;
+  const et = document.getElementById("admin-ev-tbl");
+  et.innerHTML = `
+    <thead><tr>${["Título","Fecha","Hora","Lugar","Acciones"].map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
+    <tbody>
+      ${eventos.map(e=>`
+        <tr style="border-bottom:1px solid var(--border);opacity:${e.fecha<HOY?.7:1}">
+          <td style="padding:9px 13px;color:var(--text)">${esc(e.titulo)}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${fmt(e.fecha)}</td>
+          <td style="padding:9px 13px;font-family:monospace;font-size:.7rem;color:var(--text3)">${esc(e.hora||"—")}</td>
+          <td style="padding:9px 13px;font-size:.78rem;color:var(--text2)">${esc(e.lugar||"—")}</td>
+          <td style="padding:9px 13px">
+            <div style="display:flex;gap:5px">
+              <button class="mini-btn" onclick="abrirEditEv(${e.id})">✏</button>
+              <button class="mini-btn" onclick="eliminarEv(${e.id})" style="color:var(--danger)">✕</button>
+            </div>
+          </td>
+        </tr>`).join("")}
+    </tbody>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD PUBLICACIONES
+// ═══════════════════════════════════════════════════════════
+function openModalPub() {
+  editPubId = null;
+  adjuntosTemp = [];
+  etqSeleccionadas = [];
+  document.getElementById("modal-pub-title").textContent = "Nueva publicación";
+  ["fp-titulo","fp-autor","fp-contenido"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fp-cat").innerHTML = CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  document.getElementById("fp-pri").value = "normal";
+  document.getElementById("fp-fecha").value = HOY;
+  document.getElementById("fp-fijada").checked = false;
+  document.getElementById("fp-activa").checked = true;
+  renderEtqBtns();
+  renderAdjPreview();
+  openModal("modal-pub");
+}
+
+function abrirEditPub(id) {
+  const p = pubs.find(x => x.id === id);
+  if (!p) return;
+  editPubId = id;
+  adjuntosTemp = [...(p.adjuntos||[])];
+  etqSeleccionadas = [...(p.etiquetas||[])];
+  document.getElementById("modal-pub-title").textContent = "Editar publicación";
+  document.getElementById("fp-titulo").value    = p.titulo;
+  document.getElementById("fp-contenido").value = p.contenido;
+  document.getElementById("fp-autor").value     = p.autor;
+  document.getElementById("fp-fecha").value     = p.fecha;
+  document.getElementById("fp-cat").innerHTML   = CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  document.getElementById("fp-cat").value       = p.categoria;
+  document.getElementById("fp-pri").value       = p.prioridad;
+  document.getElementById("fp-fijada").checked  = p.fijada;
+  document.getElementById("fp-activa").checked  = p.activa;
+  renderEtqBtns();
+  renderAdjPreview();
+  openModal("modal-pub");
+}
+
+function renderEtqBtns() {
+  document.getElementById("etq-btns").innerHTML = ETIQUETAS.map(e =>
+    `<button class="etq-btn ${etqSeleccionadas.includes(e)?'sel':''}" onclick="toggleEtq('${e}')">${esc(e)}</button>`
+  ).join("");
+}
+
+function toggleEtq(e) {
+  etqSeleccionadas = etqSeleccionadas.includes(e)
+    ? etqSeleccionadas.filter(x => x !== e)
+    : [...etqSeleccionadas, e];
+  renderEtqBtns();
+}
+
+function handleAdjuntos(inp) {
+  const files = Array.from(inp.files);
+  const proms = files.map(f => new Promise(res => {
+    const r = new FileReader();
+    r.onload = ev => res({ nombre:f.name, tipo:f.type, tamaño:f.size, data:ev.target.result });
+    r.readAsDataURL(f);
+  }));
+  Promise.all(proms).then(nuevos => {
+    adjuntosTemp = [...adjuntosTemp, ...nuevos];
+    renderAdjPreview();
+    inp.value = "";
+  });
+}
+
+function renderAdjPreview() {
+  document.getElementById("adj-preview").innerHTML = adjuntosTemp.map((a,i) => `
+    <div class="adj-item">
+      <span style="font-size:1rem">${iconAdj(a.tipo,a.nombre)}</span>
+      <span style="flex:1;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.nombre)}</span>
+      <span style="color:var(--text3);margin-right:4px">${(a.tamaño/1024).toFixed(0)} KB</span>
+      <button onclick="removeAdj(${i})" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:.85rem;padding:0">✕</button>
+    </div>`).join("");
+}
+
+function removeAdj(i) {
+  adjuntosTemp.splice(i,1);
+  renderAdjPreview();
+}
+
+function guardarPub() {
+  const titulo    = document.getElementById("fp-titulo").value.trim();
+  const contenido = document.getElementById("fp-contenido").value.trim();
+  if (!titulo || !contenido) return alert("Título y contenido son obligatorios.");
+  const pub = {
+    id:       editPubId || Date.now(),
+    titulo,
+    contenido,
+    categoria: document.getElementById("fp-cat").value,
+    prioridad: document.getElementById("fp-pri").value,
+    autor:     document.getElementById("fp-autor").value.trim(),
+    fecha:     document.getElementById("fp-fecha").value || HOY,
+    fijada:    document.getElementById("fp-fijada").checked,
+    activa:    document.getElementById("fp-activa").checked,
+    etiquetas: [...etqSeleccionadas],
+    adjuntos:  [...adjuntosTemp],
+  };
+  if (editPubId) {
+    pubs = pubs.map(p => p.id === editPubId ? pub : p);
+  } else {
+    pubs = [pub, ...pubs];
+  }
+  closeModal("modal-pub");
+  renderAdmin();
+  jbSave();
+}
+
+function eliminarPub(id) {
+  if (!confirm("¿Eliminar publicación?")) return;
+  pubs = pubs.filter(p => p.id !== id);
+  renderAdmin();
+  jbSave();
+}
+
+function togglePub(id, campo) {
+  pubs = pubs.map(p => p.id === id ? { ...p, [campo]: !p[campo] } : p);
+  renderAdmin();
+  jbSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD EVENTOS
+// ═══════════════════════════════════════════════════════════
+function openModalEv() {
+  editEvId = null;
+  document.getElementById("modal-ev-title").textContent = "Nuevo evento";
+  ["fe-titulo","fe-hora","fe-lugar","fe-desc"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fe-fecha").value = HOY;
+  openModal("modal-ev");
+}
+
+function abrirEditEv(id) {
+  const e = eventos.find(x => x.id === id);
+  if (!e) return;
+  editEvId = id;
+  document.getElementById("modal-ev-title").textContent = "Editar evento";
+  document.getElementById("fe-titulo").value = e.titulo;
+  document.getElementById("fe-fecha").value  = e.fecha;
+  document.getElementById("fe-hora").value   = e.hora||"";
+  document.getElementById("fe-lugar").value  = e.lugar||"";
+  document.getElementById("fe-desc").value   = e.descripcion||"";
+  openModal("modal-ev");
+}
+
+function guardarEv() {
+  const titulo = document.getElementById("fe-titulo").value.trim();
+  const fecha  = document.getElementById("fe-fecha").value;
+  if (!titulo || !fecha) return alert("Título y fecha son obligatorios.");
+  const ev = {
+    id:          editEvId || Date.now(),
+    titulo,
+    fecha,
+    hora:        document.getElementById("fe-hora").value,
+    lugar:       document.getElementById("fe-lugar").value.trim(),
+    descripcion: document.getElementById("fe-desc").value.trim(),
+  };
+  if (editEvId) {
+    eventos = eventos.map(e => e.id === editEvId ? ev : e);
+  } else {
+    eventos = [...eventos, ev];
+  }
+  closeModal("modal-ev");
+  renderAdmin();
+  jbSave();
+}
+
+function eliminarEv(id) {
+  if (!confirm("¿Eliminar evento?")) return;
+  eventos = eventos.filter(e => e.id !== id);
+  renderAdmin();
+  jbSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SERVICIOS
+// ═══════════════════════════════════════════════════════════
+function renderServicios() {
+  // Botones admin
+  document.getElementById("btn-add-svc").style.display = esAdmin ? "inline-block" : "none";
+  document.getElementById("btn-doc-svc").style.display = esAdmin ? "inline-block" : "none";
+
+  // Documentos
+  renderDocsSvc();
+
+  // Orden del día
+  renderOrdenDia();
+
+  // Servicios
+  const fEsc  = document.getElementById("f-esc").value;
+  const fTipo = document.getElementById("f-tipo-svc").value;
+  let lista = servicios;
+  if (fEsc  !== "todos") lista = lista.filter(s => s.escuadron === fEsc);
+  if (fTipo !== "todos") lista = lista.filter(s => s.tipoServicio === fTipo);
+
+  document.getElementById("svc-count").textContent = lista.length + " PERSONAL EN SERVICIO";
+
+  const tw = document.getElementById("svc-tbl-wrap");
+  if (lista.length === 0) {
+    tw.innerHTML = `<div class="vacio">${esAdmin?"Sin servicios registrados. Presiona «+ Agregar servicio» para comenzar.":"No hay servicios registrados para hoy."}</div>`;
+  } else {
+    tw.innerHTML = `
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>${["Nombre / Apellido","RUT","Escuadrón","Tipo de servicio","Horario","Lugar","Obs.",esAdmin?"":""].filter(h=>h||!esAdmin?true:false).map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
+          <tbody>
+            ${lista.map(s=>`
+              <tr>
+                <td style="padding:9px 12px;font-weight:600;color:var(--text)">${esc(s.nombre)}</td>
+                <td style="padding:9px 12px;font-family:monospace;font-size:.72rem;color:var(--text3)">${esc(s.rut||"—")}</td>
+                <td style="padding:9px 12px"><span style="background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:2px;font-size:.62rem;padding:2px 6px;font-family:monospace;font-weight:600">${esc(s.escuadron)}</span></td>
+                <td style="padding:9px 12px">${tipoBadge(s.tipoServicio)}</td>
+                <td style="padding:9px 12px;font-family:monospace;font-size:.72rem;color:var(--text2);white-space:nowrap">${esc(s.horaInicio)} — ${esc(s.horaTermino)}</td>
+                <td style="padding:9px 12px;font-size:.78rem;color:var(--text2)">${esc(s.lugar||"—")}</td>
+                <td style="padding:9px 12px;font-size:.75rem;color:var(--text3);max-width:140px">${esc(s.obs||"—")}</td>
+                ${esAdmin?`<td style="padding:9px 12px"><div style="display:flex;gap:5px">
+                  <button class="mini-btn" onclick="abrirEditSvc(${s.id})">✏</button>
+                  <button class="mini-btn" onclick="eliminarSvc(${s.id})" style="color:var(--danger)">✕</button>
+                </div></td>`:""}
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // Resumen por tipo
+  const tipos = ["Guardia","Facción","Servicio de Cuartel","Turno Especial","Instrucción","Comisión"];
+  const res = document.getElementById("svc-resumen");
+  if (servicios.length > 0) {
+    res.innerHTML = tipos.map(t => {
+      const n = servicios.filter(s => s.tipoServicio === t).length;
+      if (!n) return "";
+      return `<div class="svc-sum-card"><div style="font-size:1.4rem;font-weight:700;color:var(--accent)">${n}</div><div style="font-size:.65rem;color:var(--text3);font-family:monospace">${esc(t.toUpperCase())}</div></div>`;
+    }).join("");
+  } else {
+    res.innerHTML = "";
+  }
+}
+
+function openModalSvc() {
+  editSvcId = null;
+  document.getElementById("modal-svc-title").textContent = "Nuevo servicio";
+  ["fs-nombre","fs-rut","fs-lugar","fs-obs"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fs-esc").selectedIndex  = 0;
+  document.getElementById("fs-tipo").selectedIndex = 0;
+  document.getElementById("fs-hi").value = "08:00";
+  document.getElementById("fs-ht").value = "16:00";
+  openModal("modal-svc");
+}
+
+function abrirEditSvc(id) {
+  const s = servicios.find(x => x.id === id);
+  if (!s) return;
+  editSvcId = id;
+  document.getElementById("modal-svc-title").textContent = "Editar servicio";
+  document.getElementById("fs-nombre").value = s.nombre;
+  document.getElementById("fs-rut").value    = s.rut||"";
+  document.getElementById("fs-esc").value    = s.escuadron;
+  document.getElementById("fs-tipo").value   = s.tipoServicio;
+  document.getElementById("fs-hi").value     = s.horaInicio;
+  document.getElementById("fs-ht").value     = s.horaTermino;
+  document.getElementById("fs-lugar").value  = s.lugar||"";
+  document.getElementById("fs-obs").value    = s.obs||"";
+  openModal("modal-svc");
+}
+
+function guardarSvc() {
+  const nombre = document.getElementById("fs-nombre").value.trim();
+  if (!nombre) return alert("El nombre es obligatorio.");
+  const svc = {
+    id:           editSvcId || Date.now(),
+    nombre,
+    rut:          document.getElementById("fs-rut").value.trim(),
+    escuadron:    document.getElementById("fs-esc").value,
+    tipoServicio: document.getElementById("fs-tipo").value,
+    horaInicio:   document.getElementById("fs-hi").value,
+    horaTermino:  document.getElementById("fs-ht").value,
+    lugar:        document.getElementById("fs-lugar").value.trim(),
+    obs:          document.getElementById("fs-obs").value.trim(),
+  };
+  if (editSvcId) {
+    servicios = servicios.map(s => s.id === editSvcId ? svc : s);
+  } else {
+    servicios = [...servicios, svc];
+  }
+  closeModal("modal-svc");
+  renderServicios();
+  jbSave();
+}
+
+function eliminarSvc(id) {
+  if (!confirm("¿Eliminar servicio?")) return;
+  servicios = servicios.filter(s => s.id !== id);
+  renderServicios();
+  jbSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ORDEN DEL DÍA
+// ═══════════════════════════════════════════════════════════
+function renderOrdenDia() {
+  const ob = document.getElementById("orden-btns");
+  const oc = document.getElementById("orden-content");
+
+  ob.innerHTML = (!ordenEditando && (ordenDia.instruccion || ordenDia.firmante)) ? `
+    <button class="btn-s" onclick="imprimirOrden()">🖨 Imprimir / Guardar PDF</button>
+    ${esAdmin?`<button class="btn-s" onclick="toggleOrdenEdicion()">✏ Editar</button>`:''}
+  ` : esAdmin ? `
+    <button class="btn-p" onclick="toggleOrdenEdicion()">${ordenEditando?"✓ Guardar orden":"✏ Editar"}</button>
+  ` : "";
+
+  if (ordenEditando) {
+    oc.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="sub-lbl">FECHA</div>
+          <input type="date" value="${ordenDia.fecha}" oninput="ordenDia.fecha=this.value">
+        </div>
+        <div><div class="sub-lbl">HORA DE ENCUADRE</div>
+          <input placeholder="07:30" value="${esc(ordenDia.encuadre)}" oninput="ordenDia.encuadre=this.value">
+        </div>
+        <div style="grid-column:1/-1"><div class="sub-lbl">INSTRUCCIÓN DEL DÍA</div>
+          <textarea style="min-height:90px" placeholder="Detallar actividades…" oninput="ordenDia.instruccion=this.value">${esc(ordenDia.instruccion)}</textarea>
+        </div>
+        <div style="grid-column:1/-1"><div class="sub-lbl">NOVEDAD</div>
+          <input placeholder="Sin novedad." value="${esc(ordenDia.novedad)}" oninput="ordenDia.novedad=this.value">
+        </div>
+        <div><div class="sub-lbl">OFICIAL / SUBOFICIAL FIRMANTE</div>
+          <input placeholder="Nombre completo" value="${esc(ordenDia.firmante)}" oninput="ordenDia.firmante=this.value">
+        </div>
+        <div><div class="sub-lbl">GRADO</div>
+          <input placeholder="Sgto. 1° / Cbo." value="${esc(ordenDia.grado)}" oninput="ordenDia.grado=this.value">
+        </div>
+      </div>`;
+  } else {
+    const sinContenido = !ordenDia.instruccion && !ordenDia.firmante;
+    oc.innerHTML = `
+      <div class="orden-meta">
+        <div class="orden-field"><div class="sub-lbl">FECHA</div>
+          <div style="font-size:.95rem;font-weight:700;color:var(--text)">${fmt(ordenDia.fecha)||"—"}</div>
+        </div>
+        <div class="orden-field"><div class="sub-lbl">ENCUADRE</div>
+          <div style="font-size:.95rem;font-weight:700;color:var(--accent)">${esc(ordenDia.encuadre)||"—"} HRS</div>
+        </div>
+        <div class="orden-field"><div class="sub-lbl">NOVEDAD</div>
+          <div style="font-size:.88rem;color:var(--text2)">${esc(ordenDia.novedad)||"—"}</div>
+        </div>
+      </div>
+      ${ordenDia.instruccion?`<div class="mb-12"><div class="sub-lbl">INSTRUCCIÓN</div>
+        <div class="orden-instruccion">${esc(ordenDia.instruccion)}</div></div>`:''}
+      ${ordenDia.firmante?`<div class="orden-firma">
+        <span style="font-size:.72rem;color:var(--text3);font-family:monospace">FIRMA:</span>
+        <span style="font-size:.88rem;font-weight:600;color:var(--text)">${esc(ordenDia.grado)} ${esc(ordenDia.firmante)}</span>
+      </div>`:''}
+      ${sinContenido?`<div style="color:var(--text3);font-size:.82rem">${esAdmin?"Sin contenido — presiona «✏ Editar» para completar.":"Sin publicar aún."}</div>`:''}`;
+  }
+}
+
+function toggleOrdenEdicion() {
+  ordenEditando = !ordenEditando;
+  renderOrdenDia();
+}
+
+function imprimirOrden() {
+  const html = `<html><head><title>Orden del Día</title><style>
+    body{font-family:'Palatino Linotype',serif;max-width:700px;margin:40px auto;padding:0 30px;color:#1c1f18}
+    h1{font-size:1.1rem;letter-spacing:.1em;text-align:center;border-bottom:2px solid #4a7c59;padding-bottom:10px;margin-bottom:20px}
+    .row{display:flex;gap:40px;margin-bottom:14px}.lbl{font-size:.65rem;letter-spacing:.1em;color:#7a8070;font-family:monospace;margin-bottom:3px}
+    .val{font-size:.9rem;font-weight:700}.instruccion{white-space:pre-wrap;font-size:.88rem;line-height:1.75;margin:16px 0;padding:14px;border-left:3px solid #4a7c59;background:#f5f7f2}
+    .firma{border-top:1px solid #ccc;padding-top:14px;margin-top:20px;font-size:.85rem}
+    .header{text-align:center;margin-bottom:24px;font-size:.7rem;letter-spacing:.15em;color:#4a7c59}
+  </style></head><body>
+    <div class="header">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div>
+    <h1>ORDEN DEL DÍA</h1>
+    <div class="row">
+      <div><div class="lbl">FECHA</div><div class="val">${fmt(ordenDia.fecha)||"—"}</div></div>
+      <div><div class="lbl">HORA DE ENCUADRE</div><div class="val">${ordenDia.encuadre||"—"} HRS</div></div>
+      <div><div class="lbl">NOVEDAD</div><div class="val">${ordenDia.novedad||"Sin novedad."}</div></div>
+    </div>
+    ${ordenDia.instruccion?`<div class="lbl">INSTRUCCIÓN</div><div class="instruccion">${ordenDia.instruccion}</div>`:''}
+    <div class="firma"><strong>${ordenDia.grado||""} ${ordenDia.firmante||""}</strong><br>
+    <span style="font-size:.75rem;color:#7a8070">Oficial/Suboficial Firmante</span></div>
+  
+<!-- ═══ PANEL DE INFORMACIÓN FLOTANTE ═══ -->
+<div id="info-panel">
+  <div id="info-panel-header">
+    <span>ⓘ INFORMACIÓN RÁPIDA</span>
+    <button onclick="toggleInfoPanel()" style="background:none;border:none;color:var(--header-text);cursor:pointer;font-size:1rem;padding:0;line-height:1">✕</button>
+  </div>
+  <div id="info-panel-body">
+    <div class="info-section">
+      <div class="info-section-title">SISTEMA</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Unidad</span>
+        <span class="info-row-val">ESFOCAR Concepción</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Sistema</span>
+        <span class="info-row-val">Diario Mural Digital</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Versión</span>
+        <span class="info-row-val">v1.0 — 2026</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">ESTADO ACTUAL</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Publicaciones activas</span>
+        <span class="info-row-val" id="ip-pub-count">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Eventos próximos</span>
+        <span class="info-row-val" id="ip-ev-count">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Avisos urgentes/críticos</span>
+        <span class="info-row-val" id="ip-urg-count" style="color:var(--danger)">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Personal en servicio</span>
+        <span class="info-row-val" id="ip-svc-count">—</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">SECCIONES DISPONIBLES</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Publicaciones</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('publicaciones')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Calendario</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('calendario')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Documentos</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('documentos')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Servicios</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('servicios')">Ir →</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Cumpleaños</span>
+        <span class="info-row-val" style="color:var(--accent);cursor:pointer" onclick="toggleInfoPanel();showSec('cumpleanos')">Ir →</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">ATAJOS</div>
+      <div style="font-size:.73rem;color:var(--text3);line-height:1.7">
+        <div>🔐 Acceso admin desde el nav superior</div>
+        <div>◑ / ☀ para cambiar modo oscuro</div>
+        <div>📌 Avisos fijados aparecen primero</div>
+        <div>▲ Barra roja = aviso crítico activo</div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">FECHA Y HORA</div>
+      <div class="info-row">
+        <span class="info-row-lbl">Hoy</span>
+        <span class="info-row-val" id="ip-fecha">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-lbl">Hora</span>
+        <span class="info-row-val" id="ip-hora" style="font-family:monospace">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Botón FAB -->
+<button id="info-fab" onclick="toggleInfoPanel()" title="Información rápida">
+  ⓘ
+  <span id="info-fab-badge" id="info-fab-badge" style="display:none"></span>
+</button>
+
+</body></html>`;
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOCUMENTOS SERVICIOS
+// ═══════════════════════════════════════════════════════════
+function renderDocsSvc() {
+  const grid = document.getElementById("docs-svc-grid");
+  if (docsSvc.length === 0) {
+    grid.innerHTML = `<div class="vacio">${esAdmin?"Sin documentos. Presiona «+ Subir documento» para publicar.":"No hay documentos publicados aún."}</div>`;
+    return;
+  }
+  grid.innerHTML = docsSvc.map(d => {
+    const esPDF  = d.archivo?.tipo?.includes("pdf") || d.archivo?.nombre?.endsWith(".pdf");
+    const esWord = d.archivo?.tipo?.includes("word") || d.archivo?.nombre?.endsWith(".docx");
+    const icono  = esPDF ? "📄" : esWord ? "📝" : "📎";
+    const color  = esPDF ? "var(--danger)" : esWord ? "var(--accent)" : "var(--text2)";
+    const etiq   = esPDF ? "PDF" : esWord ? "WORD" : "DOC";
+    return `
+      <div class="doc-card">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.6rem">${icono}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.62rem;letter-spacing:.1em;font-family:monospace;color:${color};font-weight:700;margin-bottom:2px">${etiq}</div>
+            <div style="font-size:.88rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.titulo)}</div>
+          </div>
+        </div>
+        ${d.descripcion?`<div style="font-size:.78rem;color:var(--text2);line-height:1.5">${esc(d.descripcion)}</div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <div style="font-size:.68rem;color:var(--text3);font-family:monospace">${fmt(d.fecha)}${d.autor?" · "+esc(d.autor):""}</div>
+          <div style="display:flex;gap:6px">
+            <a href="${d.archivo.data}" download="${esc(d.archivo.nombre)}"
+              style="font-size:.72rem;background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:3px 10px;text-decoration:none;font-family:monospace;font-weight:600">
+              ⬇ Descargar
+            </a>
+            ${esAdmin?`<button class="mini-btn" onclick="eliminarDocSvc(${d.id})" style="color:var(--danger);font-size:.72rem">✕</button>`:''}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function openModalDocSvc() {
+  docSvcTemp = null;
+  ["fd-titulo","fd-desc","fd-autor"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fd-fecha").value = HOY;
+  document.getElementById("fd-preview").textContent = "";
+  document.getElementById("fd-archivo").value = "";
+  openModal("modal-doc-svc");
+}
+
+function handleDocSvc(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    docSvcTemp = { nombre:f.name, tipo:f.type, tamano:f.size, data:ev.target.result };
+    document.getElementById("fd-preview").textContent = "✓ " + f.name + " (" + (f.size/1024).toFixed(0) + " KB)";
+  };
+  r.readAsDataURL(f);
+}
+
+function guardarDocSvc() {
+  const titulo = document.getElementById("fd-titulo").value.trim();
+  if (!titulo || !docSvcTemp) return alert("Título y archivo son obligatorios.");
+  docsSvc = [...docsSvc, {
+    id:          Date.now(),
+    titulo,
+    descripcion: document.getElementById("fd-desc").value.trim(),
+    fecha:       document.getElementById("fd-fecha").value || HOY,
+    autor:       document.getElementById("fd-autor").value.trim(),
+    archivo:     docSvcTemp,
+  }];
+  closeModal("modal-doc-svc");
+  renderDocsSvc();
+  jbSave();
+}
+
+function eliminarDocSvc(id) {
+  if (!confirm("¿Eliminar documento?")) return;
+  docsSvc = docsSvc.filter(d => d.id !== id);
+  renderDocsSvc();
+  jbSave();
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// CUMPLEAÑOS
+// ═══════════════════════════════════════════════════════════
+let bdayTab = "alumnos";
+let editBdayId = null;
+
+let cumpleanos = [
+  // Alumnos de ejemplo
+  { id:101, nombre:"Carlos Fuentes Mora",      grado:"Alumno",         cat:"alumnos",       dia:1,  mes:5,  anio:2003, escuadron:"Escuadrón A" },
+  { id:102, nombre:"Andrea Soto Pizarro",      grado:"Alumna",         cat:"alumnos",       dia:15, mes:5,  anio:2002, escuadron:"Escuadrón B" },
+  { id:103, nombre:"Pablo Rojas Sepúlveda",    grado:"Alumno",         cat:"alumnos",       dia:22, mes:6,  anio:2003, escuadron:"Escuadrón A" },
+  { id:104, nombre:"Valentina Castro Ibáñez",  grado:"Alumna",         cat:"alumnos",       dia:8,  mes:7,  anio:2002, escuadron:"Escuadrón C" },
+  { id:105, nombre:"Diego Muñoz Flores",       grado:"Alumno",         cat:"alumnos",       dia:30, mes:4,  anio:2003, escuadron:"Escuadrón B" },
+  // Instructores de ejemplo
+  { id:201, nombre:"Juan Arriagada Vega",      grado:"Sgto. 1°",       cat:"instructores",  dia:12, mes:5,  anio:1985, escuadron:"" },
+  { id:202, nombre:"Marcela Ríos Contreras",   grado:"Cabo 1°",        cat:"instructores",  dia:3,  mes:8,  anio:1990, escuadron:"" },
+  { id:203, nombre:"Rodrigo Pino Salinas",     grado:"Suboficial",     cat:"instructores",  dia:19, mes:11, anio:1982, escuadron:"" },
+  // Personal Administrativo de ejemplo
+  { id:301, nombre:"Patricia Salas Mardones",  grado:"Administrativa", cat:"administrativo",dia:27, mes:9,  anio:1978, escuadron:"" },
+  { id:302, nombre:"Felipe Araya Cárdenas",    grado:"Administrativo", cat:"administrativo",dia:5,  mes:12, anio:1980, escuadron:"" },
+];
+
+const BDAY_CATS = [
+  { id:"alumnos",       lbl:"Alumnos",                icon:"🎓" },
+  { id:"instructores",  lbl:"Instructores",            icon:"⭐" },
+  { id:"administrativo",lbl:"Personal Administrativo", icon:"🏢" },
+];
+
+const MESES_L = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+function diasParaCumple(dia, mes) {
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  let cumple = new Date(anioActual, mes - 1, dia);
+  if (cumple < hoy) cumple = new Date(anioActual + 1, mes - 1, dia);
+  const diff = Math.round((cumple - hoy) / (1000*60*60*24));
+  return diff;
+}
+
+function esCumpleHoy(dia, mes) {
+  const hoy = new Date();
+  return hoy.getDate() === dia && (hoy.getMonth() + 1) === mes;
+}
+
+function esCumpleMes(dia, mes) {
+  const hoy = new Date();
+  return (hoy.getMonth() + 1) === mes && !esCumpleHoy(dia, mes);
+}
+
+function renderCumpleanos() {
+  document.getElementById("btn-add-bday").style.display = esAdmin ? "inline-block" : "none";
+
+  // Tabs
+  const tabsEl = document.getElementById("bday-tabs");
+  tabsEl.innerHTML = BDAY_CATS.map(c => `
+    <button class="bday-tab-btn ${bdayTab===c.id?'active':''}" onclick="setBdayTab('${c.id}')">
+      ${c.icon} ${esc(c.lbl)}
+      <span style="margin-left:5px;font-size:.65rem;opacity:.8">(${cumpleanos.filter(b=>b.cat===c.id).length})</span>
+    </button>
+  `).join("");
+
+  // Content
+  const lista = cumpleanos
+    .filter(b => b.cat === bdayTab)
+    .sort((a, b) => {
+      const da = diasParaCumple(a.dia, a.mes);
+      const db = diasParaCumple(b.dia, b.mes);
+      return da - db;
+    });
+
+  const hoyCount = lista.filter(b => esCumpleHoy(b.dia, b.mes)).length;
+  const mesCount  = lista.filter(b => esCumpleMes(b.dia, b.mes)).length;
+
+  let header = "";
+  if (hoyCount) {
+    header += `<div style="background:rgba(201,168,76,.12);border:1px solid #c9a84c;border-radius:3px;padding:10px 16px;margin-bottom:16px;font-size:.84rem;color:#7a5a10;">
+      🎉 ¡Hay ${hoyCount} cumpleaños hoy! Recuerda felicitarles.
+    </div>`;
+  }
+  if (mesCount) {
+    header += `<div style="background:var(--accent3);border:1px solid var(--accent);border-radius:3px;padding:10px 16px;margin-bottom:16px;font-size:.84rem;color:var(--accent2);">
+      📅 ${mesCount} cumpleaños este mes.
+    </div>`;
+  }
+
+  const cards = lista.length ? lista.map(b => {
+    const hoy = esCumpleHoy(b.dia, b.mes);
+    const mes  = esCumpleMes(b.dia, b.mes);
+    const dias = diasParaCumple(b.dia, b.mes);
+    const initials = b.nombre.split(" ").slice(0,2).map(n=>n[0]).join("").toUpperCase();
+    const edadStr  = b.anio ? ` · ${new Date().getFullYear() - b.anio + (hoy ? 0 : (dias < 366 && new Date().getMonth()+1 > b.mes ? 1 : 0))} años` : "";
+    const diasStr  = hoy ? "¡Hoy! 🎂" : (dias === 1 ? "Mañana" : "En " + dias + " días");
+    return `
+      <div class="bday-card${hoy?' hoy':mes?' este-mes':''}">
+        <div class="bday-avatar">${hoy ? "🎂" : initials}</div>
+        <div style="flex:1;min-width:0">
+          <div class="bday-name">${esc(b.nombre)}</div>
+          <div class="bday-meta">
+            ${esc(b.grado)}${b.escuadron?" · "+esc(b.escuadron):""}
+            · ${b.dia} de ${MESES_L[b.mes-1]}${b.anio?" "+b.anio:""}${edadStr}
+          </div>
+        </div>
+        ${hoy ? `<span class="bday-badge-hoy">¡HOY!</span>` : mes ? `<span class="bday-badge-mes">ESTE MES</span>` : ""}
+        <div class="bday-dias">${diasStr}</div>
+        ${esAdmin ? `<div style="display:flex;gap:4px;margin-left:8px">
+          <button class="mini-btn" onclick="abrirEditBday(${b.id})">✏</button>
+          <button class="mini-btn" onclick="eliminarBday(${b.id})" style="color:var(--danger)">✕</button>
+        </div>` : ""}
+      </div>`;
+  }).join("") : `<div class="vacio">Sin registros en esta categoría.${esAdmin?" Presiona «+ Agregar» para añadir.":""}</div>`;
+
+  document.getElementById("bday-content").innerHTML = header + `<div class="flex-col">${cards}</div>`;
+}
+
+function setBdayTab(id) {
+  bdayTab = id;
+  renderCumpleanos();
+}
+
+function openModalBday() {
+  editBdayId = null;
+  document.getElementById("modal-bday-title").textContent = "Agregar Cumpleaños";
+  ["fb-nombre","fb-grado","fb-escuadron","fb-anio"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fb-dia").value = "";
+  document.getElementById("fb-mes").value = "1";
+  document.getElementById("fb-cat").value = bdayTab;
+  openModal("modal-bday");
+}
+
+function abrirEditBday(id) {
+  const b = cumpleanos.find(x => x.id === id);
+  if (!b) return;
+  editBdayId = id;
+  document.getElementById("modal-bday-title").textContent = "Editar Cumpleaños";
+  document.getElementById("fb-nombre").value    = b.nombre;
+  document.getElementById("fb-grado").value     = b.grado;
+  document.getElementById("fb-cat").value       = b.cat;
+  document.getElementById("fb-dia").value       = b.dia;
+  document.getElementById("fb-mes").value       = b.mes;
+  document.getElementById("fb-anio").value      = b.anio||"";
+  document.getElementById("fb-escuadron").value = b.escuadron||"";
+  openModal("modal-bday");
+}
+
+function guardarBday() {
+  const nombre = document.getElementById("fb-nombre").value.trim();
+  const dia    = parseInt(document.getElementById("fb-dia").value);
+  const mes    = parseInt(document.getElementById("fb-mes").value);
+  if (!nombre || !dia || !mes) return alert("Nombre, día y mes son obligatorios.");
+  const bday = {
+    id:        editBdayId || Date.now(),
+    nombre,
+    grado:     document.getElementById("fb-grado").value.trim(),
+    cat:       document.getElementById("fb-cat").value,
+    dia,
+    mes,
+    anio:      parseInt(document.getElementById("fb-anio").value)||null,
+    escuadron: document.getElementById("fb-escuadron").value.trim(),
+  };
+  if (editBdayId) {
+    cumpleanos = cumpleanos.map(b => b.id === editBdayId ? bday : b);
+  } else {
+    cumpleanos = [...cumpleanos, bday];
+  }
+  closeModal("modal-bday");
+  renderCumpleanos();
+  jbSave();
+}
+
+function eliminarBday(id) {
+  if (!confirm("¿Eliminar cumpleaños?")) return;
+  cumpleanos = cumpleanos.filter(b => b.id !== id);
+  renderCumpleanos();
+  jbSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT — arranca DESPUÉS de cargar datos desde la nube
+// ═══════════════════════════════════════════════════════════
+document.getElementById("footer-year").textContent = new Date().getFullYear();
+jbLoad().then(() => {
+  buildNav();
+  renderInicio();
+});
+
+// ═══════════════════════════════════════════════════════════
+// PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
+// ═══════════════════════════════════════════════════════════
+function toggleInfoPanel() {
+  const panel = document.getElementById('info-panel');
+  panel.classList.toggle('visible');
+  if (panel.classList.contains('visible')) updateInfoPanel();
+}
+
+function updateInfoPanel() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+  const urg = act.filter(p => p.prioridad === 'urgente' || p.prioridad === 'critico').length;
+
+  const el = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+  el('ip-pub-count', act.length);
+  el('ip-ev-count', prox.length);
+  el('ip-urg-count', urg || '0');
+  el('ip-svc-count', servicios.length);
+
+  // Fecha y hora
+  const ahora = new Date();
+  const diasSem = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mesesLbl = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fechaStr = diasSem[ahora.getDay()] + ' ' + ahora.getDate() + ' ' + mesesLbl[ahora.getMonth()] + ' ' + ahora.getFullYear();
+  const horaStr  = String(ahora.getHours()).padStart(2,'0') + ':' + String(ahora.getMinutes()).padStart(2,'0') + ':' + String(ahora.getSeconds()).padStart(2,'0');
+  el('ip-fecha', fechaStr);
+  el('ip-hora',  horaStr);
+
+  // Badge FAB
+  const badge = document.getElementById('info-fab-badge');
+  if (badge) { badge.style.display = urg > 0 ? 'flex' : 'none'; badge.textContent = urg; }
+}
+
+// Reloj en tiempo real
+setInterval(() => {
+  const panel = document.getElementById('info-panel');
+  if (panel && panel.classList.contains('visible')) {
+    const ahora = new Date();
+    const mesesLbl = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const diasSem  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const fechaStr = diasSem[ahora.getDay()] + ' ' + ahora.getDate() + ' ' + mesesLbl[ahora.getMonth()] + ' ' + ahora.getFullYear();
+    const horaStr  = String(ahora.getHours()).padStart(2,'0') + ':' + String(ahora.getMinutes()).padStart(2,'0') + ':' + String(ahora.getSeconds()).padStart(2,'0');
+    const ef = document.getElementById('ip-fecha'); if(ef) ef.textContent = fechaStr;
+    const eh = document.getElementById('ip-hora');  if(eh) eh.textContent = horaStr;
+  }
+}, 1000);
+
+// Badge urgentes al iniciar
+(function initFabBadge() {
+  const act = pubsActivas();
+  const urg = act.filter(p => p.prioridad === 'urgente' || p.prioridad === 'critico').length;
+  const badge = document.getElementById('info-fab-badge');
+  if (badge && urg > 0) { badge.style.display = 'flex'; badge.textContent = urg; }
+})();
+
+// ── Drag ──
+(function initDrag() {
+  const panel  = document.getElementById('info-panel');
+  const header = document.getElementById('info-panel-header');
+  if (!panel || !header) return;
+
+  let isDragging = false, startX, startY, startLeft, startTop;
+
+  header.addEventListener('mousedown', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    isDragging = true;
+    panel.classList.add('dragging');
+    const rect = panel.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    startLeft = rect.left; startTop = rect.top;
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    panel.style.left = startLeft + 'px'; panel.style.top = startTop + 'px';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    let newLeft = startLeft + dx;
+    let newTop  = startTop  + dy;
+    newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  newLeft));
+    newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, newTop));
+    panel.style.left = newLeft + 'px'; panel.style.top = newTop + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) { isDragging = false; panel.classList.remove('dragging'); }
+  });
+
+  // Touch support
+  header.addEventListener('touchstart', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    isDragging = true;
+    const rect = panel.getBoundingClientRect();
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    startLeft = rect.left; startTop = rect.top;
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    panel.style.left = startLeft + 'px'; panel.style.top = startTop + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    let newLeft = startLeft + dx;
+    let newTop  = startTop  + dy;
+    newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  newLeft));
+    newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, newTop));
+    panel.style.left = newLeft + 'px'; panel.style.top = newTop + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => { isDragging = false; panel.classList.remove('dragging'); });
+})();
+
+
+// ═══════════════════════════════════════════════════════════
+// ════════════ JSONBIN ENGINE ════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+(function initJBCfg() {
+  const saved = localStorage.getItem('jb_cfg');
+  if (saved) {
+    try {
+      const cfg = JSON.parse(saved);
+      if (cfg.binId)  window._JB_BIN  = cfg.binId;
+      if (cfg.apiKey) window._JB_KEY  = cfg.apiKey;
+    } catch(e){}
+  }
+})();
+
+async function jbSave() {
+  const binId  = window._JB_BIN;
+  const apiKey = window._JB_KEY;
+  if (!binId || !apiKey) return;
+
+  // Strip adjuntos/archivos grandes para no superar 100KB de JSONBin free
+  const pubsLight = pubs.map(p => ({ ...p, adjuntos: [] }));
+  const docsSvcLight = docsSvc.map(d => ({ ...d, archivo: { nombre: d.archivo?.nombre, tipo: d.archivo?.tipo, tamano: d.archivo?.tamano } }));
+
+  const payload = {
+    pubs: pubsLight,
+    eventos,
+    servicios,
+    docsSvc: docsSvcLight,
+    ordenDia,
+    cumpleanos,
+  };
+
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': apiKey,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      showCloudMsg('✅ Guardado en la nube', '#2a7a3a');
+    } else {
+      const err = await res.json();
+      showCloudMsg('⚠ Error al guardar: ' + (err.message||res.status), '#b84c37');
+      console.error('jbSave error:', err);
+    }
+  } catch(e) {
+    showCloudMsg('⚠ Sin conexión — cambios solo locales', '#a06030');
+    console.error('jbSave catch:', e);
+  }
+}
+
+async function jbLoad() {
+  const binId  = window._JB_BIN;
+  const apiKey = window._JB_KEY;
+  if (!binId || !apiKey) {
+    showCloudMsg('☁ Configura JSONBin en ⚙ NUBE para persistencia', '#4a7c59');
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { 'X-Master-Key': apiKey },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      showCloudMsg('⚠ Error al cargar: ' + (err.message||res.status), '#b84c37');
+      console.error('jbLoad error:', err);
+      return;
+    }
+    const data = await res.json();
+    const rec  = data.record;
+    if (rec.pubs        && Array.isArray(rec.pubs))        pubs        = rec.pubs;
+    if (rec.eventos     && Array.isArray(rec.eventos))     eventos     = rec.eventos;
+    if (rec.servicios   && Array.isArray(rec.servicios))   servicios   = rec.servicios;
+    if (rec.docsSvc     && Array.isArray(rec.docsSvc))     docsSvc     = rec.docsSvc;
+    if (rec.ordenDia    && typeof rec.ordenDia === 'object') ordenDia  = rec.ordenDia;
+    if (rec.cumpleanos  && Array.isArray(rec.cumpleanos))  cumpleanos  = rec.cumpleanos;
+    showCloudMsg('☁ Datos cargados desde la nube', '#4a7c59');
+  } catch(e) {
+    showCloudMsg('⚠ Sin conexión — mostrando datos locales', '#a06030');
+    console.error('jbLoad catch:', e);
+  }
+}
+
+function showCloudMsg(txt, color) {
+  const el = document.getElementById('cloud-msg');
+  if (!el) return;
+  el.textContent = txt;
+  el.style.background = color;
+  el.style.opacity = '1';
+  clearTimeout(window._cloudTimer);
+  window._cloudTimer = setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+
+function openCfg() {
+  const saved = localStorage.getItem('jb_cfg');
+  let binId = '', apiKey = '';
+  if (saved) { try { const c = JSON.parse(saved); binId = c.binId||''; apiKey = c.apiKey||''; } catch(e){} }
+  document.getElementById('cfg-bin').value = binId;
+  document.getElementById('cfg-key').value = apiKey;
+  document.getElementById('cfg-status').textContent = '';
+  document.getElementById('modal-cfg').style.display = 'flex';
+}
+
+function saveCfg() {
+  const binId  = document.getElementById('cfg-bin').value.trim();
+  const apiKey = document.getElementById('cfg-key').value.trim();
+  if (!binId || !apiKey) return alert('Ambos campos son obligatorios.');
+  localStorage.setItem('jb_cfg', JSON.stringify({ binId, apiKey }));
+  window._JB_BIN = binId;
+  window._JB_KEY = apiKey;
+  document.getElementById('cfg-status').textContent = '✅ Configuración guardada';
+  document.getElementById('cfg-status').style.color = 'var(--accent)';
+}
+
+async function testCfg() {
+  const binId  = document.getElementById('cfg-bin').value.trim();
+  const apiKey = document.getElementById('cfg-key').value.trim();
+  if (!binId || !apiKey) return alert('Completa ambos campos primero.');
+  document.getElementById('cfg-status').textContent = '⏳ Probando…';
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { 'X-Master-Key': apiKey }
+    });
+    if (res.ok) {
+      document.getElementById('cfg-status').textContent = '✅ Conexión exitosa con JSONBin';
+      document.getElementById('cfg-status').style.color = 'var(--accent)';
+    } else {
+      const err = await res.json();
+      document.getElementById('cfg-status').textContent = '❌ Error: ' + (err.message||res.status);
+      document.getElementById('cfg-status').style.color = 'var(--danger)';
+    }
+  } catch(e) {
+    document.getElementById('cfg-status').textContent = '❌ Sin conexión';
+    document.getElementById('cfg-status').style.color = 'var(--danger)';
+  }
+}
+
+
+<div id="modal-cfg" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box" style="max-width:440px">
+    <h3>☁ Configuración JSONBin</h3>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:16px">Ingresa tus credenciales de <a href="https://jsonbin.io" target="_blank" style="color:var(--accent)">jsonbin.io</a> para persistencia en la nube.</p>
+    <div class="form-col">
+      <div>
+        <div class="sub-lbl">BIN ID</div>
+        <input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0">
+      </div>
+      <div>
+        <div class="sub-lbl">API KEY (X-Master-Key)</div>
+        <input id="cfg-key" type="password" placeholder="$2a$10$...">
+      </div>
+      <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="saveCfg()">💾 Guardar</button>
+        <button class="btn-s" onclick="testCfg()">🔍 Probar</button>
+        <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cerrar</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:4px">
+        Las credenciales se guardan solo en este navegador (localStorage).
+      </div>
+    </div>
+  </div>
+</div>
+
+</script>
+</body>
+</html>
