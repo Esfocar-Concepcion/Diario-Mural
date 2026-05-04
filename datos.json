@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:49.414Z",
+  "updatedAt": "2026-05-04T15:15:56.478Z",
   "pubs": [
     {
       "id": 6,
@@ -256,6 +256,16 @@
       "dia": 5,
       "mes": 12,
       "anio": 1980,
+      "escuadron": ""
+    },
+    {
+      "id": 1777907752720,
+      "nombre": "MIGUEL PULGAR",
+      "grado": "SARGENTO 1RO.",
+      "cat": "alumnos",
+      "dia": 8,
+      "mes": 9,
+      "anio": 1985,
       "escuadron": ""
     }
   ]
