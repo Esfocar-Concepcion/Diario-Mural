@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -6,897 +6,172 @@
   <title>Diario Mural — ESFOCAR Concepción</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:         #f2f3ee;
-      --bg2:        #ffffff;
-      --bg3:        #e8eae2;
-      --surface:    #ffffff;
-      --border:     #d4d8cc;
-      --border2:    #c4c9ba;
-      --text:       #1c1f18;
-      --text2:      #4a4f42;
-      --text3:      #7a8070;
-      --accent:     #4a7c59;
-      --accent2:    #3a6147;
-      --accent3:    #d6e8d9;
-      --danger:     #b84c37;
-      --warn:       #a06030;
-      --crit:       #7a1a1a;
-      --header-bg:  #1e2d1a;
-      --header-text:#d8e8d0;
-      --shadow:     rgba(0,0,0,0.10);
+      --bg:#0f1510;--bg2:#161d13;--bg3:#1e2820;--surface:#18201a;
+      --border:#2a3828;--border2:#354535;--text:#e8f0e0;--text2:#b8ccb0;
+      --text3:#7a9870;--accent:#5a9c6a;--accent2:#6ab87a;--accent3:#1a3020;
+      --danger:#d45c44;--warn:#c07840;--crit:#e03030;
+      --header-bg:#0a0f08;--header-text:#d8f0c8;--shadow:rgba(0,0,0,0.45);
     }
-
-    body {
-      font-family: 'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background .25s, color .25s;
-    }
-
-    /* Dark mode */
-    body.dark {
-      --bg:         #111510;
-      --bg2:        #1a1f18;
-      --bg3:        #222820;
-      --surface:    #1e2419;
-      --border:     #2e3828;
-      --border2:    #3a4832;
-      --text:       #d8e4d0;
-      --text2:      #a8b89a;
-      --text3:      #6a7a60;
-      --accent:     #5a9468;
-      --accent2:    #6aad7a;
-      --accent3:    #1e3028;
-      --danger:     #d45c44;
-      --warn:       #c07840;
-      --crit:       #e03030;
-      --header-bg:  #0c120a;
-      --header-text:#b8d0a8;
-      --shadow:     rgba(0,0,0,0.40);
-    }
-
-    /* ── Layout ── */
-    #crit-bar {
-      background: var(--crit);
-      color: #fff;
-      padding: 7px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: .78rem;
-      letter-spacing: .06em;
-      font-family: monospace;
-    }
-    #crit-bar.hidden { display: none; }
-
-    header {
-      background: var(--header-bg);
-      color: var(--header-text);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 16px var(--shadow);
-    }
-    .header-inner {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 58px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-    }
-    .brand-logo {
-      width: 46px; height: 46px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 1.15rem; letter-spacing: .05em;
-      flex-shrink: 0;
-      border: 2px solid #c9a84c;
-      box-shadow: 0 0 8px rgba(201,168,76,0.35);
-    }
-    .brand-sub { font-size: .6rem; letter-spacing: .22em; color: var(--accent2); font-family: monospace; line-height: 1; }
-    .brand-title { font-size: .98rem; font-weight: 700; letter-spacing: .04em; line-height: 1.2; }
-
-    nav.nav-d { display: flex; gap: 4px; align-items: center; }
-    nav.nav-m { display: none; gap: 8px; }
-
-    .nav-btn {
-      background: transparent; border: none; padding: 6px 14px;
-      cursor: pointer; font-size: .78rem; letter-spacing: .06em;
-      border-radius: 2px; font-family: inherit; color: var(--header-text);
-      transition: background .15s; border: 1px solid transparent;
-    }
-    .nav-btn.active {
-      background: var(--accent3);
-      color: var(--accent2);
-      border-color: var(--accent);
-    }
-    .nav-btn:hover { opacity: .85; }
-    .icon-btn {
-      background: none; border: none; cursor: pointer;
-      color: inherit; padding: 4px 8px; border-radius: 2px; font-size: 1rem;
-    }
-
-    /* Mobile menu */
-    #mob-menu {
-      background: var(--header-bg);
-      border-top: 1px solid var(--border);
-      padding: 8px 18px 14px;
-      display: none;
-    }
-    #mob-menu.open { display: block; }
-    .mob-item {
-      display: block; width: 100%; text-align: left;
-      background: none; border: none; border-bottom: 1px solid var(--border);
-      color: var(--header-text); padding: 10px 4px; cursor: pointer;
-      font-size: .88rem; font-family: inherit;
-    }
-
-    main { max-width: 1140px; margin: 0 auto; padding: 26px 16px 60px; }
-
-    footer {
-      background: var(--header-bg);
-      color: var(--text3);
-      padding: 22px 20px;
-      text-align: center;
-      font-size: .62rem;
-      letter-spacing: .2em;
-      font-family: monospace;
-    }
-
-    /* ── Sections ── */
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* ── Grid helpers ── */
-    .grid-5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 26px; }
-    .grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-    .grid-11 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px,1fr)); gap: 14px; }
-    .grid-auto-sm { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
-
-    /* ── Hero ── */
-    .hero {
-      background: var(--header-bg);
-      color: var(--header-text);
-      border-radius: 4px;
-      padding: 36px 36px 32px;
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      right: -40px; top: -40px;
-      width: 220px; height: 220px;
-      border-radius: 50%;
-      background: var(--accent);
-      opacity: .06;
-      pointer-events: none;
-    }
-    .hero-sub { font-size: .62rem; letter-spacing: .28em; color: #ffffff; font-family: monospace; margin-bottom: 10px; }
-    .hero h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 8px; line-height: 1.2; color: #ffffff; }
-    .hero-accent { font-size: 1rem; font-weight: 400; color: #ffffff; }
-    .hero p { font-size: .88rem; color: rgba(255,255,255,0.85); line-height: 1.7; max-width: 480px; margin: 0 0 22px; }
-    .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-    .hero .btn-s { color: #ffffff; border-color: rgba(255,255,255,0.7); }
-    .hero .btn-s:hover { background: rgba(255,255,255,0.15); border-color: #ffffff; }
-
-    /* ── Metric cards ── */
-    .metric-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 16px 14px;
-      text-align: center;
-    }
-    .metric-icon { font-size: 1.1rem; }
-    .metric-val { font-size: 1.7rem; font-weight: 700; line-height: 1.2; }
-    .metric-label { font-size: .68rem; color: var(--text3); letter-spacing: .05em; margin-top: 2px; }
-
-    /* ── SecTitle ── */
-    .sec-title { margin-bottom: 16px; }
-    .sec-title h2 { font-size: 1rem; margin: 0; color: var(--text); font-weight: 700; letter-spacing: .04em; }
-    .sec-title-bar { height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin-top: 5px; width: 60px; }
-
-    /* ── PubCard ── */
-    .pub-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: box-shadow .15s, transform .1s;
-    }
-    .pub-card:hover { box-shadow: 0 3px 12px var(--shadow); transform: translateY(-1px); }
-    .pub-card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 7px; align-items: center; }
-    .pub-card-title { font-size: .9rem; font-weight: 600; color: var(--text); margin-bottom: 5px; line-height: 1.35; }
-    .pub-card-date { font-size: .7rem; color: var(--text3); margin-bottom: 8px; font-family: monospace; }
-    .pub-card-body {
-      font-size: .8rem; color: var(--text2); line-height: 1.6;
-      overflow: hidden; display: -webkit-box;
-      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    }
-    .pub-card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
-
-    /* ── EvCard ── */
-    .ev-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 12px 14px;
-    }
-    .ev-card-title { font-size: .86rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-    .ev-card-date { font-size: .7rem; color: var(--text3); font-family: monospace; }
-    .ev-card-lugar { font-size: .73rem; color: var(--text2); margin-top: 3px; }
-    .ev-card-desc { font-size: .76rem; color: var(--text3); margin-top: 4px; line-height: 1.5; }
-
-    /* ── Badges ── */
-    .badge {
-      border-radius: 2px; font-size: .65rem; font-weight: 700;
-      padding: 2px 7px; letter-spacing: .06em; font-family: monospace;
-    }
-    .badge-cat { background: var(--accent3); color: var(--accent); border: 1px solid var(--accent); }
-    .badge-imp { background: rgba(74,124,89,.13); color: var(--accent); border: 1px solid var(--accent); font-size: .62rem; }
-    .badge-urg { background: rgba(184,76,55,.13); color: var(--danger); border: 1px solid var(--danger); font-size: .62rem; }
-    .badge-crit { background: rgba(122,26,26,.13); color: var(--crit); border: 1px solid var(--crit); font-size: .62rem; }
-    .tag { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); border-radius: 2px; font-size: .65rem; padding: 1px 6px; font-family: monospace; }
-
-    /* ── Forms ── */
-    input, select, textarea {
-      border: 1px solid var(--border2);
-      border-radius: 2px;
-      padding: 8px 11px;
-      font-size: .82rem;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      width: 100%;
-      transition: border-color .15s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: 2px solid var(--accent); outline-offset: 1px;
-    }
-    textarea { resize: vertical; }
-
-    /* ── Buttons ── */
-    .btn-p {
-      background: var(--accent); color: #fff; border: none;
-      padding: 8px 18px; cursor: pointer; border-radius: 2px;
-      font-size: .8rem; letter-spacing: .05em; font-family: inherit;
-    }
-    .btn-s {
-      background: transparent; color: var(--accent);
-      border: 1px solid var(--accent); padding: 8px 18px;
-      cursor: pointer; border-radius: 2px;
-      font-size: .8rem; letter-spacing: .05em; font-family: inherit;
-    }
-    .btn-p:hover, .btn-s:hover { opacity: .85; }
-
-    .mini-btn {
-      background: var(--bg3); border: 1px solid var(--border);
-      padding: 3px 8px; cursor: pointer; border-radius: 2px;
-      font-size: .8rem; color: var(--text2);
-    }
-    .mini-btn:hover { opacity: .8; }
-
-    /* ── Sub label ── */
-    .sub-lbl { font-size: .65rem; letter-spacing: .18em; color: var(--text3); margin-bottom: 8px; font-family: monospace; }
-
-    /* ── Table ── */
-    .tbl { width: 100%; border-collapse: collapse; font-size: .8rem; }
-    .tbl th { padding: 9px 13px; text-align: left; font-size: .65rem; letter-spacing: .1em; color: var(--text3); font-family: monospace; font-weight: 600; background: var(--bg3); border-bottom: 1px solid var(--border); }
-    .tbl td { padding: 9px 13px; border-bottom: 1px solid var(--border); }
-    .tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; overflow-x: auto; }
-
-    /* ── Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.55);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; padding: 16px;
-    }
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 26px;
-      max-width: 520px; width: 100%;
-      max-height: 90vh; overflow-y: auto;
-      box-shadow: 0 12px 40px var(--shadow);
-    }
-    .modal-box h3 { margin: 0 0 18px; font-size: 1rem; color: var(--text); }
-
-    /* ── Vacio ── */
-    .vacio { color: var(--text3); font-size: .84rem; padding: 20px 0; text-align: center; }
-
-    /* ── Detalle ── */
-    .detalle-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 4px; padding: 32px 36px;
-    }
-
-    /* ── Filtros ── */
-    .filtros-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 3px; padding: 16px 18px; margin-bottom: 18px;
-    }
-    .filtros-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
-    .filtros-row2 { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-
-    /* ── Servicios ── */
-    .svc-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-    .svc-sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 10px 16px; text-align: center; min-width: 100px; }
-
-    /* ── Orden del Día ── */
-    .orden-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 4px solid var(--accent); border-radius: 4px; padding: 22px 26px;
-    }
-    .orden-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
-    .orden-field { }
-    .orden-instruccion { font-size: .88rem; color: var(--text2); line-height: 1.75; white-space: pre-wrap; }
-    .orden-firma { border-top: 1px solid var(--border); padding-top: 12px; display: flex; gap: 8px; align-items: center; }
-
-    /* ── Adjuntos ── */
-    .adj-list { display: flex; flex-direction: column; gap: 7px; margin-top: 8px; }
-    .adj-item {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--bg3); padding: 5px 10px; border-radius: 3px; font-size: .75rem;
-    }
-
-    /* ── Doc card ── */
-    .doc-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 4px; padding: 16px 18px;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-
-    /* ── Etiqueta buttons ── */
-    .etq-btn {
-      padding: 3px 10px; border-radius: 2px; font-size: .72rem; cursor: pointer;
-      border: 1px solid var(--border); background: var(--bg3); color: var(--text2);
-      font-family: inherit;
-    }
-    .etq-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent2); }
-
-
-    /* ── Cumpleaños ── */
-    .bday-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
-    .bday-tab-btn {
-      padding:7px 18px; border-radius:2px; font-size:.78rem; cursor:pointer;
-      border:1px solid var(--border); background:var(--bg3); color:var(--text2);
-      font-family:inherit; letter-spacing:.05em; transition:background .15s;
-    }
-    .bday-tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent2); }
-    .bday-card {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:3px; padding:14px 16px;
-      display:flex; align-items:center; gap:14px;
-    }
-    .bday-card.hoy { border-left:4px solid #c9a84c; background:rgba(201,168,76,.07); }
+    body { background:var(--bg);color:var(--text);font-family:'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;min-height:100vh;transition:background .25s,color .25s; }
+    body.dark { --bg:#111510;--bg2:#1a1f18;--bg3:#222820;--surface:#1e2419;--border:#2e3828;--border2:#3a4832;--text:#d8e4d0;--text2:#a8b89a;--text3:#6a7a60;--accent:#5a9468;--accent2:#6aad7a;--accent3:#1e3028;--danger:#d45c44;--warn:#c07840;--crit:#e03030;--header-bg:#0c120a;--header-text:#b8d0a8;--shadow:rgba(0,0,0,0.40); }
+    #crit-bar { background:var(--crit);color:#fff;padding:7px 18px;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;letter-spacing:.06em;font-family:monospace; }
+    #crit-bar.hidden { display:none; }
+    header { background:var(--header-bg);color:var(--header-text);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px var(--shadow); }
+    .header-inner { max-width:1140px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:58px; }
+    .brand { display:flex;align-items:center;gap:14px;cursor:pointer; }
+    .brand-logo { width:46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.15rem;flex-shrink:0;border:2px solid #c9a84c;box-shadow:0 0 8px rgba(201,168,76,0.35); }
+    .brand-sub { font-size:.6rem;letter-spacing:.22em;color:var(--accent2);font-family:monospace;line-height:1; }
+    .brand-title { font-size:.98rem;font-weight:700;letter-spacing:.04em;line-height:1.2; }
+    nav.nav-d { display:flex;gap:4px;align-items:center; }
+    nav.nav-m { display:none;gap:8px; }
+    .nav-btn { background:transparent;border:1px solid transparent;padding:6px 14px;cursor:pointer;font-size:.78rem;letter-spacing:.06em;border-radius:2px;font-family:inherit;color:var(--header-text);transition:background .15s; }
+    .nav-btn.active { background:var(--accent3);color:var(--accent2);border-color:var(--accent); }
+    .nav-btn:hover { opacity:.85; }
+    .icon-btn { background:none;border:none;cursor:pointer;color:inherit;padding:4px 8px;border-radius:2px;font-size:1rem; }
+    #mob-menu { background:var(--header-bg);border-top:1px solid var(--border);padding:8px 18px 14px;display:none; }
+    #mob-menu.open { display:block; }
+    .mob-item { display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);color:var(--header-text);padding:10px 4px;cursor:pointer;font-size:.88rem;font-family:inherit; }
+    main { max-width:1140px;margin:0 auto;padding:26px 16px 60px; }
+    footer { background:var(--header-bg);color:var(--text3);padding:22px 20px;text-align:center;font-size:.62rem;letter-spacing:.2em;font-family:monospace; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .grid-5 { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:26px; }
+    .grid-21 { display:grid;grid-template-columns:2fr 1fr;gap:20px; }
+    .grid-11 { display:grid;grid-template-columns:1fr 1fr;gap:18px; }
+    .grid-auto { display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px; }
+    .grid-auto-sm { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px; }
+    .hero { background:var(--header-bg);color:var(--header-text);border-radius:4px;padding:36px 36px 32px;margin-bottom:24px;position:relative;overflow:hidden; }
+    .hero::before { content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.06;pointer-events:none; }
+    .hero-sub { font-size:.62rem;letter-spacing:.28em;color:var(--accent2);font-family:monospace;margin-bottom:10px; }
+    .hero h1 { font-size:1.9rem;font-weight:700;margin:0 0 8px;line-height:1.2; }
+    .hero-accent { font-size:1rem;font-weight:400;color:var(--accent); }
+    .hero p { font-size:.88rem;color:var(--text2);line-height:1.7;max-width:480px;margin:0 0 22px; }
+    .hero-btns { display:flex;gap:10px;flex-wrap:wrap; }
+    .metric-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:16px 14px;text-align:center; }
+    .metric-icon { font-size:1.1rem; }
+    .metric-val { font-size:1.7rem;font-weight:700;line-height:1.2; }
+    .metric-label { font-size:.68rem;color:var(--text3);letter-spacing:.05em;margin-top:2px; }
+    .sec-title { margin-bottom:16px; }
+    .sec-title h2 { font-size:1rem;margin:0;color:var(--text);font-weight:700;letter-spacing:.04em; }
+    .sec-title-bar { height:2px;background:linear-gradient(to right,var(--accent),transparent);margin-top:5px;width:60px; }
+    .pub-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 16px;cursor:pointer;transition:box-shadow .15s,transform .1s; }
+    .pub-card:hover { box-shadow:0 3px 12px var(--shadow);transform:translateY(-1px); }
+    .pub-card-meta { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;align-items:center; }
+    .pub-card-title { font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.35; }
+    .pub-card-date { font-size:.7rem;color:var(--text3);margin-bottom:8px;font-family:monospace; }
+    .pub-card-body { font-size:.8rem;color:var(--text2);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
+    .pub-card-tags { display:flex;gap:5px;flex-wrap:wrap;margin-top:8px; }
+    .ev-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:12px 14px; }
+    .ev-card-title { font-size:.86rem;font-weight:600;color:var(--text);margin-bottom:3px; }
+    .ev-card-date { font-size:.7rem;color:var(--text3);font-family:monospace; }
+    .ev-card-lugar { font-size:.73rem;color:var(--text2);margin-top:3px; }
+    .ev-card-desc { font-size:.76rem;color:var(--text3);margin-top:4px;line-height:1.5; }
+    .badge { border-radius:2px;font-size:.65rem;font-weight:700;padding:2px 7px;letter-spacing:.06em;font-family:monospace; }
+    .badge-cat { background:var(--accent3);color:var(--accent);border:1px solid var(--accent); }
+    .badge-imp { background:rgba(74,124,89,.13);color:var(--accent);border:1px solid var(--accent);font-size:.62rem; }
+    .badge-urg { background:rgba(184,76,55,.13);color:var(--danger);border:1px solid var(--danger);font-size:.62rem; }
+    .badge-crit { background:rgba(122,26,26,.13);color:var(--crit);border:1px solid var(--crit);font-size:.62rem; }
+    .tag { background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:2px;font-size:.65rem;padding:1px 6px;font-family:monospace; }
+    input,select,textarea { border:1px solid var(--border2);border-radius:2px;padding:8px 11px;font-size:.82rem;font-family:inherit;background:var(--bg);color:var(--text);width:100%;transition:border-color .15s; }
+    input:focus,select:focus,textarea:focus { outline:2px solid var(--accent);outline-offset:1px; }
+    textarea { resize:vertical; }
+    .btn-p { background:var(--accent);color:#fff;border:none;padding:8px 18px;cursor:pointer;border-radius:2px;font-size:.8rem;letter-spacing:.05em;font-family:inherit; }
+    .btn-s { background:transparent;color:var(--accent);border:1px solid var(--accent);padding:8px 18px;cursor:pointer;border-radius:2px;font-size:.8rem;letter-spacing:.05em;font-family:inherit; }
+    .btn-p:hover,.btn-s:hover { opacity:.85; }
+    .mini-btn { background:var(--bg3);border:1px solid var(--border);padding:3px 8px;cursor:pointer;border-radius:2px;font-size:.8rem;color:var(--text2); }
+    .mini-btn:hover { opacity:.8; }
+    .sub-lbl { font-size:.65rem;letter-spacing:.18em;color:var(--text3);margin-bottom:8px;font-family:monospace; }
+    .tbl { width:100%;border-collapse:collapse;font-size:.8rem; }
+    .tbl th { padding:9px 13px;text-align:left;font-size:.65rem;letter-spacing:.1em;color:var(--text3);font-family:monospace;font-weight:600;background:var(--bg3);border-bottom:1px solid var(--border); }
+    .tbl td { padding:9px 13px;border-bottom:1px solid var(--border); }
+    .tbl-wrap { background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow-x:auto; }
+    /* MODAL */
+    .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px; }
+    .modal-box { background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px var(--shadow); }
+    .modal-box h3 { margin:0 0 18px;font-size:1rem;color:var(--text); }
+    /* MODAL CONFIRMACIÓN */
+    .confirm-box { max-width:380px; }
+    .confirm-msg { font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:20px; }
+    .vacio { color:var(--text3);font-size:.84rem;padding:20px 0;text-align:center; }
+    .detalle-box { background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:32px 36px; }
+    .filtros-box { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:16px 18px;margin-bottom:18px; }
+    .filtros-row { display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px; }
+    .filtros-row2 { display:flex;gap:10px;flex-wrap:wrap;align-items:center; }
+    .svc-summary { display:flex;gap:10px;flex-wrap:wrap;margin-top:20px; }
+    .svc-sum-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px 16px;text-align:center;min-width:100px; }
+    .orden-box { background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:22px 26px; }
+    .orden-meta { display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px; }
+    .orden-instruccion { font-size:.88rem;color:var(--text2);line-height:1.75;white-space:pre-wrap; }
+    .orden-firma { border-top:1px solid var(--border);padding-top:12px;display:flex;gap:8px;align-items:center; }
+    .adj-list { display:flex;flex-direction:column;gap:7px;margin-top:8px; }
+    .adj-item { display:flex;align-items:center;gap:8px;background:var(--bg3);padding:5px 10px;border-radius:3px;font-size:.75rem; }
+    .doc-card { background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;display:flex;flex-direction:column;gap:8px; }
+    .etq-btn { padding:3px 10px;border-radius:2px;font-size:.72rem;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:inherit; }
+    .etq-btn.sel { background:var(--accent);color:#fff;border-color:var(--accent2); }
+    .bday-tabs { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px; }
+    .bday-tab-btn { padding:7px 18px;border-radius:2px;font-size:.78rem;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:inherit;letter-spacing:.05em;transition:background .15s; }
+    .bday-tab-btn.active { background:var(--accent);color:#fff;border-color:var(--accent2); }
+    .bday-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 16px;display:flex;align-items:center;gap:14px; }
+    .bday-card.hoy { border-left:4px solid #c9a84c;background:rgba(201,168,76,.07); }
     .bday-card.este-mes { border-left:4px solid var(--accent); }
-    .bday-avatar {
-      width:42px; height:42px; border-radius:50%;
-      background:var(--accent3); color:var(--accent);
-      display:flex; align-items:center; justify-content:center;
-      font-size:1.3rem; font-weight:700; flex-shrink:0;
-      border:2px solid var(--border);
-    }
-    .bday-card.hoy .bday-avatar { background:rgba(201,168,76,.18); color:#9a7a1a; border-color:#c9a84c; }
-    .bday-name { font-size:.9rem; font-weight:600; color:var(--text); line-height:1.3; }
-    .bday-meta { font-size:.72rem; color:var(--text3); font-family:monospace; margin-top:2px; }
-    .bday-badge-hoy {
-      background:rgba(201,168,76,.2); color:#8a6a10; border:1px solid #c9a84c;
-      border-radius:2px; font-size:.62rem; font-weight:700; padding:2px 7px;
-      font-family:monospace; letter-spacing:.06em; white-space:nowrap;
-    }
-    .bday-badge-mes {
-      background:var(--accent3); color:var(--accent); border:1px solid var(--accent);
-      border-radius:2px; font-size:.62rem; font-weight:700; padding:2px 7px;
-      font-family:monospace; letter-spacing:.06em; white-space:nowrap;
-    }
-    .bday-dias {
-      font-size:.68rem; color:var(--text3); font-family:monospace;
-      margin-left:auto; text-align:right; white-space:nowrap;
-    }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .grid-21 { grid-template-columns: 1fr !important; }
-      .grid-5  { grid-template-columns: 1fr 1fr 1fr !important; }
-    }
-    @media (max-width: 680px) {
-      nav.nav-d { display: none !important; }
-      nav.nav-m { display: flex !important; }
-      .grid-5  { grid-template-columns: 1fr 1fr !important; }
-      .grid-21 { grid-template-columns: 1fr !important; }
-      .grid-11 { grid-template-columns: 1fr !important; }
-      .detalle-box { padding: 20px 16px; }
-      .hero { padding: 24px 20px; }
-    }
-
-    .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .form-row > * { flex: 1; min-width: 120px; }
-    .form-col { display: flex; flex-direction: column; gap: 11px; }
-    .form-checks { display: flex; gap: 18px; flex-wrap: wrap; }
-    .form-checks label { display: flex; align-items: center; gap: 5px; font-size: .82rem; color: var(--text2); cursor: pointer; }
-    .form-btns { display: flex; gap: 10px; }
-    .form-btns .btn-p, .form-btns .btn-s { flex: 1; }
-
-    .flex-sb { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .flex-row { display: flex; gap: 8px; align-items: center; }
-    .flex-col { display: flex; flex-direction: column; gap: 12px; }
-    .mb-12 { margin-bottom: 12px; }
-    .mb-16 { margin-bottom: 16px; }
-    .mb-18 { margin-bottom: 18px; }
-    .mb-26 { margin-bottom: 26px; }
-    .mb-28 { margin-bottom: 28px; }
-    .mb-32 { margin-bottom: 32px; }
-    .mt-14 { margin-top: 14px; }
-    .mt-20 { margin-top: 20px; }
-    .w100 { width: 100%; }
-    .text-center { text-align: center; }
-    .res-count { font-size: .7rem; color: var(--text3); font-family: monospace; margin-bottom: 12px; }
-    .active-badge { background: var(--accent3); color: var(--accent); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
-    .inactive-badge { background: var(--bg3); color: var(--text3); padding: 2px 8px; border-radius: 2px; font-size: .68rem; font-weight: 600; font-family: monospace; }
-
-    /* ── Panel de Información Flotante ── */
-    #info-panel {
-      position: fixed;
-      bottom: 80px;
-      right: 24px;
-      width: 320px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      box-shadow: 0 8px 32px var(--shadow);
-      z-index: 500;
-      display: none;
-      flex-direction: column;
-      user-select: none;
-      transition: box-shadow .2s;
-      overflow: hidden;
-    }
-    #info-panel.visible { display: flex; }
-    #info-panel.dragging { box-shadow: 0 16px 48px rgba(0,0,0,.3); }
-    #info-panel-header {
-      background: var(--header-bg);
-      color: var(--header-text);
-      padding: 10px 14px;
-      font-size: .75rem;
-      letter-spacing: .12em;
-      font-family: monospace;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: grab;
-      border-bottom: 1px solid var(--border);
-    }
-    #info-panel-header:active { cursor: grabbing; }
-    #info-panel-body {
-      padding: 16px;
-      font-size: .8rem;
-      color: var(--text2);
-      line-height: 1.65;
-      overflow-y: auto;
-      max-height: 420px;
-    }
-    .info-section { margin-bottom: 14px; }
-    .info-section:last-child { margin-bottom: 0; }
-    .info-section-title {
-      font-size: .65rem;
-      letter-spacing: .14em;
-      color: var(--accent);
-      font-family: monospace;
-      font-weight: 700;
-      margin-bottom: 5px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 4px;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 3px 0;
-      font-size: .76rem;
-      border-bottom: 1px dotted var(--border);
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-row-lbl { color: var(--text3); font-family: monospace; font-size: .7rem; }
-    .info-row-val { color: var(--text); font-weight: 600; text-align: right; max-width: 180px; }
-
-    /* ── Botón flotante de información ── */
-    #info-fab {
-      position: fixed;
-      bottom: 28px;
-      right: 24px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 18px rgba(74,124,89,.45);
-      z-index: 501;
-      transition: background .2s, transform .15s;
-      font-family: inherit;
-    }
-    #info-fab:hover { background: var(--accent2); transform: scale(1.08); }
-    #info-fab-badge {
-      position: absolute;
-      top: 2px; right: 2px;
-      background: var(--crit);
-      color: #fff;
-      border-radius: 50%;
-      width: 16px; height: 16px;
-      font-size: .55rem;
-      display: flex; align-items: center; justify-content: center;
-      font-family: monospace;
-      font-weight: 700;
-    }
-
-  
-    /* ── Ticker de noticias ── */
-    #ticker-wrap {
-      background: #214528;
-      color: #f5c518;
-      padding: 8px 0;
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-      z-index: 99;
-      border-top: 2px solid #2d6a2d;
-      border-bottom: 2px solid #2d6a2d;
-    }
-    #ticker-label {
-      position: absolute; left: 0; top: 0;
-      background: #c9a84c;
-      color: #1a2a0a;
-      padding: 0 16px;
-      font-size: .68rem;
-      font-family: monospace;
-      font-weight: 900;
-      letter-spacing: .15em;
-      z-index: 2;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      text-transform: uppercase;
-    }
-    #ticker-inner {
-      display: inline-block;
-      animation: ticker-scroll 40s linear infinite;
-      padding-left: 120px;
-      font-size: .78rem;
-      font-family: monospace;
-      font-weight: 700;
-      letter-spacing: .06em;
-      color: #f5c518;
-      text-transform: uppercase;
-    }
-    #ticker-inner:hover { animation-play-state: paused; cursor: pointer; }
-    @keyframes ticker-scroll {
-      0%   { transform: translateX(100vw); }
-      100% { transform: translateX(-100%); }
-    }
-    .ticker-sep { margin: 0 20px; color: #c9a84c; }
-
-  
-    /* ── Galería / Destacados ── */
-    .section-head {
-      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;
-    }
-    .section-head .sec-title { margin-bottom:0; }
-    .feature-tabs {
-      display:flex; gap:8px; flex-wrap:wrap; margin: 0 0 16px;
-    }
-    .feature-tabs .nav-btn {
-      padding: 7px 12px;
-      font-size: .72rem;
-      border-radius: 4px;
-    }
-    .feature-card {
-      overflow:hidden;
-      border-radius: 8px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.08);
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-    .feature-cover {
-      height: 190px;
-      background: linear-gradient(135deg, #183018, #2e5a2e);
-      display:flex; align-items:center; justify-content:center; overflow:hidden;
-    }
-    .feature-cover img { width:100%; height:100%; object-fit:cover; display:block; }
-    .feature-body { padding: 14px 15px 16px; }
-    .feature-kicker {
-      display:inline-block; padding:4px 8px; border-radius:999px;
-      background: var(--accent3); color: var(--accent2);
-      font-size:.68rem; font-family:monospace; letter-spacing:.08em; margin-bottom:8px;
-    }
-    .feature-title { font-size:.95rem; font-weight:700; color:var(--text); margin:0 0 6px; }
-    .feature-desc { font-size:.8rem; color:var(--text2); line-height:1.5; margin:0 0 10px; }
-    .feature-meta { font-size:.7rem; color:var(--text3); font-family:monospace; }
-
-  
-    /* ── Destacados institucionales ── */
-    #sec-destacados .feature-card {
-      border: 1px solid rgba(201,168,76,.35);
-      box-shadow: 0 6px 20px rgba(0,0,0,.08);
-      position: relative;
-    }
-    #sec-destacados .feature-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-top: 3px solid #c9a84c;
-      pointer-events: none;
-      opacity: .9;
-    }
-    #sec-destacados .feature-kicker {
-      background: #c9a84c;
-      color: #1a2a0a;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    #sec-destacados .feature-title {
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
-    #sec-destacados .feature-desc {
-      min-height: 42px;
-    }
-    #sec-destacados .feature-meta {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      border-top: 1px dashed var(--border);
-      padding-top: 10px;
-      margin-top: 10px;
-    }
-    #sec-destacados .feature-meta::after {
-      content: 'RECONOCIMIENTO';
-      font-size: .62rem;
-      color: var(--accent);
-      letter-spacing: .12em;
-      font-family: monospace;
-      font-weight: 700;
-    }
-
-  
-    /* ── Galería institucional ── */
-    #sec-galeria .feature-card {
-      border: 1px solid rgba(74,124,89,.18);
-      box-shadow: 0 6px 20px rgba(0,0,0,.08);
-      position: relative;
-    }
-    #sec-galeria .feature-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-top: 3px solid var(--accent);
-      pointer-events: none;
-      opacity: .9;
-    }
-    #sec-galeria .feature-kicker {
-      background: var(--accent3);
-      color: var(--accent2);
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    #sec-galeria .feature-title {
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
-    #sec-galeria .feature-meta {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      border-top: 1px dashed var(--border);
-      padding-top: 10px;
-      margin-top: 10px;
-    }
-    #sec-galeria .feature-meta::after {
-      content: 'ÁLBUM OFICIAL';
-      font-size: .62rem;
-      color: var(--accent);
-      letter-spacing: .12em;
-      font-family: monospace;
-      font-weight: 700;
-    }
-
-  
-    /* ── Ajuste institucional global ── */
-    :root {
-      --accent: #315f3a;
-      --accent2: #214528;
-      --accent3: #dfeadf;
-      --header-bg: #142214;
-      --header-text: #f3f7ef;
-      --text: #202420;
-      --text2: #4f574e;
-      --text3: #7a8278;
-      --surface: #ffffff;
-      --bg: #f4f6f1;
-      --bg3: #e8ece4;
-      --border: #d6ddd0;
-      --border2: #c4cbbd;
-    }
-    .hero {
-      background: linear-gradient(135deg, #142214 0%, #1c301c 70%, #203620 100%) !important;
-      border-left: 4px solid #c9a84c !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,.10);
-    }
-    .hero .btn-p {
-      background: #315f3a;
-      color: #fff;
-      border: 1px solid #315f3a;
-    }
-    .hero .btn-p:hover {
-      background: #24482c;
-    }
-    .hero .btn-s {
-      color: #fff;
-      border-color: rgba(255,255,255,.75);
-    }
-    .hero .btn-s:hover {
-      background: rgba(255,255,255,.12);
-    }
-    .nav-btn.active {
-      background: #dfeadf;
-      color: #214528;
-      border-color: #315f3a;
-      box-shadow: 0 0 8px rgba(49,95,58,.18);
-    }
-    .pub-card, .feature-card {
-      border-radius: 8px;
-    }
-    .sec-title h2 {
-      letter-spacing: .02em;
-    }
-    .empty {
-      color: var(--text3);
-      font-size: .82rem;
-      font-family: monospace;
-      padding: 16px;
-      border: 1px dashed var(--border);
-      border-radius: 6px;
-      background: rgba(255,255,255,.6);
-    }
-
-  
-    /* ── Botones admin uniformes ── */
-    .btn-p,
-    .btn-s,
-    .nav-btn,
-    .icon-btn {
-      border-radius: 6px;
-    }
-    .btn-p {
-      background: linear-gradient(135deg, #315f3a, #24482c);
-      border: 1px solid #315f3a;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(49,95,58,.18);
-    }
-    .btn-p:hover {
-      background: linear-gradient(135deg, #24482c, #19331f);
-    }
-    .btn-s {
-      background: transparent;
-      color: #315f3a;
-      border: 1px solid #315f3a;
-    }
-    .btn-s:hover {
-      background: rgba(49,95,58,.08);
-    }
-    .form-btns .btn-p,
-    .form-btns .btn-s,
-    #sec-publicaciones .btn-p,
-    #sec-calendario .btn-p,
-    #sec-documentos .btn-p,
-    #sec-galeria .btn-p,
-    #sec-destacados .btn-p,
-    #sec-servicios .btn-p,
-    #sec-cumpleanos .btn-p {
-      min-height: 38px;
-      padding: 8px 14px;
-      font-weight: 700;
-      letter-spacing: .02em;
-    }
-    .nav-btn {
-      background: transparent;
-      border: 1px solid transparent;
-    }
-    .nav-btn.active {
-      background: #dfeadf;
-      border-color: #315f3a;
-      color: #24482c;
-    }
-
-  
-    /* ── Modo práctico interno ── */
-    .hero p,
-    .hero .hero-sub,
-    .feature-desc,
-    .feature-meta,
-    .empty,
-    .sub-lbl,
-    .sec-title-bar,
-    .ticker-sep {
-      opacity: .92;
-    }
-    .feature-card,
-    .pub-card,
-    .metric-card {
-      transition: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
-    .feature-card:hover,
-    .pub-card:hover,
-    .metric-card:hover {
-      transform: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
-    #sec-destacados .feature-meta::after,
-    #sec-galeria .feature-meta::after {
-      content: '';
-    }
-    .btn-p, .btn-s {
-      font-size: .78rem;
-      padding: 7px 12px;
-    }
-    .nav-btn, .icon-btn {
-      font-size: .74rem;
-    }
-    .hero {
-      padding: 30px 30px 26px;
-    }
-    .hero h1 {
-      font-size: 1.72rem;
-    }
-
+    .bday-avatar { width:42px;height:42px;border-radius:50%;background:var(--accent3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;flex-shrink:0;border:2px solid var(--border); }
+    .bday-card.hoy .bday-avatar { background:rgba(201,168,76,.18);color:#9a7a1a;border-color:#c9a84c; }
+    .bday-name { font-size:.9rem;font-weight:600;color:var(--text);line-height:1.3; }
+    .bday-meta { font-size:.72rem;color:var(--text3);font-family:monospace;margin-top:2px; }
+    .bday-badge-hoy { background:rgba(201,168,76,.2);color:#8a6a10;border:1px solid #c9a84c;border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;font-family:monospace;letter-spacing:.06em;white-space:nowrap; }
+    .bday-badge-mes { background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;font-family:monospace;letter-spacing:.06em;white-space:nowrap; }
+    .bday-dias { font-size:.68rem;color:var(--text3);font-family:monospace;margin-left:auto;text-align:right;white-space:nowrap; }
+    ::-webkit-scrollbar { width:6px;height:6px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border2);border-radius:3px; }
+    @media(max-width:900px){.grid-21{grid-template-columns:1fr!important}.grid-5{grid-template-columns:1fr 1fr 1fr!important}}
+    @media(max-width:680px){nav.nav-d{display:none!important}nav.nav-m{display:flex!important}.grid-5{grid-template-columns:1fr 1fr!important}.grid-21{grid-template-columns:1fr!important}.grid-11{grid-template-columns:1fr!important}.detalle-box{padding:20px 16px}.hero{padding:24px 20px}}
+    .form-row{display:flex;gap:10px;flex-wrap:wrap}.form-row>*{flex:1;min-width:120px}
+    .form-col{display:flex;flex-direction:column;gap:11px}
+    .form-checks{display:flex;gap:18px;flex-wrap:wrap}
+    .form-checks label{display:flex;align-items:center;gap:5px;font-size:.82rem;color:var(--text2);cursor:pointer}
+    .form-btns{display:flex;gap:10px}.form-btns .btn-p,.form-btns .btn-s{flex:1}
+    .flex-sb{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .flex-row{display:flex;gap:8px;align-items:center}
+    .flex-col{display:flex;flex-direction:column;gap:12px}
+    .mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-18{margin-bottom:18px}.mb-22{margin-bottom:22px}.mb-26{margin-bottom:26px}.mb-28{margin-bottom:28px}.mb-32{margin-bottom:32px}
+    .mt-14{margin-top:14px}.mt-20{margin-top:20px}.w100{width:100%}.text-center{text-align:center}
+    .res-count{font-size:.7rem;color:var(--text3);font-family:monospace;margin-bottom:12px}
+    .active-badge{background:var(--accent3);color:var(--accent);padding:2px 8px;border-radius:2px;font-size:.68rem;font-weight:600;font-family:monospace}
+    .inactive-badge{background:var(--bg3);color:var(--text3);padding:2px 8px;border-radius:2px;font-size:.68rem;font-weight:600;font-family:monospace}
+    #info-panel{position:fixed;bottom:80px;right:24px;width:320px;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 32px var(--shadow);z-index:500;display:none;flex-direction:column;user-select:none;transition:box-shadow .2s;overflow:hidden}
+    #info-panel.visible{display:flex}
+    #info-panel.dragging{box-shadow:0 16px 48px rgba(0,0,0,.3)}
+    #info-panel-header{background:var(--header-bg);color:var(--header-text);padding:10px 14px;font-size:.75rem;letter-spacing:.12em;font-family:monospace;font-weight:700;display:flex;align-items:center;justify-content:space-between;cursor:grab;border-bottom:1px solid var(--border)}
+    #info-panel-header:active{cursor:grabbing}
+    #info-panel-body{padding:16px;font-size:.8rem;color:var(--text2);line-height:1.65;overflow-y:auto;max-height:420px}
+    .info-section{margin-bottom:14px}.info-section:last-child{margin-bottom:0}
+    .info-section-title{font-size:.65rem;letter-spacing:.14em;color:var(--accent);font-family:monospace;font-weight:700;margin-bottom:5px;border-bottom:1px solid var(--border);padding-bottom:4px}
+    .info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:3px 0;font-size:.76rem;border-bottom:1px dotted var(--border)}
+    .info-row:last-child{border-bottom:none}
+    .info-row-lbl{color:var(--text3);font-family:monospace;font-size:.7rem}
+    .info-row-val{color:var(--text);font-weight:600;text-align:right;max-width:180px}
+    #info-fab{position:fixed;bottom:28px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(74,124,89,.45);z-index:501;transition:background .2s,transform .15s;font-family:inherit}
+    #info-fab:hover{background:var(--accent2);transform:scale(1.08)}
+    #info-fab-badge{position:absolute;top:2px;right:2px;background:var(--crit);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.55rem;display:flex;align-items:center;justify-content:center;font-family:monospace;font-weight:700}
+    .pub-card,.ev-card,.doc-card,.metric-card,.bday-card,.filtros-box,.orden-box{background:var(--surface);border-color:var(--border);color:var(--text)}
+    input,select,textarea{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+    .tbl-wrap{background:var(--surface)}.tbl th{background:var(--bg3);color:var(--text3)}.tbl td{color:var(--text2)}
+    .modal-box{background:var(--surface);color:var(--text)}.modal-box h3{color:var(--text)}
+    .pub-card-title{color:var(--text)}.pub-card-body{color:var(--text2)}.sec-title h2{color:var(--text)}.sub-lbl{color:var(--text3)}
+    .hero{background:linear-gradient(135deg,#0d1a0c 0%,#1a2d16 100%)}
   </style>
 </head>
-<body><header><nav id="nav" style="display:flex;gap:10px;flex-wrap:wrap"></nav></header>
-
-<!-- BARRA CRÍTICA -->
+<body>
 <div id="crit-bar" class="hidden">
   <span id="crit-txt">▲ CRÍTICO</span>
   <button class="icon-btn" onclick="document.getElementById('crit-bar').classList.add('hidden')" style="color:#fff">✕</button>
 </div>
-
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="brand" onclick="showSec('inicio')">
-      <div class="brand-logo" style="background:transparent;border:none;box-shadow:none;padding:0;overflow:hidden"><img src="https://raw.githubusercontent.com/Esfocar-Concepcion/Diario-Mural/main/assets/escudo.jpg" alt="ESFOCAR" style="width:46px;height:46px;object-fit:cover;border-radius:50%"></div>
+      <div class="brand-logo">EF</div>
       <div>
         <div class="brand-sub">ESFOCAR · CONCEPCIÓN</div>
         <div class="brand-title">Diario Mural</div>
@@ -905,30 +180,27 @@
     <nav class="nav-d" id="nav-desktop"></nav>
     <nav class="nav-m">
       <button class="icon-btn" style="color:var(--header-text)" onclick="toggleDark()" id="dark-btn-mob">◑</button>
+      <button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer">⚙</button>
       <button class="nav-btn" style="border:1px solid var(--accent)" onclick="toggleMobMenu()">☰</button>
     </nav>
   </div>
   <div id="mob-menu"></div>
 </header>
-
-<!-- TICKER -->
-<div id="ticker-wrap">
-  <div id="ticker-label">📢 AVISOS</div>
-  <div id="ticker-inner">Cargando...</div>
+<div id="news-ticker" style="background:linear-gradient(90deg,#0a1208,#152010 50%,#0a1208);color:#e0f0d0;height:40px;display:flex;align-items:center;overflow:hidden;border-bottom:2px solid var(--accent);border-top:1px solid var(--border)">
+  <div style="background:var(--accent);color:#fff;padding:0 18px;height:100%;display:flex;align-items:center;font-size:.74rem;font-weight:900;letter-spacing:.18em;font-family:monospace;white-space:nowrap;flex-shrink:0;gap:6px">● NOTICIAS</div>
+  <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center;position:relative">
+    <div id="ticker-inner" style="display:flex;white-space:nowrap;color:#d8f0c8;font-size:.82rem;font-family:monospace;letter-spacing:.04em"></div>
+  </div>
 </div>
-
-<!-- CONTENIDO -->
+<div id="cloud-msg"></div>
+<style>
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#cloud-msg{position:fixed;bottom:20px;left:20px;z-index:99999;padding:10px 18px;border-radius:4px;color:#fff;font-family:monospace;font-size:.8rem;opacity:0;transition:opacity .3s;pointer-events:none}
+</style>
 <main>
-    <section class="hero-demo" style="margin:18px 0 8px;padding:18px;border-radius:18px;background:linear-gradient(135deg, rgba(76,139,245,.18), rgba(43,194,130,.14));border:1px solid rgba(255,255,255,.08)">
-      <div style="font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Modo demo</div>
-      <h1 style="margin:0 0 6px;font-size:clamp(1.3rem,2vw,2rem)">Panel institucional listo para presentación</h1>
-      <div style="color:var(--text2);max-width:820px;line-height:1.55">Publicaciones, administración y secciones principales quedaron activas para una demostración limpia y funcional.</div>
-    </section>
-
-  <!-- ═══ INICIO ═══ -->
   <div id="sec-inicio" class="section active">
     <div class="hero">
-      <div style="display:flex;align-items:center;gap:18px;margin-bottom:10px"><img src="https://raw.githubusercontent.com/Esfocar-Concepcion/Diario-Mural/main/assets/escudo.jpg" alt="Escudo ESFOCAR" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))"><div><div class="hero-sub" style="margin-bottom:0">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div></div></div>
+      <div class="hero-sub">ESCUELA DE FORMACIÓN DE CARABINEROS — CONCEPCIÓN</div>
       <h1>Diario Mural<br><span class="hero-accent">Grupo Concepción</span></h1>
       <p>Espacio oficial de información institucional para los alumnos de la Escuela de Formación de Carabineros.</p>
       <div class="hero-btns">
@@ -936,9 +208,7 @@
         <button class="btn-s" onclick="showSec('calendario')">Calendario →</button>
       </div>
     </div>
-
     <div class="grid-5 mb-26" id="metrics-grid"></div>
-
     <div class="grid-21">
       <div>
         <div class="sec-title"><h2>Publicaciones recientes</h2><div class="sec-title-bar"></div></div>
@@ -952,22 +222,16 @@
       </div>
     </div>
   </div>
-
-  <!-- ═══ PUBLICACIONES ═══ -->
   <div id="sec-publicaciones" class="section">
     <div class="sec-title"><h2>Publicaciones</h2><div class="sec-title-bar"></div></div>
     <div class="filtros-box">
       <div class="filtros-row">
         <input id="f-q" placeholder="Buscar por título, contenido, autor o etiqueta…" oninput="applyFilters()" style="flex:1;min-width:200px">
-        <select id="f-cat" onchange="applyFilters()" style="min-width:180px">
-          <option value="todas">Todas las categorías</option>
-        </select>
+        <select id="f-cat" onchange="applyFilters()" style="min-width:180px"><option value="todas">Todas las categorías</option></select>
         <select id="f-pri" onchange="applyFilters()" style="min-width:160px">
           <option value="todas">Todas las prioridades</option>
-          <option value="critico">Crítico</option>
-          <option value="urgente">Urgente</option>
-          <option value="importante">Importante</option>
-          <option value="normal">Normal</option>
+          <option value="critico">Crítico</option><option value="urgente">Urgente</option>
+          <option value="importante">Importante</option><option value="normal">Normal</option>
         </select>
       </div>
       <div class="filtros-row2">
@@ -976,47 +240,31 @@
         <span style="color:var(--text3);font-size:.8rem">—</span>
         <input id="f-hasta" type="date" oninput="applyFilters()" style="width:140px">
         <span style="font-size:.72rem;color:var(--text3);font-family:monospace;margin-left:8px">ETIQUETA:</span>
-        <select id="f-etq" onchange="applyFilters()" style="min-width:130px">
-          <option value="">Todas</option>
-        </select>
+        <select id="f-etq" onchange="applyFilters()" style="min-width:130px"><option value="">Todas</option></select>
         <button class="btn-s" id="btn-limpiar" onclick="limpiarFiltros()" style="padding:6px 12px;font-size:.75rem;display:none">✕ Limpiar filtros</button>
       </div>
     </div>
     <div class="res-count" id="res-count"></div>
     <div class="grid-auto" id="pub-grid"></div>
   </div>
-
-  <!-- ═══ DETALLE ═══ -->
   <div id="sec-detalle" class="section">
     <button class="btn-s mb-18" onclick="showSec('publicaciones')">← Volver</button>
     <div class="detalle-box" id="detalle-content"></div>
   </div>
-
-  <!-- ═══ CALENDARIO ═══ -->
   <div id="sec-calendario" class="section">
     <div class="sec-title"><h2>Calendario de Actividades</h2><div class="sec-title-bar"></div></div>
     <div class="grid-11">
-      <div>
-        <div class="sub-lbl">PRÓXIMOS</div>
-        <div class="flex-col" id="cal-prox"></div>
-      </div>
-      <div>
-        <div class="sub-lbl">PASADOS</div>
-        <div class="flex-col" id="cal-pasados"></div>
-      </div>
+      <div><div class="sub-lbl">PRÓXIMOS</div><div class="flex-col" id="cal-prox"></div></div>
+      <div><div class="sub-lbl">PASADOS</div><div class="flex-col" id="cal-pasados"></div></div>
     </div>
   </div>
-
-  <!-- ═══ DOCUMENTOS ═══ -->
   <div id="sec-documentos" class="section">
     <div class="sec-title"><h2>Biblioteca de Documentos</h2><div class="sec-title-bar"></div></div>
     <div class="grid-auto-sm" id="docs-grid"></div>
   </div>
-
-  <!-- ═══ ADMIN ═══ -->
   <div id="sec-admin" class="section">
     <div class="flex-sb mb-22">
-      <div class="sec-title" style="margin:0"><h2>Panel de Administración</h2><div style="color:var(--text3);font-size:.9rem;margin-top:4px">Vista operacional para gestionar contenido</div><div class="sec-title-bar"></div></div>
+      <div class="sec-title" style="margin:0"><h2>Panel de Administración</h2><div class="sec-title-bar"></div></div>
       <div class="flex-row">
         <button class="btn-p" onclick="openModalPub()">+ Publicación</button>
         <button class="btn-s" onclick="openModalEv()">+ Evento</button>
@@ -1032,10 +280,7 @@
       <div class="tbl-wrap"><table class="tbl" id="admin-ev-tbl"></table></div>
     </div>
   </div>
-
-  <!-- ═══ SERVICIOS ═══ -->
   <div id="sec-servicios" class="section">
-    <!-- Documentos publicados -->
     <div class="mb-28">
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Documentos Publicados</h2><div class="sec-title-bar"></div></div>
@@ -1043,7 +288,6 @@
       </div>
       <div class="grid-auto-sm" id="docs-svc-grid"></div>
     </div>
-    <!-- Orden del Día -->
     <div class="mb-28">
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Orden del Día</h2><div class="sec-title-bar"></div></div>
@@ -1051,7 +295,6 @@
       </div>
       <div class="orden-box" id="orden-content"></div>
     </div>
-    <!-- Servicios del personal -->
     <div>
       <div class="flex-sb mb-16">
         <div class="sec-title" style="margin:0"><h2>Servicios del Personal</h2><div class="sec-title-bar"></div></div>
@@ -1060,14 +303,12 @@
       <div class="flex-row mb-16" style="flex-wrap:wrap">
         <select id="f-esc" onchange="renderServicios()" style="min-width:160px">
           <option value="todos">Todos los escuadrones</option>
-          <option>Escuadrón A</option><option>Escuadrón B</option>
-          <option>Escuadrón C</option><option>Sin asignar</option>
+          <option>Escuadrón A</option><option>Escuadrón B</option><option>Escuadrón C</option><option>Sin asignar</option>
         </select>
         <select id="f-tipo-svc" onchange="renderServicios()" style="min-width:160px">
           <option value="todos">Todos los tipos</option>
-          <option>Guardia</option><option>Facción</option>
-          <option>Servicio de Cuartel</option><option>Turno Especial</option>
-          <option>Instrucción</option><option>Comisión</option>
+          <option>Guardia</option><option>Facción</option><option>Servicio de Cuartel</option>
+          <option>Turno Especial</option><option>Instrucción</option><option>Comisión</option>
         </select>
         <span class="sub-lbl" id="svc-count" style="margin:0;align-self:center"></span>
       </div>
@@ -1075,26 +316,6 @@
       <div class="svc-summary" id="svc-resumen"></div>
     </div>
   </div>
-
-
-  
-  <!-- ═══ ÁLBUMES ═══ -->
-  <div id="sec-galeria" class="section">
-    <div class="flex-sb mb-16">
-      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
-      <button class="btn-p" id="btn-add-galeria" style="display:none" onclick="openModalGaleria()">+ Nuevo álbum</button>
-    </div>
-    <div class="grid-auto-sm" id="album-grid"></div>
-  </div>
-
-  <!-- ═══ DESTACADOS ═══ -->
-  <div id="sec-destacados" class="section">
-    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button>
-    <div class="dest-tabs" id="dest-tabs"></div>
-    <div class="grid-auto-sm" id="dest-grid"></div>
-  </div>
-
-<!-- ═══ CUMPLEAÑOS ═══ -->
   <div id="sec-cumpleanos" class="section">
     <div class="flex-sb mb-16">
       <div class="sec-title" style="margin:0"><h2>🎂 Cumpleaños</h2><div class="sec-title-bar"></div></div>
@@ -1103,21 +324,20 @@
     <div class="bday-tabs" id="bday-tabs"></div>
     <div id="bday-content"></div>
   </div>
-
 </main>
-
 <footer>
   <div>ESCUELA DE FORMACIÓN DE CARABINEROS — GRUPO CONCEPCIÓN</div>
   <div style="margin-top:4px">Diario Mural Institucional · <span id="footer-year"></span></div>
 </footer>
 
-<!-- ═══ MODALES ═══ -->
+<!-- ═══════════════════ MODALES ═══════════════════ -->
+
+<!-- LOGIN -->
 <div id="modal-login" class="modal-overlay" style="display:none" onclick="closeModal('modal-login',event)">
   <div class="modal-box">
     <h3>🔐 Acceso Administrador</h3>
     <p style="font-size:.8rem;color:var(--text3);margin-bottom:14px">Ingrese la contraseña institucional.</p>
-    <input type="password" id="inp-pass" placeholder="Contraseña" class="mb-12"
-      onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="inp-pass" placeholder="Contraseña" class="mb-12" onkeydown="if(event.key==='Enter')doLogin()">
     <div id="pass-err" style="color:var(--danger);font-size:.78rem;margin-bottom:10px;display:none">Contraseña incorrecta.</div>
     <div class="form-btns">
       <button class="btn-p" onclick="doLogin()">Ingresar</button>
@@ -1126,6 +346,7 @@
   </div>
 </div>
 
+<!-- PUBLICACIÓN -->
 <div id="modal-pub" class="modal-overlay" style="display:none" onclick="closeModal('modal-pub',event)">
   <div class="modal-box">
     <h3 id="modal-pub-title">Nueva publicación</h3>
@@ -1134,10 +355,8 @@
       <div class="form-row">
         <select id="fp-cat"></select>
         <select id="fp-pri">
-          <option value="normal">Normal</option>
-          <option value="importante">Importante</option>
-          <option value="urgente">Urgente</option>
-          <option value="critico">Crítico</option>
+          <option value="normal">Normal</option><option value="importante">Importante</option>
+          <option value="urgente">Urgente</option><option value="critico">Crítico</option>
         </select>
       </div>
       <div class="form-row">
@@ -1151,15 +370,14 @@
       </div>
       <div>
         <div class="sub-lbl">ADJUNTOS (PDF, Word, Imágenes, etc.)</div>
-        <input type="file" id="fp-adjuntos" multiple
-          accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.gif"
-          onchange="handleAdjuntos(this)">
+        <input type="file" id="fp-adjuntos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.gif" onchange="handleAdjuntos(this)">
         <div class="adj-list" id="adj-preview"></div>
       </div>
       <div class="form-checks">
         <label><input type="checkbox" id="fp-fijada"> 📌 Fijar</label>
         <label><input type="checkbox" id="fp-activa" checked> ✅ Activa</label>
       </div>
+      <div id="pub-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarPub()">Guardar</button>
         <button class="btn-s" onclick="closeModal('modal-pub')">Cancelar</button>
@@ -1168,6 +386,7 @@
   </div>
 </div>
 
+<!-- EVENTO -->
 <div id="modal-ev" class="modal-overlay" style="display:none" onclick="closeModal('modal-ev',event)">
   <div class="modal-box">
     <h3 id="modal-ev-title">Nuevo evento</h3>
@@ -1179,6 +398,7 @@
       </div>
       <input id="fe-lugar" placeholder="Lugar">
       <textarea id="fe-desc" placeholder="Descripción" style="min-height:80px"></textarea>
+      <div id="ev-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarEv()">Guardar</button>
         <button class="btn-s" onclick="closeModal('modal-ev')">Cancelar</button>
@@ -1187,6 +407,7 @@
   </div>
 </div>
 
+<!-- SERVICIO -->
 <div id="modal-svc" class="modal-overlay" style="display:none" onclick="closeModal('modal-svc',event)">
   <div class="modal-box">
     <h3 id="modal-svc-title">Nuevo servicio</h3>
@@ -1197,13 +418,11 @@
       </div>
       <div class="form-row">
         <select id="fs-esc">
-          <option>Escuadrón A</option><option>Escuadrón B</option>
-          <option>Escuadrón C</option><option>Sin asignar</option>
+          <option>Escuadrón A</option><option>Escuadrón B</option><option>Escuadrón C</option><option>Sin asignar</option>
         </select>
         <select id="fs-tipo">
-          <option>Guardia</option><option>Facción</option>
-          <option>Servicio de Cuartel</option><option>Turno Especial</option>
-          <option>Instrucción</option><option>Comisión</option>
+          <option>Guardia</option><option>Facción</option><option>Servicio de Cuartel</option>
+          <option>Turno Especial</option><option>Instrucción</option><option>Comisión</option>
         </select>
       </div>
       <div class="form-row">
@@ -1212,6 +431,7 @@
       </div>
       <input id="fs-lugar" placeholder="Lugar (ej: Portería, Pabellón A…)">
       <textarea id="fs-obs" placeholder="Observaciones (opcional)" style="min-height:60px"></textarea>
+      <div id="svc-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarSvc()">Guardar</button>
         <button class="btn-s" onclick="closeModal('modal-svc')">Cancelar</button>
@@ -1220,6 +440,7 @@
   </div>
 </div>
 
+<!-- DOCUMENTO SERVICIO -->
 <div id="modal-doc-svc" class="modal-overlay" style="display:none" onclick="closeModal('modal-doc-svc',event)">
   <div class="modal-box">
     <h3>Publicar Documento (PDF / Word)</h3>
@@ -1235,6 +456,7 @@
         <input type="file" id="fd-archivo" accept=".pdf,.doc,.docx" onchange="handleDocSvc(this)">
         <div id="fd-preview" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
       </div>
+      <div id="doc-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarDocSvc()">📤 Publicar</button>
         <button class="btn-s" onclick="closeModal('modal-doc-svc')">Cancelar</button>
@@ -1243,14 +465,14 @@
   </div>
 </div>
 
-
+<!-- CUMPLEAÑOS -->
 <div id="modal-bday" class="modal-overlay" style="display:none" onclick="closeModal('modal-bday',event)">
   <div class="modal-box">
     <h3 id="modal-bday-title">Agregar Cumpleaños</h3>
     <div class="form-col">
       <input id="fb-nombre" placeholder="Nombre completo *">
       <div class="form-row">
-        <div><div class="sub-lbl">GRADO / CARGO</div><input id="fb-grado" placeholder="Ej: Sgto. 1°, Instructor, Administrativo"></div>
+        <div><div class="sub-lbl">GRADO / CARGO</div><input id="fb-grado" placeholder="Ej: Sgto. 1°, Instructor"></div>
         <div><div class="sub-lbl">CATEGORÍA</div>
           <select id="fb-cat">
             <option value="alumnos">Alumnos</option>
@@ -1272,6 +494,7 @@
         <div><div class="sub-lbl">AÑO (opc.)</div><input id="fb-anio" type="number" min="1940" max="2010" placeholder="AAAA"></div>
       </div>
       <input id="fb-escuadron" placeholder="Escuadrón / Sección (opcional)">
+      <div id="bday-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarBday()">Guardar</button>
         <button class="btn-s" onclick="closeModal('modal-bday')">Cancelar</button>
@@ -1280,198 +503,897 @@
   </div>
 </div>
 
-
-<div id="modal-cfg" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal-box" style="max-width:440px">
-    <h3>☁ Configuración JSONBin (Nube)</h3>
-    <p style="font-size:.78rem;color:var(--text3);margin-bottom:16px">Ingresa tus credenciales de jsonbin.io para activar la persistencia en la nube.</p>
-    <div class="form-col">
-      <div><div class="sub-lbl">BIN ID</div><input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0"></div>
-      <div><div class="sub-lbl">API KEY (X-Master-Key)</div><input id="cfg-key" type="password" placeholder="$2a$10$..."></div>
-      <div><div class="sub-lbl">GITHUB TOKEN (para adjuntos)</div><input id="cfg-ghtoken" type="password" placeholder="ghp_..."></div>
-      <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
-      <div class="form-btns">
-        <button class="btn-p" onclick="saveCfg()">Guardar</button>
-        <button class="btn-s" onclick="testCfg()">Probar conexión</button>
-        <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cerrar</button>
-      </div>
-      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:8px">Las credenciales se guardan en este navegador (localStorage).</div>
+<!-- MODAL CONFIRMACIÓN PERSONALIZADA (reemplaza confirm()) -->
+<div id="modal-confirm" class="modal-overlay" style="display:none">
+  <div class="modal-box confirm-box">
+    <h3 id="confirm-title">Confirmar acción</h3>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="form-btns">
+      <button class="btn-p" id="confirm-ok" style="background:var(--danger);border-color:var(--danger)">Eliminar</button>
+      <button class="btn-s" onclick="closeConfirm()">Cancelar</button>
     </div>
   </div>
 </div>
 
-
-<div id="modal-galeria" class="modal-overlay" style="display:none" onclick="closeModal('modal-galeria',event)">
-  <div class="modal-box" style="max-width:560px">
-    <h3>📷 Nuevo Álbum</h3>
-    <div class="form-col">
-      <div><div class="sub-lbl">TÍTULO *</div><input id="fg-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
-      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fg-desc" placeholder="Breve descripción del álbum"></div>
-      <div class="form-row">
-        <div><div class="sub-lbl">FECHA</div><input id="fg-fecha" type="date"></div>
-        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fg-autor" placeholder="Ej: Grupo Concepción"></div>
-      </div>
-      <div>
-        <div class="sub-lbl">PORTADA</div>
-        <input type="file" id="fg-portada" accept="image/*" onchange="handleAlbumPortada(this)">
-        <div id="fg-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
-      </div>
-      <div>
-        <div class="sub-lbl">FOTOS DEL ÁLBUM</div>
-        <input type="file" id="fg-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
-        <div id="fg-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
-      </div>
-      <div class="form-btns">
-        <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
-        <button class="btn-s" onclick="closeModal('modal-galeria')">Cancelar</button>
-      </div>
-    </div>
+<!-- PANEL INFO FLOTANTE -->
+<div id="info-panel">
+  <div id="info-panel-header">
+    <span>ℹ INFORMACIÓN DEL SISTEMA</span>
+    <button class="icon-btn" onclick="document.getElementById('info-panel').classList.remove('visible')" style="color:var(--header-text)">✕</button>
   </div>
+  <div id="info-panel-body"></div>
 </div>
-<div id="modal-destacados" class="modal-overlay" style="display:none" onclick="closeModal('modal-destacados',event)">
-  <div class="modal-box" style="max-width:560px">
-    <h3>🏅 Nuevo Destacado</h3>
-    <div class="form-col">
-      <div><div class="sub-lbl">TIPO</div>
-        <select id="fdest-tipo">
-          <option value="alumno">Carabinero Alumno</option>
-          <option value="seccion">Sección</option>
-          <option value="funcionario" selected>Funcionario</option>
-        </select>
-      </div>
-      <div><div class="sub-lbl">NOMBRE / SECCIÓN *</div><input id="fdest-titulo" placeholder="Ej: Alumno destacado / Sección C / Sgto. Pérez"></div>
-      <div><div class="sub-lbl">MOTIVO</div><input id="fdest-motivo" placeholder="Reconocimiento breve"></div>
-      <div class="form-row">
-        <div><div class="sub-lbl">FECHA</div><input id="fdest-fecha" type="date"></div>
-        <div><div class="sub-lbl">FOTO</div><input id="fdest-foto" type="file" accept="image/*" onchange="handleDestFoto(this)"></div>
-      </div>
-      <div id="fdest-prev" style="font-size:.75rem;color:var(--accent);font-family:monospace"></div>
-      <div class="form-btns">
-        <button class="btn-p" onclick="guardarDestacado()">Guardar</button>
-        <button class="btn-s" onclick="closeModal('modal-destacados')">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div id="modal-galeria" class="modal-overlay" style="display:none" onclick="closeModal('modal-galeria',event)">
-  <div class="modal-box" style="max-width:560px">
-    <h3>📷 Nuevo Álbum</h3>
-    <div class="form-col">
-      <div><div class="sub-lbl">TÍTULO *</div><input id="fg-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
-      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fg-desc" placeholder="Breve descripción del álbum"></div>
-      <div class="form-row">
-        <div><div class="sub-lbl">FECHA</div><input id="fg-fecha" type="date"></div>
-        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fg-autor" placeholder="Ej: Grupo Concepción"></div>
-      </div>
-      <div>
-        <div class="sub-lbl">PORTADA</div>
-        <input type="file" id="fg-portada" accept="image/*" onchange="handleAlbumPortada(this)">
-        <div id="fg-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
-      </div>
-      <div>
-        <div class="sub-lbl">FOTOS DEL ÁLBUM</div>
-        <input type="file" id="fg-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
-        <div id="fg-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
-      </div>
-      <div class="form-btns">
-        <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
-        <button class="btn-s" onclick="closeModal('modal-galeria')">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
+<button id="info-fab" onclick="toggleInfoPanel()" title="Información del sistema">
+  ℹ<span id="info-fab-badge" style="display:none"></span>
+</button>
 
 <script>
-// Minimal stable bootstrap
-let esAdmin = false;
-let secActual = 'inicio';
+// ═══════════════════════════════════════════════════════════
+// CONSTANTES
+// ═══════════════════════════════════════════════════════════
+const ADMIN_PASS = "974877Z";
+const HOY = new Date().toISOString().split("T")[0];
 
-let esAdmin = true;
-function doLogin(){ esAdmin = true; buildNav(); renderAdmin(); showSec('admin'); }
-function doLogout(){ esAdmin = false; buildNav(); showSec('inicio'); }
-function renderAdmin(){
-  const box = document.getElementById('admin-box');
-  if (!box) return;
-  box.innerHTML = `
-    <div class="metric-card"><div class="metric-val">${pubs.length}</div><div class="metric-label">Publicaciones</div></div>
-    <div class="metric-card"><div class="metric-val">${galerias.length}</div><div class="metric-label">Galerías</div></div>
-    <div class="metric-card"><div class="metric-val">${destacados.length}</div><div class="metric-label">Destacados</div></div>
-  `;
-  ['btn-add-pub','btn-add-ev','btn-add-doc','btn-add-galeria','btn-add-dest','btn-add-bday','btn-doc-svc','btn-add-svc','btn-edit-orden'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display = esAdmin ? '' : 'none'; });
-}
-
-let galerias = [];
-let destacados = [];
-
-let pubs = [
-  { id:1, titulo:'Bienvenida', contenido:'Sistema restablecido y operativo.', categoria:'noticias', prioridad:'normal', autor:'Sistema', fecha:'2026-05-04', fijada:true, activa:true, etiquetas:['inicio'], adjuntos:[] }
+const CATS = [
+  { id:"noticias",         label:"Noticias",          icon:"◈" },
+  { id:"instrucciones",    label:"Instrucciones",     icon:"◉" },
+  { id:"comunicados",      label:"Comunicados",       icon:"◎" },
+  { id:"actividades",      label:"Actividades",       icon:"◆" },
+  { id:"avisos",           label:"Avisos Urgentes",   icon:"▲" },
+  { id:"documentos",       label:"Documentos",        icon:"▣" },
+  { id:"vida-estudiantil", label:"Vida Estudiantil",  icon:"◐" },
+  { id:"calendario",       label:"Calendario",        icon:"◫" },
 ];
 
-function openModalPub(){ const m=document.getElementById('modal-pub'); if(m) m.style.display='flex'; }
-function guardarPub(){
-  const t=document.getElementById('fp-titulo');
-  const c=document.getElementById('fp-contenido');
-  if(!t || !c) return;
-  const pub={ id:Date.now(), titulo:t.value.trim(), contenido:c.value.trim(), categoria:(document.getElementById('fp-cat')||{}).value||'noticias', prioridad:(document.getElementById('fp-pri')||{}).value||'normal', autor:(document.getElementById('fp-autor')||{}).value||'Admin', fecha:(document.getElementById('fp-fecha')||{}).value||new Date().toISOString().slice(0,10), fijada:(document.getElementById('fp-fijada')||{}).checked||false, activa:(document.getElementById('fp-activa')||{}).checked!==false, etiquetas:[], adjuntos:[] };
-  if(!pub.titulo || !pub.contenido) return;
-  pubs.unshift(pub);
-  const m=document.getElementById('modal-pub'); if(m) m.style.display='none';
-  renderPubs(); buildTicker();
+const ETIQUETAS = ["Disciplina","Académico","Formación","Salud","Deportes","Ceremonial","Administrativo","Servicio","Permiso","Uniforme"];
+const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const MESES_L = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+let esAdmin = false, darkMode = false, secActual = "inicio";
+let editPubId = null, editEvId = null, editSvcId = null;
+let adjuntosTemp = [], docSvcTemp = null, etqSeleccionadas = [], ordenEditando = false;
+
+let ordenDia = { fecha: HOY, encuadre: "07:30", instruccion: "", novedad: "Sin novedad.", firmante: "", grado: "" };
+let servicios = [], docsSvc = [];
+
+let pubs = [
+  { id:1, titulo:"Formación Extraordinaria — 1 de Mayo", categoria:"avisos", autor:"Inspectoría General", fecha:"2026-04-28", prioridad:"critico", fijada:true, activa:true, etiquetas:["Ceremonial","Formación","Disciplina"], adjuntos:[], contenido:"Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada." },
+  { id:2, titulo:"Instrucciones Revista de Dormitorio — Semana 28 Abril", categoria:"instrucciones", autor:"Oficial de Cuartel", fecha:"2026-04-27", prioridad:"importante", fijada:false, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados." },
+  { id:3, titulo:"Comunicado: Normas de Presentación Personal", categoria:"comunicados", autor:"Comandancia ESFOCAR", fecha:"2026-04-25", prioridad:"importante", fijada:true, activa:true, etiquetas:["Disciplina","Uniforme"], adjuntos:[], contenido:"Se recuerda que la presentación personal es reflejo de la disciplina institucional. Queda prohibido el uso de joyas y accesorios no reglamentarios. El uniforme debe portarse en óptimas condiciones en todo momento. Se realizarán controles aleatorios." },
+  { id:4, titulo:"Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente", categoria:"noticias", autor:"Secretaría ESFOCAR", fecha:"2026-04-22", prioridad:"normal", fijada:false, activa:true, etiquetas:["Formación","Académico"], adjuntos:[], contenido:"Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad." },
+  { id:5, titulo:"Calendario Semanal — 28 Abril al 4 Mayo", categoria:"actividades", autor:"Coordinación Académica", fecha:"2026-04-27", prioridad:"normal", fijada:false, activa:true, etiquetas:["Académico","Formación"], adjuntos:[], contenido:"Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A." },
+  { id:6, titulo:"Resultados Torneo Deportivo Interno 2026", categoria:"vida-estudiantil", autor:"Bienestar Estudiantil", fecha:"2026-04-20", prioridad:"normal", fijada:false, activa:true, etiquetas:["Deportes"], adjuntos:[], contenido:"Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes." },
+  { id:7, titulo:"Reglamento de Convivencia Estudiantil 2026", categoria:"documentos", autor:"Secretaría", fecha:"2026-04-15", prioridad:"normal", fijada:false, activa:true, etiquetas:["Administrativo","Disciplina"], adjuntos:[], contenido:"Se publica el Reglamento de Convivencia Estudiantil actualizado para 2026. Incluye modificaciones en artículos 12, 23 y 45 referentes a dispositivos electrónicos, permisos de salida y licencias médicas. Lectura obligatoria." },
+  { id:8, titulo:"Cambio Horario Comedor — Semana 28 Abril", categoria:"avisos", autor:"Administración", fecha:"2026-04-26", prioridad:"urgente", fijada:false, activa:true, etiquetas:["Administrativo"], adjuntos:[], contenido:"Por mantención de equipos el comedor operará en horario especial: Desayuno 06:45. Almuerzo 12:30 (escuadrón A primero). Once 18:00. Cena 20:30. Respetar los horarios asignados." },
+  { id:9, titulo:"Charla Salud Mental y Bienestar Estudiantil", categoria:"actividades", autor:"Área de Salud", fecha:"2026-04-18", prioridad:"normal", fijada:false, activa:true, etiquetas:["Salud","Académico"], adjuntos:[], contenido:"Se realizará una charla sobre salud mental y técnicas de manejo del estrés para los alumnos del Grupo Concepción. Participación voluntaria pero recomendada. Auditorio principal, 15:00 hrs." },
+  { id:10, titulo:"Instrucciones para Salida Fin de Semana", categoria:"instrucciones", autor:"Oficial de Servicio", fecha:"2026-04-24", prioridad:"importante", fijada:false, activa:true, etiquetas:["Permiso","Disciplina"], adjuntos:[], contenido:"Para la salida reglamentaria del próximo fin de semana: presentar libreta de permisos al oficial de guardia. Hora límite de regreso: domingo 21:00 hrs. Cualquier novedad debe ser reportada inmediatamente." },
+];
+
+let eventos = [
+  { id:1, titulo:"Formación Extraordinaria", fecha:"2026-05-01", hora:"07:30", lugar:"Patio Central", descripcion:"Uniforme de gala obligatorio." },
+  { id:2, titulo:"Evaluación Derecho Procesal", fecha:"2026-05-02", hora:"09:00", lugar:"Sala A", descripcion:"Evaluación parcial semestre I." },
+  { id:3, titulo:"Tiro en Polígono", fecha:"2026-04-29", hora:"14:00", lugar:"Polígono ESFOCAR", descripcion:"Escuadrón B." },
+  { id:4, titulo:"Revista de Dormitorios", fecha:"2026-04-30", hora:"06:00", lugar:"Pabellones A y B", descripcion:"Revista semanal." },
+  { id:5, titulo:"Instrucción Orden Cerrado", fecha:"2026-05-05", hora:"08:00", lugar:"Cancha Principal", descripcion:"Práctica formaciones y desfiles." },
+  { id:6, titulo:"Charla: Ética Policial", fecha:"2026-05-06", hora:"10:00", lugar:"Auditorio", descripcion:"A cargo del Coronel de la Prefectura." },
+  { id:7, titulo:"Salida Fin de Semana — Esc. A", fecha:"2026-05-08", hora:"17:00", lugar:"Portería", descripcion:"Salida reglamentaria." },
+  { id:8, titulo:"Instrucción de Armas", fecha:"2026-04-28", hora:"08:00", lugar:"Sala Armas", descripcion:"Limpieza y mantenimiento." },
+];
+
+let cumpleanos = [];
+
+// ═══════════════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════════════
+function fmt(s) { if (!s) return ""; const [y,m,d] = s.split("-"); return parseInt(d)+" "+MESES[parseInt(m)-1]+" "+y; }
+function priColor(p) { if(p==="critico") return "var(--crit)"; if(p==="urgente") return "var(--danger)"; if(p==="importante") return "var(--accent)"; return "var(--border2)"; }
+function esc(s) { return String(s||"").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function catLabel(id) { const c=CATS.find(x=>x.id===id); return c?c.icon+" "+c.label.toUpperCase():id; }
+function priBadge(pri) { if(pri==="normal") return ""; const cls={importante:"badge-imp",urgente:"badge-urg",critico:"badge-crit"}; const lbl={importante:"IMPORTANTE",urgente:"URGENTE",critico:"CRÍTICO"}; return `<span class="badge ${cls[pri]}">${lbl[pri]}</span>`; }
+function tipoBadge(tipo) { const colors={"Guardia":"var(--accent)","Facción":"var(--accent2)","Servicio de Cuartel":"var(--text3)","Turno Especial":"var(--warn)","Instrucción":"var(--crit)","Comisión":"var(--danger)"}; const c=colors[tipo]||"var(--text3)"; return `<span style="background:${c}22;color:${c};border:1px solid ${c};border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;letter-spacing:.06em;font-family:monospace">${esc(tipo).toUpperCase()}</span>`; }
+function iconAdj(tipo,nombre) { if(tipo?.includes("pdf")||nombre?.endsWith(".pdf")) return "📄"; if(tipo?.includes("image")) return "🖼️"; if(tipo?.includes("word")||nombre?.endsWith(".docx")||nombre?.endsWith(".doc")) return "📝"; if(nombre?.endsWith(".xlsx")||nombre?.endsWith(".xls")) return "📊"; return "📎"; }
+function pubsActivas() { return pubs.filter(p=>p.activa).sort((a,b)=>{ const ord={critico:0,urgente:1,importante:2,normal:3}; if(a.fijada!==b.fijada) return a.fijada?-1:1; if(ord[a.prioridad]!==ord[b.prioridad]) return ord[a.prioridad]-ord[b.prioridad]; return new Date(b.fecha)-new Date(a.fecha); }); }
+function proxEventos() { return eventos.filter(e=>e.fecha>=HOY).sort((a,b)=>a.fecha.localeCompare(b.fecha)); }
+function formatSize(b) { if(b<1024) return b+"B"; if(b<1048576) return (b/1024).toFixed(1)+"KB"; return (b/1048576).toFixed(1)+"MB"; }
+function showErr(elId, msg) { const el=document.getElementById(elId); if(el){ el.textContent=msg; el.style.display=msg?"block":"none"; } }
+
+// ═══════════════════════════════════════════════════════════
+// MODAL CONFIRMACIÓN (reemplaza confirm() nativo)
+// ═══════════════════════════════════════════════════════════
+let _confirmCb = null;
+function showConfirm(msg, cb, titulo) {
+  document.getElementById("confirm-msg").textContent = msg;
+  document.getElementById("confirm-title").textContent = titulo || "Confirmar eliminación";
+  document.getElementById("modal-confirm").style.display = "flex";
+  _confirmCb = cb;
+  document.getElementById("confirm-ok").onclick = () => { closeConfirm(); if(_confirmCb) _confirmCb(); };
 }
-function renderPubs(){
-  const grid=document.getElementById('pubs-grid');
-  if(!grid) return;
-  grid.innerHTML = pubs.map(p => `<article class="pub-card"><div class="pub-title">${esc(p.titulo)}</div><div style="color:var(--text3);font-size:.8rem;margin:.35rem 0">${esc(p.fecha)} · ${esc(p.autor)}</div><div style="color:var(--text2);font-size:.88rem;line-height:1.5">${esc(p.contenido)}</div></article>`).join('');
+function closeConfirm() { document.getElementById("modal-confirm").style.display="none"; _confirmCb=null; }
+
+// ═══════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════════
+const NAV_ITEMS = [
+  {id:"inicio",        lbl:"Inicio"},
+  {id:"publicaciones", lbl:"Publicaciones"},
+  {id:"calendario",    lbl:"Calendario"},
+  {id:"documentos",    lbl:"Documentos"},
+  {id:"servicios",     lbl:"Servicios"},
+  {id:"cumpleanos",    lbl:"🎂 Cumpleaños"},
+];
+
+function buildNav() {
+  const nd = document.getElementById("nav-desktop");
+  const mm = document.getElementById("mob-menu");
+  const adminItem = esAdmin ? [{id:"admin", lbl:"⚙ Admin"}] : [];
+  const items = [...NAV_ITEMS, ...adminItem];
+  nd.innerHTML = items.map(n=>`<button class="nav-btn ${secActual===n.id?'active':''}" onclick="showSec('${n.id}')">${esc(n.lbl)}</button>`).join("")
+    + `<button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 14px;border-radius:3px;font-size:.72rem;font-family:monospace;cursor:pointer;margin-left:8px;letter-spacing:.05em">☁ NUBE</button>`
+    + `<button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>`
+    + (esAdmin
+        ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
+        : `<button class="nav-btn" onclick="openModal('modal-login')" style="border:1px solid var(--accent);color:var(--accent2);margin-left:4px">Admin</button>`);
+  mm.innerHTML = items.map(n=>`<button class="mob-item" onclick="showSec('${n.id}');closeMobMenu()">${esc(n.lbl)}</button>`).join("")
+    + (esAdmin
+        ? `<button class="mob-item" onclick="doLogout()" style="color:var(--danger)">Cerrar sesión</button>`
+        : `<button class="mob-item" onclick="openModal('modal-login');closeMobMenu()" style="color:var(--accent2)">Acceso Admin</button>`);
 }
 
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showSec(id){
-  const secs = document.querySelectorAll('.section');
-  secs.forEach(s => s.style.display = 'none');
-  const el = document.getElementById('sec-' + id);
-  if (el) el.style.display = 'block';
-  secActual = id;
-  buildNav();
+function showSec(id) {
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  const el = document.getElementById("sec-"+id);
+  if(el) el.classList.add("active");
+  secActual = id; buildNav(); renderSection(id); window.scrollTo(0,0);
 }
-function buildNav(){
-  const nd = document.getElementById('nav-desktop');
-  const mm = document.getElementById('mob-menu');
-  if (!nd || !mm) return;
-  const items = [
-    {id:'inicio', lbl:'Inicio'},
-    {id:'publicaciones', lbl:'Publicaciones'},
-    {id:'calendario', lbl:'Calendario'},
-    {id:'documentos', lbl:'Documentos'},
-    {id:'galeria', lbl:'Galería'},
-    {id:'destacados', lbl:'Destacados'},
-    {id:'servicios', lbl:'Servicios'},
-    {id:'cumpleanos', lbl:'Cumpleaños'}
+
+function renderSection(id) {
+  if(id==="inicio")        renderInicio();
+  if(id==="publicaciones") { initFiltros(); renderPubs(); }
+  if(id==="calendario")    renderCalendario();
+  if(id==="documentos")    renderDocumentos();
+  if(id==="admin")         renderAdmin();
+  if(id==="servicios")     renderServicios();
+  if(id==="cumpleanos")    renderCumpleanos();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DARK MODE / MOBILE
+// ═══════════════════════════════════════════════════════════
+function toggleDark() { darkMode=!darkMode; document.body.classList.toggle("dark",darkMode); buildNav(); const mb=document.getElementById("dark-btn-mob"); if(mb) mb.textContent=darkMode?"☀":"◑"; }
+function toggleMobMenu() { document.getElementById("mob-menu").classList.toggle("open"); }
+function closeMobMenu() { document.getElementById("mob-menu").classList.remove("open"); }
+
+// ═══════════════════════════════════════════════════════════
+// MODALES
+// ═══════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).style.display="flex"; }
+function closeModal(id,e) { if(e&&e.target!==e.currentTarget) return; document.getElementById(id).style.display="none"; }
+
+// ═══════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════
+function doLogin() {
+  const p = document.getElementById("inp-pass").value;
+  if(p===ADMIN_PASS) {
+    esAdmin=true;
+    closeModal("modal-login");
+    document.getElementById("inp-pass").value="";
+    document.getElementById("pass-err").style.display="none";
+    buildNav(); showSec("admin");
+  } else {
+    document.getElementById("pass-err").style.display="block";
+  }
+}
+function doLogout() { esAdmin=false; buildNav(); showSec("inicio"); }
+
+// ═══════════════════════════════════════════════════════════
+// RENDER INICIO
+// ═══════════════════════════════════════════════════════════
+function renderInicio() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+  const critico = pubs.find(p=>p.prioridad==="critico"&&p.activa&&p.fijada);
+  const bar = document.getElementById("crit-bar");
+  if(critico) { document.getElementById("crit-txt").textContent="▲ CRÍTICO: "+critico.titulo; bar.classList.remove("hidden"); }
+  else { bar.classList.add("hidden"); }
+  const mg = document.getElementById("metrics-grid");
+  const urgentes = act.filter(p=>p.prioridad==="urgente"||p.prioridad==="critico").length;
+  const metArr = [
+    {v:act.length,           l:"Publicaciones",    i:"📋", r:false},
+    {v:act.filter(p=>p.categoria==="noticias").length, l:"Noticias", i:"◈", r:false},
+    {v:prox.length,          l:"Próximos eventos", i:"📅", r:false},
+    {v:urgentes,             l:"Urgentes/Críticos",i:"⚠",  r:true},
+    {v:act.filter(p=>p.categoria==="documentos").length, l:"Documentos", i:"▣", r:false},
   ];
-  nd.innerHTML = items.map(n => `<button class="nav-btn ${secActual===n.id?'active':''}" onclick="showSec('${n.id}')">${n.lbl}</button>`).join('') + `<button class="nav-btn" onclick="showSec('admin')">⚙ Admin</button><button class="nav-btn" onclick="showSec('publicaciones')">✦ Publicaciones</button><button class="icon-btn" onclick="openCfg()">☁</button>`;
-  mm.innerHTML = nd.innerHTML;
+  mg.innerHTML = metArr.map(m=>`<div class="metric-card" style="border-top:3px solid ${m.r?"var(--danger)":"var(--accent)"}"><div class="metric-icon" style="color:${m.r?"var(--danger)":"var(--accent)"}">${m.i}</div><div class="metric-val" style="color:${m.r&&m.v>0?"var(--danger)":"var(--text)"}">${m.v}</div><div class="metric-label">${m.l}</div></div>`).join("");
+  document.getElementById("home-pubs").innerHTML = act.slice(0,4).map(p=>pubCardHTML(p)).join("") || `<div class="vacio">Sin publicaciones</div>`;
+  document.getElementById("home-evs").innerHTML  = prox.slice(0,4).map(e=>evCardHTML(e)).join("") || `<div class="vacio">Sin eventos próximos</div>`;
 }
-function openCfg(){ const m=document.getElementById('modal-cfg'); if(m) m.style.display='flex'; }
-function closeModal(id,e){ const m=document.getElementById(id); if(m && (!e || e.target===m)) m.style.display='none'; }
-function toggleDark(){}
-function openModalPub(){ const m=document.getElementById('modal-pub'); if(m) m.style.display='flex'; }
-function openModalEv(){ const m=document.getElementById('modal-ev'); if(m) m.style.display='flex'; }
-function openModalDocSvc(){ const m=document.getElementById('modal-doc-svc'); if(m) m.style.display='flex'; }
-function openModalSvc(){ const m=document.getElementById('modal-svc'); if(m) m.style.display='flex'; }
-function openModalBday(){ const m=document.getElementById('modal-bday'); if(m) m.style.display='flex'; }
-function openModalGaleria(){ const m=document.getElementById('modal-galeria'); if(m) m.style.display='flex'; }
-function openModalDest(){ const m=document.getElementById('modal-destacados'); if(m) m.style.display='flex'; }
-function renderAdmin(){}
-function renderGaleria(){ const g=document.getElementById('album-grid'); if(g) g.innerHTML=(galerias.length?galerias.map(a=>'<div class="pub-card"><div class="pub-title">'+esc(a.titulo||'Álbum')+'</div></div>').join(''):'<div class="empty">Galería lista.</div>'); }
-function renderDestacados(){ const g=document.getElementById('dest-grid'); if(g) g.innerHTML=(destacados.length?destacados.map(d=>'<div class="pub-card"><div class="pub-title">'+esc(d.titulo||'Destacado')+'</div></div>').join(''):'<div class="empty">Destacados listos.</div>'); }
-function renderInicio(){}
-function renderPubs(){}
-function renderDocsSvc(){}
-function renderBdays(){}
-function buildTicker(){ const el=document.getElementById('ticker-inner'); if(el) el.textContent='SIN AVISOS ACTIVOS'; }
-window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderPubs(); renderGaleria(); renderDestacados(); renderAdmin(); buildTicker(); });
+
+function pubCardHTML(p) {
+  return `<div class="pub-card" onclick="verDetalle(${p.id})" style="border-left:3px solid ${priColor(p.prioridad)}">
+    <div class="pub-card-meta">
+      <span class="badge badge-cat">${catLabel(p.categoria)}</span>
+      ${priBadge(p.prioridad)}
+      ${p.fijada?'<span style="color:#c9a84c;font-size:.8rem">📌</span>':''}
+    </div>
+    <div class="pub-card-title">${esc(p.titulo)}</div>
+    <div class="pub-card-date">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+    <div class="pub-card-body">${esc(p.contenido)}</div>
+    ${p.etiquetas?.length?`<div class="pub-card-tags">${p.etiquetas.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>`:""}
+  </div>`;
+}
+
+function evCardHTML(e) {
+  const pasado = e.fecha < HOY;
+  return `<div class="ev-card" style="opacity:${pasado?.7:1}">
+    <div class="ev-card-title">${esc(e.titulo)}</div>
+    <div class="ev-card-date">${fmt(e.fecha)}${e.hora?" · "+esc(e.hora):""}</div>
+    ${e.lugar?`<div class="ev-card-lugar">📍 ${esc(e.lugar)}</div>`:""}
+    ${e.descripcion?`<div class="ev-card-desc">${esc(e.descripcion)}</div>`:""}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DETALLE PUBLICACIÓN
+// ═══════════════════════════════════════════════════════════
+function verDetalle(id) {
+  const p = pubs.find(x=>x.id===id); if(!p) return;
+  const dc = document.getElementById("detalle-content");
+  dc.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      <div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <span class="badge badge-cat">${catLabel(p.categoria)}</span>
+          ${priBadge(p.prioridad)}
+          ${p.fijada?'<span style="color:#c9a84c">📌 Fijada</span>':''}
+        </div>
+        <h2 style="font-size:1.3rem;color:var(--text);margin:0 0 6px">${esc(p.titulo)}</h2>
+        <div style="font-size:.78rem;color:var(--text3);font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      </div>
+      ${esAdmin?`<div style="display:flex;gap:8px">
+        <button class="btn-s" onclick="editPub(${p.id})">✏ Editar</button>
+        <button class="btn-s" style="color:var(--danger);border-color:var(--danger)" onclick="eliminarPub(${p.id})">✕ Eliminar</button>
+      </div>`:""}
+    </div>
+    <div style="font-size:.9rem;color:var(--text2);line-height:1.8;white-space:pre-wrap;margin-bottom:18px">${esc(p.contenido)}</div>
+    ${p.etiquetas?.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${p.etiquetas.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>`:""}
+    ${p.adjuntos?.length?`<div><div class="sub-lbl">ADJUNTOS</div><div class="adj-list">${p.adjuntos.map(a=>`<div class="adj-item"><span>${iconAdj(a.tipo,a.nombre)}</span><a href="${a.url}" download="${esc(a.nombre)}" style="color:var(--accent);text-decoration:none">${esc(a.nombre)}</a><span style="color:var(--text3);font-size:.7rem">${a.size||""}</span></div>`).join("")}</div></div>`:""}
+  `;
+  showSec("detalle");
+}
+
+// ═══════════════════════════════════════════════════════════
+// PUBLICACIONES — FILTROS
+// ═══════════════════════════════════════════════════════════
+function initFiltros() {
+  const fc = document.getElementById("f-cat");
+  fc.innerHTML = `<option value="todas">Todas las categorías</option>` + CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  const fe = document.getElementById("f-etq");
+  fe.innerHTML = `<option value="">Todas</option>` + ETIQUETAS.map(e=>`<option value="${e}">${e}</option>`).join("");
+}
+
+function applyFilters() {
+  const q=(document.getElementById("f-q").value||"").toLowerCase();
+  const cat=document.getElementById("f-cat").value;
+  const pri=document.getElementById("f-pri").value;
+  const desde=document.getElementById("f-desde").value;
+  const hasta=document.getElementById("f-hasta").value;
+  const etq=document.getElementById("f-etq").value;
+  const btn=document.getElementById("btn-limpiar");
+  const active = q||cat!=="todas"||pri!=="todas"||desde||hasta||etq;
+  if(btn) btn.style.display=active?"inline-block":"none";
+  let res = pubsActivas();
+  if(cat!=="todas") res=res.filter(p=>p.categoria===cat);
+  if(pri!=="todas") res=res.filter(p=>p.prioridad===pri);
+  if(q) res=res.filter(p=>(p.titulo+p.contenido+p.autor+(p.etiquetas||[]).join(" ")).toLowerCase().includes(q));
+  if(desde) res=res.filter(p=>p.fecha>=desde);
+  if(hasta) res=res.filter(p=>p.fecha<=hasta);
+  if(etq) res=res.filter(p=>(p.etiquetas||[]).includes(etq));
+  document.getElementById("res-count").textContent = res.length+" publicación"+(res.length!==1?"es":"")+" encontrada"+(res.length!==1?"s":"");
+  document.getElementById("pub-grid").innerHTML = res.map(p=>pubCardHTML(p)).join("") || `<div class="vacio" style="grid-column:1/-1">No se encontraron publicaciones con esos filtros.</div>`;
+}
+
+function renderPubs() { applyFilters(); }
+function limpiarFiltros() {
+  ["f-q","f-desde","f-hasta"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+  ["f-cat","f-pri"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=el.options[0].value; });
+  document.getElementById("f-etq").value="";
+  applyFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CALENDARIO
+// ═══════════════════════════════════════════════════════════
+function renderCalendario() {
+  const prox = eventos.filter(e=>e.fecha>=HOY).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const pas  = eventos.filter(e=>e.fecha<HOY).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  document.getElementById("cal-prox").innerHTML    = prox.map(e=>evCardHTML(e)).join("")||`<div class="vacio">Sin eventos próximos</div>`;
+  document.getElementById("cal-pasados").innerHTML = pas.map(e=>evCardHTML(e)).join("")||`<div class="vacio">Sin eventos pasados</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOCUMENTOS
+// ═══════════════════════════════════════════════════════════
+function renderDocumentos() {
+  const docs = pubs.filter(p=>p.activa&&p.categoria==="documentos");
+  document.getElementById("docs-grid").innerHTML = docs.map(p=>`
+    <div class="doc-card" onclick="verDetalle(${p.id})" style="cursor:pointer">
+      <div style="font-size:1.8rem">📄</div>
+      <div style="font-weight:600;font-size:.9rem;color:var(--text)">${esc(p.titulo)}</div>
+      <div style="font-size:.72rem;color:var(--text3);font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
+      <div style="font-size:.78rem;color:var(--text2)">${esc(p.contenido.substring(0,100))}…</div>
+    </div>`).join("")||`<div class="vacio">Sin documentos publicados</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════
+function renderAdmin() {
+  if(!esAdmin) return;
+  const am = document.getElementById("admin-metrics");
+  am.innerHTML = [
+    {v:pubs.length,                      l:"Total publicaciones", i:"📋"},
+    {v:pubs.filter(p=>p.activa).length,  l:"Activas",            i:"✅"},
+    {v:eventos.length,                   l:"Eventos",            i:"📅"},
+    {v:pubs.filter(p=>p.prioridad==="critico"||p.prioridad==="urgente").length, l:"Críticas/Urgentes", i:"⚠"},
+  ].map(m=>`<div class="metric-card"><div class="metric-icon">${m.i}</div><div class="metric-val">${m.v}</div><div class="metric-label">${m.l}</div></div>`).join("");
+
+  const pt = document.getElementById("admin-pub-tbl");
+  pt.innerHTML = `<thead><tr><th>TÍTULO</th><th>CAT</th><th>PRIORIDAD</th><th>FECHA</th><th>ESTADO</th><th>ACCIONES</th></tr></thead><tbody>`
+    + pubs.map(p=>`<tr>
+      <td style="color:var(--text)">${esc(p.titulo)}</td>
+      <td><span class="badge badge-cat" style="font-size:.6rem">${catLabel(p.categoria)}</span></td>
+      <td>${priBadge(p.prioridad)||"<span style='color:var(--text3);font-size:.75rem'>Normal</span>"}</td>
+      <td style="font-family:monospace;font-size:.75rem">${fmt(p.fecha)}</td>
+      <td><span class="${p.activa?"active-badge":"inactive-badge"}">${p.activa?"ACTIVA":"INACTIVA"}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="mini-btn" onclick="editPub(${p.id})">✏</button>
+        <button class="mini-btn" onclick="toggleActiva(${p.id})" style="color:var(--accent)">${p.activa?"✕":"✓"}</button>
+        <button class="mini-btn" onclick="eliminarPub(${p.id})" style="color:var(--danger)">🗑</button>
+      </div></td>
+    </tr>`).join("") + "</tbody>";
+
+  const et = document.getElementById("admin-ev-tbl");
+  et.innerHTML = `<thead><tr><th>TÍTULO</th><th>FECHA</th><th>HORA</th><th>LUGAR</th><th>ACCIONES</th></tr></thead><tbody>`
+    + eventos.map(e=>`<tr>
+      <td style="color:var(--text)">${esc(e.titulo)}</td>
+      <td style="font-family:monospace;font-size:.75rem">${fmt(e.fecha)}</td>
+      <td style="font-family:monospace;font-size:.75rem">${e.hora||""}</td>
+      <td style="font-size:.78rem">${esc(e.lugar||"")}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="mini-btn" onclick="editEv(${e.id})">✏</button>
+        <button class="mini-btn" onclick="eliminarEv(${e.id})" style="color:var(--danger)">🗑</button>
+      </div></td>
+    </tr>`).join("") + "</tbody>";
+}
+
+// ═══════════════════════════════════════════════════════════
+// SERVICIOS
+// ═══════════════════════════════════════════════════════════
+function renderServicios() {
+  if(esAdmin) {
+    document.getElementById("btn-add-svc").style.display="block";
+    document.getElementById("btn-doc-svc").style.display="block";
+  }
+  renderOrdenDia();
+  renderDocsSvc();
+  const fEsc  = document.getElementById("f-esc").value;
+  const fTipo = document.getElementById("f-tipo-svc").value;
+  let svcs = [...servicios];
+  if(fEsc!=="todos")  svcs=svcs.filter(s=>s.escuadron===fEsc);
+  if(fTipo!=="todos") svcs=svcs.filter(s=>s.tipo===fTipo);
+  document.getElementById("svc-count").textContent = svcs.length+" servicio"+(svcs.length!==1?"s":"");
+  const wrap = document.getElementById("svc-tbl-wrap");
+  if(!svcs.length){ wrap.innerHTML=`<div class="vacio">Sin servicios registrados para este filtro</div>`; document.getElementById("svc-resumen").innerHTML=""; return; }
+  wrap.innerHTML = `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>NOMBRE</th><th>ESCUADRÓN</th><th>TIPO</th><th>HORARIO</th><th>LUGAR</th>${esAdmin?"<th>ACCIONES</th>":""}</tr></thead><tbody>`
+    + svcs.map(s=>`<tr>
+      <td style="color:var(--text);font-weight:600">${esc(s.nombre)}${s.rut?`<div style="font-size:.68rem;color:var(--text3);font-family:monospace">${esc(s.rut)}</div>`:""}</td>
+      <td style="font-size:.78rem">${esc(s.escuadron)}</td>
+      <td>${tipoBadge(s.tipo)}</td>
+      <td style="font-family:monospace;font-size:.75rem">${esc(s.horaInicio||"")} — ${esc(s.horaTermino||"")}</td>
+      <td style="font-size:.78rem">${esc(s.lugar||"")}${s.obs?`<div style="font-size:.7rem;color:var(--text3)">${esc(s.obs)}</div>`:""}</td>
+      ${esAdmin?`<td><div style="display:flex;gap:6px"><button class="mini-btn" onclick="editSvc(${s.id})">✏</button><button class="mini-btn" onclick="eliminarSvc(${s.id})" style="color:var(--danger)">🗑</button></div></td>`:""}
+    </tr>`).join("") + "</tbody></table></div>";
+  const tipos = [...new Set(svcs.map(s=>s.tipo))];
+  document.getElementById("svc-resumen").innerHTML = tipos.map(t=>{ const cnt=svcs.filter(s=>s.tipo===t).length; return `<div class="svc-sum-card"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">${cnt}</div><div style="font-size:.7rem;color:var(--text3)">${esc(t)}</div></div>`; }).join("");
+}
+
+function renderOrdenDia() {
+  const ob = document.getElementById("orden-btns");
+  const oc = document.getElementById("orden-content");
+  ob.innerHTML = esAdmin ? `<button class="btn-s" onclick="editarOrden()">✏ Editar</button>` : "";
+  if(ordenEditando && esAdmin) {
+    oc.innerHTML=`<div class="form-col">
+      <div class="form-row">
+        <div><div class="sub-lbl">FECHA</div><input id="od-fecha" type="date" value="${esc(ordenDia.fecha)}"></div>
+        <div><div class="sub-lbl">ENCUADRE</div><input id="od-enc" placeholder="07:30" value="${esc(ordenDia.encuadre)}"></div>
+      </div>
+      <div><div class="sub-lbl">INSTRUCCIÓN DEL DÍA</div><textarea id="od-inst" style="min-height:120px">${esc(ordenDia.instruccion)}</textarea></div>
+      <div><div class="sub-lbl">NOVEDAD</div><input id="od-nov" value="${esc(ordenDia.novedad)}"></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">FIRMANTE</div><input id="od-firmante" value="${esc(ordenDia.firmante)}"></div>
+        <div><div class="sub-lbl">GRADO / CARGO</div><input id="od-grado" value="${esc(ordenDia.grado)}"></div>
+      </div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarOrden()">Guardar Orden</button>
+        <button class="btn-s" onclick="ordenEditando=false;renderOrdenDia()">Cancelar</button>
+      </div>
+    </div>`;
+  } else {
+    oc.innerHTML=`<div class="orden-meta">
+      <div class="orden-field"><div class="sub-lbl">FECHA</div><div style="color:var(--text);font-weight:600">${fmt(ordenDia.fecha)}</div></div>
+      <div class="orden-field"><div class="sub-lbl">ENCUADRE</div><div style="color:var(--text);font-weight:600">${esc(ordenDia.encuadre)||"—"}</div></div>
+    </div>
+    <div class="sub-lbl">INSTRUCCIÓN</div>
+    <div class="orden-instruccion">${esc(ordenDia.instruccion)||"Sin instrucción registrada."}</div>
+    <div class="orden-firma" style="margin-top:16px">
+      <div><div class="sub-lbl">NOVEDAD</div><div style="color:var(--text);font-size:.84rem">${esc(ordenDia.novedad)}</div></div>
+      ${ordenDia.firmante?`<div style="margin-left:auto;text-align:right"><div class="sub-lbl">FIRMA</div><div style="color:var(--text);font-weight:600">${esc(ordenDia.firmante)}</div><div style="font-size:.72rem;color:var(--text3)">${esc(ordenDia.grado)}</div></div>`:""}
+    </div>`;
+  }
+}
+
+function editarOrden() { ordenEditando=true; renderOrdenDia(); }
+function guardarOrden() {
+  ordenDia = {
+    fecha:     document.getElementById("od-fecha").value,
+    encuadre:  document.getElementById("od-enc").value,
+    instruccion: document.getElementById("od-inst").value,
+    novedad:   document.getElementById("od-nov").value,
+    firmante:  document.getElementById("od-firmante").value,
+    grado:     document.getElementById("od-grado").value,
+  };
+  ordenEditando=false; renderOrdenDia(); jbSave(); showCloud("✓ Orden del día guardada");
+}
+
+function renderDocsSvc() {
+  const grid = document.getElementById("docs-svc-grid");
+  if(!docsSvc.length){ grid.innerHTML=`<div class="vacio">Sin documentos publicados</div>`; return; }
+  grid.innerHTML = docsSvc.map(d=>`<div class="doc-card">
+    <div style="font-size:1.8rem">📄</div>
+    <div style="font-weight:600;font-size:.9rem;color:var(--text)">${esc(d.titulo)}</div>
+    <div style="font-size:.72rem;color:var(--text3);font-family:monospace">${fmt(d.fecha)} · ${esc(d.autor||"")}</div>
+    ${d.desc?`<div style="font-size:.78rem;color:var(--text2)">${esc(d.desc)}</div>`:""}
+    <div style="display:flex;gap:8px;margin-top:6px">
+      ${d.url?`<a href="${d.url}" download="${esc(d.titulo)}" class="btn-s" style="font-size:.72rem;padding:4px 10px;text-decoration:none">⬇ Descargar</a>`:""}
+      ${esAdmin?`<button class="mini-btn" onclick="eliminarDocSvc(${d.id})" style="color:var(--danger)">🗑</button>`:""}
+    </div>
+  </div>`).join("");
+}
+
+// ═══════════════════════════════════════════════════════════
+// CUMPLEAÑOS
+// ═══════════════════════════════════════════════════════════
+function renderCumpleanos() {
+  if(esAdmin) document.getElementById("btn-add-bday").style.display="block";
+  const tabs=[{id:"todos",l:"Todos"},{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores"},{id:"administrativo",l:"Administrativo"}];
+  const tabActivo = window._bdayTab || "todos";
+  document.getElementById("bday-tabs").innerHTML = tabs.map(t=>`<button class="bday-tab-btn ${tabActivo===t.id?"active":""}" onclick="window._bdayTab='${t.id}';renderCumpleanos()">${t.l}</button>`).join("");
+  let list = [...cumpleanos];
+  if(tabActivo!=="todos") list=list.filter(b=>b.categoria===tabActivo);
+  const hoy=new Date(), hoyMes=hoy.getMonth()+1, hoyDia=hoy.getDate();
+  list.sort((a,b)=>{ const am=(a.mes-hoyMes+12)%12*31+(a.dia-hoyDia); const bm=(b.mes-hoyMes+12)%12*31+(b.dia-hoyDia); return am-bm; });
+  const cont = document.getElementById("bday-content");
+  if(!list.length){ cont.innerHTML=`<div class="vacio">Sin registros de cumpleaños</div>`; return; }
+  cont.innerHTML = `<div class="flex-col">` + list.map(b=>{
+    const esHoy = b.dia===hoyDia && b.mes===hoyMes;
+    const esMes = b.mes===hoyMes && !esHoy;
+    const diasR = (new Date(hoy.getFullYear(),b.mes-1,b.dia) - new Date(hoy.getFullYear(),hoyMes-1,hoyDia)) / (1000*60*60*24);
+    const diasFinal = diasR < 0 ? diasR+365 : diasR;
+    return `<div class="bday-card ${esHoy?"hoy":esMes?"este-mes":""}">
+      <div class="bday-avatar">${esHoy?"🎂":b.nombre.charAt(0).toUpperCase()}</div>
+      <div>
+        <div class="bday-name">${esc(b.nombre)}</div>
+        <div class="bday-meta">${b.grado?esc(b.grado)+" · ":""}${b.escuadron?esc(b.escuadron)+" · ":""}${b.dia} ${MESES_L[b.mes-1]}${b.anio?" "+b.anio:""}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        ${esHoy?`<span class="bday-badge-hoy">🎉 HOY</span>`:""}
+        ${esMes?`<span class="bday-badge-mes">ESTE MES</span>`:""}
+        <span class="bday-dias">${esHoy?"¡Hoy!":diasFinal===0?"Hoy":"en "+Math.round(diasFinal)+" días"}</span>
+        ${esAdmin?`<button class="mini-btn" onclick="eliminarBday(${b.id})" style="color:var(--danger);font-size:.65rem">🗑</button>`:""}
+      </div>
+    </div>`;
+  }).join("") + "</div>";
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD PUBLICACIONES
+// ═══════════════════════════════════════════════════════════
+function openModalPub() {
+  editPubId=null; adjuntosTemp=[];
+  document.getElementById("modal-pub-title").textContent="Nueva publicación";
+  document.getElementById("fp-titulo").value="";
+  document.getElementById("fp-autor").value="";
+  document.getElementById("fp-fecha").value=HOY;
+  document.getElementById("fp-contenido").value="";
+  document.getElementById("fp-fijada").checked=false;
+  document.getElementById("fp-activa").checked=true;
+  document.getElementById("fp-pri").value="normal";
+  document.getElementById("adj-preview").innerHTML="";
+  document.getElementById("fp-adjuntos").value="";
+  showErr("pub-form-err","");
+  const fc=document.getElementById("fp-cat");
+  fc.innerHTML=CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  etqSeleccionadas=[];
+  renderEtqBtns();
+  openModal("modal-pub");
+}
+
+function editPub(id) {
+  const p=pubs.find(x=>x.id===id); if(!p) return;
+  editPubId=id; adjuntosTemp=[...(p.adjuntos||[])];
+  document.getElementById("modal-pub-title").textContent="Editar publicación";
+  document.getElementById("fp-titulo").value=p.titulo;
+  document.getElementById("fp-autor").value=p.autor;
+  document.getElementById("fp-fecha").value=p.fecha;
+  document.getElementById("fp-contenido").value=p.contenido;
+  document.getElementById("fp-fijada").checked=!!p.fijada;
+  document.getElementById("fp-activa").checked=!!p.activa;
+  document.getElementById("fp-pri").value=p.prioridad||"normal";
+  document.getElementById("fp-adjuntos").value="";
+  showErr("pub-form-err","");
+  const fc=document.getElementById("fp-cat");
+  fc.innerHTML=CATS.map(c=>`<option value="${c.id}" ${c.id===p.categoria?"selected":""}>${c.icon} ${c.label}</option>`).join("");
+  etqSeleccionadas=[...(p.etiquetas||[])];
+  renderEtqBtns();
+  document.getElementById("adj-preview").innerHTML=adjuntosTemp.map(a=>`<div class="adj-item">${iconAdj(a.tipo,a.nombre)} ${esc(a.nombre)}</div>`).join("");
+  openModal("modal-pub");
+}
+
+function renderEtqBtns() {
+  document.getElementById("etq-btns").innerHTML=ETIQUETAS.map(e=>`<button type="button" class="etq-btn ${etqSeleccionadas.includes(e)?"sel":""}" onclick="toggleEtq('${e}')">${e}</button>`).join("");
+}
+function toggleEtq(e) {
+  if(etqSeleccionadas.includes(e)) etqSeleccionadas=etqSeleccionadas.filter(x=>x!==e);
+  else etqSeleccionadas.push(e);
+  renderEtqBtns();
+}
+
+function handleAdjuntos(input) {
+  const files=Array.from(input.files);
+  files.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      adjuntosTemp.push({nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)});
+      document.getElementById("adj-preview").innerHTML=adjuntosTemp.map(a=>`<div class="adj-item">${iconAdj(a.tipo,a.nombre)} ${esc(a.nombre)} <span style="color:var(--text3);font-size:.7rem">${a.size}</span></div>`).join("");
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function guardarPub() {
+  const titulo=document.getElementById("fp-titulo").value.trim();
+  const contenido=document.getElementById("fp-contenido").value.trim();
+  if(!titulo||!contenido){ showErr("pub-form-err","Título y contenido son obligatorios."); return; }
+  showErr("pub-form-err","");
+  const data={
+    titulo, contenido,
+    categoria: document.getElementById("fp-cat").value,
+    prioridad: document.getElementById("fp-pri").value,
+    autor:     document.getElementById("fp-autor").value.trim()||"Administración",
+    fecha:     document.getElementById("fp-fecha").value||HOY,
+    fijada:    document.getElementById("fp-fijada").checked,
+    activa:    document.getElementById("fp-activa").checked,
+    etiquetas: [...etqSeleccionadas],
+    adjuntos:  [...adjuntosTemp],
+  };
+  if(editPubId){ const i=pubs.findIndex(p=>p.id===editPubId); if(i>=0) pubs[i]={...pubs[i],...data}; }
+  else { pubs.push({id:Date.now(),...data}); }
+  closeModal("modal-pub"); renderAdmin(); renderInicio(); jbSave(); showCloud("✓ Publicación guardada");
+}
+
+function toggleActiva(id) { const p=pubs.find(x=>x.id===id); if(p){ p.activa=!p.activa; renderAdmin(); jbSave(); showCloud("✓ Estado actualizado"); } }
+
+function eliminarPub(id) {
+  showConfirm("¿Eliminar esta publicación? Esta acción no se puede deshacer.", ()=>{
+    pubs=pubs.filter(p=>p.id!==id);
+    if(secActual==="detalle") showSec("publicaciones"); else { renderAdmin(); renderInicio(); }
+    jbSave(); showCloud("✓ Publicación eliminada");
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD EVENTOS
+// ═══════════════════════════════════════════════════════════
+function openModalEv() {
+  editEvId=null;
+  document.getElementById("modal-ev-title").textContent="Nuevo evento";
+  ["fe-titulo","fe-hora","fe-lugar","fe-desc"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fe-fecha").value=HOY;
+  showErr("ev-form-err","");
+  openModal("modal-ev");
+}
+function editEv(id) {
+  const e=eventos.find(x=>x.id===id); if(!e) return;
+  editEvId=id;
+  document.getElementById("modal-ev-title").textContent="Editar evento";
+  document.getElementById("fe-titulo").value=e.titulo;
+  document.getElementById("fe-fecha").value=e.fecha;
+  document.getElementById("fe-hora").value=e.hora||"";
+  document.getElementById("fe-lugar").value=e.lugar||"";
+  document.getElementById("fe-desc").value=e.descripcion||"";
+  showErr("ev-form-err","");
+  openModal("modal-ev");
+}
+function guardarEv() {
+  const titulo=document.getElementById("fe-titulo").value.trim();
+  if(!titulo){ showErr("ev-form-err","El título es obligatorio."); return; }
+  showErr("ev-form-err","");
+  const data={titulo,fecha:document.getElementById("fe-fecha").value||HOY,hora:document.getElementById("fe-hora").value.trim(),lugar:document.getElementById("fe-lugar").value.trim(),descripcion:document.getElementById("fe-desc").value.trim()};
+  if(editEvId){ const i=eventos.findIndex(e=>e.id===editEvId); if(i>=0) eventos[i]={...eventos[i],...data}; }
+  else { eventos.push({id:Date.now(),...data}); }
+  closeModal("modal-ev"); renderAdmin(); jbSave(); showCloud("✓ Evento guardado");
+}
+function eliminarEv(id) {
+  showConfirm("¿Eliminar este evento?", ()=>{
+    eventos=eventos.filter(e=>e.id!==id); renderAdmin(); jbSave(); showCloud("✓ Evento eliminado");
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD SERVICIOS
+// ═══════════════════════════════════════════════════════════
+function openModalSvc() {
+  editSvcId=null;
+  document.getElementById("modal-svc-title").textContent="Nuevo servicio";
+  ["fs-nombre","fs-rut","fs-lugar","fs-obs"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fs-hi").value="08:00";
+  document.getElementById("fs-ht").value="16:00";
+  showErr("svc-form-err","");
+  openModal("modal-svc");
+}
+function editSvc(id) {
+  const s=servicios.find(x=>x.id===id); if(!s) return;
+  editSvcId=id;
+  document.getElementById("modal-svc-title").textContent="Editar servicio";
+  document.getElementById("fs-nombre").value=s.nombre;
+  document.getElementById("fs-rut").value=s.rut||"";
+  document.getElementById("fs-esc").value=s.escuadron||"Escuadrón A";
+  document.getElementById("fs-tipo").value=s.tipo||"Guardia";
+  document.getElementById("fs-hi").value=s.horaInicio||"08:00";
+  document.getElementById("fs-ht").value=s.horaTermino||"16:00";
+  document.getElementById("fs-lugar").value=s.lugar||"";
+  document.getElementById("fs-obs").value=s.obs||"";
+  showErr("svc-form-err","");
+  openModal("modal-svc");
+}
+function guardarSvc() {
+  const nombre=document.getElementById("fs-nombre").value.trim();
+  if(!nombre){ showErr("svc-form-err","El nombre es obligatorio."); return; }
+  showErr("svc-form-err","");
+  const data={nombre,rut:document.getElementById("fs-rut").value.trim(),escuadron:document.getElementById("fs-esc").value,tipo:document.getElementById("fs-tipo").value,horaInicio:document.getElementById("fs-hi").value,horaTermino:document.getElementById("fs-ht").value,lugar:document.getElementById("fs-lugar").value.trim(),obs:document.getElementById("fs-obs").value.trim()};
+  if(editSvcId){ const i=servicios.findIndex(s=>s.id===editSvcId); if(i>=0) servicios[i]={...servicios[i],...data}; }
+  else { servicios.push({id:Date.now(),...data}); }
+  closeModal("modal-svc"); renderServicios(); jbSave(); showCloud("✓ Servicio guardado");
+}
+function eliminarSvc(id) {
+  showConfirm("¿Eliminar este servicio?", ()=>{
+    servicios=servicios.filter(s=>s.id!==id); renderServicios(); jbSave(); showCloud("✓ Servicio eliminado");
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD DOCUMENTOS SVC
+// ═══════════════════════════════════════════════════════════
+function openModalDocSvc() {
+  docSvcTemp=null;
+  ["fd-titulo","fd-desc","fd-autor"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fd-fecha").value=HOY;
+  document.getElementById("fd-preview").textContent="";
+  document.getElementById("fd-archivo").value="";
+  showErr("doc-form-err","");
+  openModal("modal-doc-svc");
+}
+function handleDocSvc(input) {
+  const f=input.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    docSvcTemp={nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)};
+    document.getElementById("fd-preview").textContent="📄 "+f.name+" ("+formatSize(f.size)+")";
+  };
+  reader.readAsDataURL(f);
+}
+function guardarDocSvc() {
+  const titulo=document.getElementById("fd-titulo").value.trim();
+  if(!titulo||!docSvcTemp){ showErr("doc-form-err","Título y archivo son obligatorios."); return; }
+  showErr("doc-form-err","");
+  docsSvc.push({id:Date.now(),titulo,desc:document.getElementById("fd-desc").value.trim(),fecha:document.getElementById("fd-fecha").value||HOY,autor:document.getElementById("fd-autor").value.trim(),url:docSvcTemp.url,nombre:docSvcTemp.nombre});
+  closeModal("modal-doc-svc"); renderDocsSvc(); jbSave(); showCloud("✓ Documento publicado");
+}
+function eliminarDocSvc(id) {
+  showConfirm("¿Eliminar este documento?", ()=>{
+    docsSvc=docsSvc.filter(d=>d.id!==id); renderDocsSvc(); jbSave(); showCloud("✓ Documento eliminado");
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD CUMPLEAÑOS
+// ═══════════════════════════════════════════════════════════
+function openModalBday() {
+  document.getElementById("modal-bday-title").textContent="Agregar Cumpleaños";
+  ["fb-nombre","fb-grado","fb-escuadron","fb-anio"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fb-dia").value="";
+  document.getElementById("fb-mes").value="1";
+  document.getElementById("fb-cat").value="alumnos";
+  showErr("bday-form-err","");
+  openModal("modal-bday");
+}
+function guardarBday() {
+  const nombre=document.getElementById("fb-nombre").value.trim();
+  const dia=parseInt(document.getElementById("fb-dia").value);
+  const mes=parseInt(document.getElementById("fb-mes").value);
+  if(!nombre||!dia||!mes){ showErr("bday-form-err","Nombre, día y mes son obligatorios."); return; }
+  if(dia<1||dia>31){ showErr("bday-form-err","Día inválido (1–31)."); return; }
+  showErr("bday-form-err","");
+  cumpleanos.push({
+    id:Date.now(), nombre,
+    grado:     document.getElementById("fb-grado").value.trim(),
+    categoria: document.getElementById("fb-cat").value,
+    dia, mes,
+    anio:      parseInt(document.getElementById("fb-anio").value)||null,
+    escuadron: document.getElementById("fb-escuadron").value.trim()
+  });
+  closeModal("modal-bday"); renderCumpleanos(); jbSave(); showCloud("✓ Cumpleaños agregado");
+}
+function eliminarBday(id) {
+  showConfirm("¿Eliminar este registro de cumpleaños?", ()=>{
+    cumpleanos=cumpleanos.filter(b=>b.id!==id); renderCumpleanos(); jbSave(); showCloud("✓ Registro eliminado");
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// NUBE / JSONBIN
+// ═══════════════════════════════════════════════════════════
+const STORAGE_KEY = "diarioMuralCfg";
+function jbBinId()  { try { return (JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")).binId||"";  } catch(e){ return ""; } }
+function jbApiKey() { try { return (JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")).apiKey||""; } catch(e){ return ""; } }
+
+async function jbSave() {
+  const binId=jbBinId(), apiKey=jbApiKey();
+  if(!binId||!apiKey) return;
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json","X-Master-Key":apiKey,"X-Bin-Versioning":"false"},
+      body:JSON.stringify({pubs,eventos,servicios,docsSvc,cumpleanos,ordenDia})
+    });
+  } catch(e){ console.warn("jbSave error:",e); }
+}
+
+async function jbLoad() {
+  const binId=jbBinId(), apiKey=jbApiKey();
+  if(!binId||!apiKey) return;
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`,{headers:{"X-Master-Key":apiKey}});
+  if(!r.ok) throw new Error("jbLoad HTTP "+r.status);
+  const d=(await r.json()).record;
+  if(d.pubs      && Array.isArray(d.pubs))      pubs       = d.pubs;
+  if(d.eventos   && Array.isArray(d.eventos))    eventos    = d.eventos;
+  if(d.servicios && Array.isArray(d.servicios))  servicios  = d.servicios;
+  if(d.docsSvc   && Array.isArray(d.docsSvc))    docsSvc    = d.docsSvc;
+  if(d.cumpleanos&& Array.isArray(d.cumpleanos)) cumpleanos = d.cumpleanos;
+  if(d.ordenDia  && typeof d.ordenDia==="object") ordenDia  = d.ordenDia;
+}
+
+function openCfg() {
+  const cur = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+  const val = prompt("Configuración JSONBin\n\nFormato: BINID|APIKEY\n\nDeja en blanco para borrar:", cur.binId&&cur.apiKey?cur.binId+"|"+cur.apiKey:"");
+  if(val===null) return;
+  if(!val.trim()){ localStorage.removeItem(STORAGE_KEY); showCloud("☁ Configuración borrada"); return; }
+  const [binId,...rest] = val.trim().split("|");
+  const apiKey = rest.join("|");
+  if(!binId||!apiKey){ alert("Formato incorrecto. Usa: BINID|APIKEY"); return; }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({binId,apiKey}));
+  showCloud("✓ Configuración guardada");
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLOUD MSG
+// ═══════════════════════════════════════════════════════════
+function showCloud(msg, type="ok") {
+  const el=document.getElementById("cloud-msg");
+  el.textContent=msg;
+  el.style.background=type==="ok"?"#2a6a3a":type==="err"?"#8a2020":"#4a4a20";
+  el.style.opacity="1";
+  setTimeout(()=>el.style.opacity="0", 2800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INFO PANEL
+// ═══════════════════════════════════════════════════════════
+function toggleInfoPanel() {
+  const panel=document.getElementById("info-panel");
+  if(panel.classList.contains("visible")){ panel.classList.remove("visible"); return; }
+  const body=document.getElementById("info-panel-body");
+  const urgentes=pubs.filter(p=>p.activa&&(p.prioridad==="critico"||p.prioridad==="urgente")).length;
+  const proximoEv=proxEventos()[0];
+  body.innerHTML=`
+    <div class="info-section">
+      <div class="info-section-title">ESTADO GENERAL</div>
+      <div class="info-row"><span class="info-row-lbl">Publicaciones activas</span><span class="info-row-val">${pubs.filter(p=>p.activa).length}</span></div>
+      <div class="info-row"><span class="info-row-lbl">Urgentes/Críticas</span><span class="info-row-val" style="color:${urgentes>0?"var(--danger)":"var(--accent)"}">${urgentes}</span></div>
+      <div class="info-row"><span class="info-row-lbl">Eventos próximos</span><span class="info-row-val">${proxEventos().length}</span></div>
+      <div class="info-row"><span class="info-row-lbl">Servicios activos</span><span class="info-row-val">${servicios.length}</span></div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">PRÓXIMO EVENTO</div>
+      ${proximoEv?`<div class="info-row"><span class="info-row-lbl">${esc(proximoEv.titulo)}</span><span class="info-row-val">${fmt(proximoEv.fecha)}</span></div>`:`<div style="color:var(--text3);font-size:.76rem">Sin eventos próximos</div>`}
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">SISTEMA</div>
+      <div class="info-row"><span class="info-row-lbl">Fecha actual</span><span class="info-row-val">${fmt(HOY)}</span></div>
+      <div class="info-row"><span class="info-row-lbl">Modo</span><span class="info-row-val">${darkMode?"Oscuro":"Claro"}</span></div>
+      <div class="info-row"><span class="info-row-lbl">JSONBin</span><span class="info-row-val" style="color:${jbBinId()?"var(--accent)":"var(--text3)"}">${jbBinId()?"Configurado":"No configurado"}</span></div>
+      <div class="info-row"><span class="info-row-lbl">Sesión</span><span class="info-row-val" style="color:${esAdmin?"var(--accent)":"var(--text3)"}">${esAdmin?"Admin":"Invitado"}</span></div>
+    </div>`;
+  const badge=document.getElementById("info-fab-badge");
+  if(urgentes>0){ badge.textContent=urgentes; badge.style.display="flex"; } else { badge.style.display="none"; }
+  panel.classList.add("visible");
+}
+
+// DRAG INFO PANEL
+(function(){
+  const panel=document.getElementById("info-panel");
+  const header=document.getElementById("info-panel-header");
+  if(!panel||!header) return;
+  let dragging=false, ox=0, oy=0;
+  header.addEventListener("mousedown",e=>{ dragging=true; ox=e.clientX-panel.offsetLeft; oy=e.clientY-panel.offsetTop; panel.classList.add("dragging"); panel.style.right="auto"; });
+  document.addEventListener("mousemove",e=>{ if(!dragging) return; panel.style.left=(e.clientX-ox)+"px"; panel.style.top=(e.clientY-oy)+"px"; });
+  document.addEventListener("mouseup",()=>{ dragging=false; panel.classList.remove("dragging"); });
+})();
+
+// ═══════════════════════════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════════════════════════
+function buildTicker() {
+  const el = document.getElementById("ticker-inner");
+  if(!el) return;
+  const items = pubsActivas().slice(0,8);
+  if(!items.length){ document.getElementById("news-ticker").style.display="none"; return; }
+  const txt = items.map(p=>{
+    const badge = p.prioridad!=="normal" ? `[${p.prioridad.toUpperCase()}] ` : "";
+    return `<span style="padding:0 32px">${badge}${esc(p.titulo)}<span style="color:var(--accent);margin-left:12px">·</span></span>`;
+  }).join("");
+  el.innerHTML = txt + txt; // duplicar para loop continuo
+  // Calcular duración según contenido
+  const totalWidth = el.scrollWidth / 2;
+  const duration = Math.max(20, totalWidth / 60); // ~60px/s
+  el.style.animation = `ticker-scroll ${duration}s linear infinite`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CARGA DATOS DESDE data.json (seed opcional)
+// ═══════════════════════════════════════════════════════════
+async function loadDataJson() {
+  try {
+    const r = await fetch('./data.json');
+    if(!r.ok) return false;
+    const d = await r.json();
+    if(Array.isArray(d.publicaciones) && d.publicaciones.length) pubs      = d.publicaciones;
+    if(Array.isArray(d.eventos)        && d.eventos.length)       eventos   = d.eventos;
+    if(Array.isArray(d.servicios))                                 servicios = d.servicios;
+    if(Array.isArray(d.docsSvc))                                   docsSvc   = d.docsSvc;
+    if(Array.isArray(d.cumpleanos))                                cumpleanos= d.cumpleanos;
+    if(d.ordenDia && typeof d.ordenDia==="object")                 ordenDia  = d.ordenDia;
+    return true;
+  } catch(e) { return false; }
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.getElementById("footer-year").textContent = new Date().getFullYear();
+(async () => {
+  const hasCreds = jbBinId() && jbApiKey();
+  if(hasCreds) {
+    try { await jbLoad(); } catch(e) { await loadDataJson(); }
+  } else {
+    await loadDataJson();
+  }
+  buildNav();
+  renderInicio();
+  buildTicker();
+})();
 </script>
-<div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
 </html>
