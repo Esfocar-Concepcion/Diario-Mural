@@ -2259,7 +2259,8 @@ function eliminarBday(id) {
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 // Cargar credenciales antes de jbLoad
-try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);window._JB_BIN=_c.binId||'';window._JB_KEY=_c.apiKey||'';}  } catch(e){}
+window._JB_BIN = '69f8bb86856a682189a5cda0';
+try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);if(_c.apiKey)window._JB_KEY=_c.apiKey;} } catch(e){}
 jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); });
 
 // ═══════════════════════════════════════════════════════════
@@ -2426,8 +2427,8 @@ function showCloudMsg(txt, color) {
 }
 
 function openCfg() {
-  var b = '', k = '';
-  try { var s = localStorage.getItem('jb_cfg'); if (s) { var c = JSON.parse(s); b = c.binId||''; k = c.apiKey||''; } } catch(e){}
+  var b = '69f8bb86856a682189a5cda0', k = '';
+  try { var s = localStorage.getItem('jb_cfg'); if (s) { var c = JSON.parse(s); if(c.apiKey) k = c.apiKey; } } catch(e){}
   document.getElementById('cfg-bin').value = b;
   document.getElementById('cfg-key').value = k;
   document.getElementById('cfg-status').textContent = '';
