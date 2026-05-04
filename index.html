@@ -1349,6 +1349,35 @@
   </div>
 </div>
 
+
+<div id="modal-album" class="modal-overlay" style="display:none" onclick="closeModal('modal-album',event)">
+  <div class="modal-box" style="max-width:560px">
+    <h3>📷 Nuevo Álbum</h3>
+    <div class="form-col">
+      <div><div class="sub-lbl">TÍTULO *</div><input id="fg-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
+      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fg-desc" placeholder="Breve descripción del álbum"></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">FECHA</div><input id="fg-fecha" type="date"></div>
+        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fg-autor" placeholder="Ej: Grupo Concepción"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">PORTADA</div>
+        <input type="file" id="fg-portada" accept="image/*" onchange="handleAlbumPortada(this)">
+        <div id="fg-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">FOTOS DEL ÁLBUM</div>
+        <input type="file" id="fg-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
+        <div id="fg-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      </div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
+        <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONSTANTES
@@ -2508,9 +2537,7 @@ function destIcon(tipo) {
   return '🏅';
 }
 
-function openModalGaleria() {
-  if (document.getElementById('modal-galeria')) document.getElementById('modal-galeria').style.display = 'flex';
-}
+function openModalGaleria() { document.getElementById('modal-album').style.display = 'flex'; }
 
 function openModalDest() {
   if (document.getElementById('modal-destacados')) document.getElementById('modal-destacados').style.display = 'flex';
