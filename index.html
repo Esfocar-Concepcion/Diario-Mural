@@ -1019,6 +1019,34 @@
   </div>
 </div>
 
+
+<div id="modal-album" class="modal-overlay" style="display:none" onclick="closeModal('modal-album',event)">
+  <div class="modal-box" style="max-width:560px">
+    <h3>📷 Nuevo Álbum</h3>
+    <div class="form-col">
+      <div><div class="sub-lbl">TÍTULO *</div><input id="fa-titulo" placeholder="Ej: Instrucción de Orden Cerrado"></div>
+      <div><div class="sub-lbl">DESCRIPCIÓN</div><input id="fa-desc" placeholder="Breve descripción del álbum"></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">FECHA</div><input id="fa-fecha" type="date"></div>
+        <div><div class="sub-lbl">AUTOR / UNIDAD</div><input id="fa-autor" placeholder="Ej: Grupo Concepción"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">PORTADA</div>
+        <input type="file" id="fa-portada" accept="image/*" onchange="handleAlbumPortada(this)">
+        <div id="fa-portada-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">FOTOS DEL ÁLBUM</div>
+        <input type="file" id="fa-fotos" accept="image/*" multiple onchange="handleAlbumFotos(this)">
+        <div id="fa-fotos-prev" style="margin-top:6px;font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      </div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarAlbum()">Guardar Álbum</button>
+        <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONSTANTES
@@ -2179,6 +2207,106 @@ function renderAlbums() {
 function renderDestacados() {
   const g = document.getElementById('dest-grid'); if (!g) return;
   g.innerHTML = (destacados||[]).map(d => `<div class="pub-card"><div class="pub-title">${esc(d.titulo||'Destacado')}</div><div style="color:var(--text3);font-size:.8rem">${esc(d.motivo||'')}</div></div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
+}
+
+
+
+let albumPortadaTemp = null;
+let albumFotosTemp = [];
+
+function openModalAlbum() {
+  albumPortadaTemp = null;
+  albumFotosTemp = [];
+  document.getElementById('fa-titulo').value = '';
+  document.getElementById('fa-desc').value = '';
+  document.getElementById('fa-fecha').value = '';
+  document.getElementById('fa-autor').value = '';
+  document.getElementById('fa-portada').value = '';
+  document.getElementById('fa-fotos').value = '';
+  document.getElementById('fa-portada-prev').textContent = '';
+  document.getElementById('fa-fotos-prev').textContent = '';
+  document.getElementById('modal-album').style.display = 'flex';
+}
+
+function _uploadImageToGitHub(file) {
+  const ghToken = window._GH_TOKEN;
+  if (!ghToken) return Promise.reject('No hay GitHub Token');
+  const path = 'adjuntos/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const b64 = ev.target.result.split(',')[1];
+      fetch('https://api.github.com/repos/Esfocar-Concepcion/Diario-Mural/contents/' + path, {
+        method: 'PUT',
+        headers: { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'image: ' + file.name, content: b64 })
+      })
+      .then(r2 => r2.json())
+      .then(d => d.content && d.content.download_url ? resolve({ nombre:file.name, tipo:file.type, tamaño:file.size, url:d.content.download_url }) : reject(d.message || 'Error subiendo imagen'))
+      .catch(reject);
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function handleAlbumPortada(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  document.getElementById('fa-portada-prev').textContent = '⏳ Subiendo portada...';
+  _uploadImageToGitHub(f).then(u => {
+    albumPortadaTemp = u;
+    document.getElementById('fa-portada-prev').textContent = '✓ ' + u.nombre;
+  }).catch(err => {
+    document.getElementById('fa-portada-prev').textContent = '✗ ' + err;
+  });
+}
+
+function handleAlbumFotos(inp) {
+  const files = Array.from(inp.files);
+  if (!files.length) return;
+  document.getElementById('fa-fotos-prev').textContent = '⏳ Subiendo ' + files.length + ' fotos...';
+  Promise.all(files.map(_uploadImageToGitHub)).then(list => {
+    albumFotosTemp = albumFotosTemp.concat(list);
+    document.getElementById('fa-fotos-prev').textContent = '✓ ' + albumFotosTemp.length + ' fotos listas';
+  }).catch(err => {
+    document.getElementById('fa-fotos-prev').textContent = '✗ ' + err;
+  });
+}
+
+function guardarAlbum() {
+  const titulo = document.getElementById('fa-titulo').value.trim();
+  if (!titulo) return alert('El título es obligatorio.');
+  const album = {
+    id: Date.now(),
+    titulo,
+    descripcion: document.getElementById('fa-desc').value.trim(),
+    fecha: document.getElementById('fa-fecha').value || HOY,
+    autor: document.getElementById('fa-autor').value.trim(),
+    portada: albumPortadaTemp,
+    fotos: albumFotosTemp
+  };
+  albums = [album].concat(albums || []);
+  closeModal('modal-album');
+  renderAlbums();
+  jbSave();
+}
+
+function renderAlbums() {
+  const g = document.getElementById('album-grid');
+  if (!g) return;
+  if (!albums || !albums.length) { g.innerHTML = '<div class="empty">Sin álbumes aún.</div>'; return; }
+  g.innerHTML = albums.map(a => `
+    <div class="pub-card" style="overflow:hidden">
+      <div style="height:180px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden">
+        ${a.portada && a.portada.url ? `<img src="${a.portada.url}" alt="${esc(a.titulo)}" style="width:100%;height:100%;object-fit:cover">` : '<div style="color:var(--text3);font-size:.8rem">Sin portada</div>'}
+      </div>
+      <div style="padding:14px">
+        <div class="pub-title">${esc(a.titulo)}</div>
+        <div style="font-size:.78rem;color:var(--text3);margin:6px 0 10px">${esc(a.descripcion||'')}</div>
+        <div style="font-size:.72rem;color:var(--text3);font-family:monospace">${esc(a.fecha)} · ${esc(a.autor||'')}</div>
+        <div style="margin-top:10px;font-size:.76rem;color:var(--accent);font-family:monospace">📸 ${a.fotos ? a.fotos.length : 0} fotos</div>
+      </div>
+    </div>`).join('');
 }
 
 // ═══════════════════════════════════════════════════════════
