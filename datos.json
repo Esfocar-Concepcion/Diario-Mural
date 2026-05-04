@@ -1,23 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:47.739Z",
+  "updatedAt": "2026-05-04T14:56:49.414Z",
   "pubs": [
-    {
-      "id": 5,
-      "titulo": "Calendario Semanal — 28 Abril al 4 Mayo",
-      "categoria": "actividades",
-      "autor": "Coordinación Académica",
-      "fecha": "2026-04-27",
-      "prioridad": "normal",
-      "fijada": false,
-      "activa": true,
-      "etiquetas": [
-        "Académico",
-        "Formación"
-      ],
-      "adjuntos": [],
-      "contenido": "Lunes 28: Instrucción de Armas 08:00. Martes 29: Derecho Penal / Tiro en Polígono 14:00. Miércoles 30: Instrucción de tránsito 15:00. Jueves 01: FORMACIÓN EXTRAORDINARIA 07:30. Viernes 02: Evaluación Derecho Procesal. Sábado 03: Servicio de cuartel escuadrón A."
-    },
     {
       "id": 6,
       "titulo": "Resultados Torneo Deportivo Interno 2026",
