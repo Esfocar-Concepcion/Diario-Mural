@@ -1,22 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T15:15:56.478Z",
+  "updatedAt": "2026-05-04T15:37:08.224Z",
   "pubs": [
-    {
-      "id": 6,
-      "titulo": "Resultados Torneo Deportivo Interno 2026",
-      "categoria": "vida-estudiantil",
-      "autor": "Bienestar Estudiantil",
-      "fecha": "2026-04-20",
-      "prioridad": "normal",
-      "fijada": false,
-      "activa": true,
-      "etiquetas": [
-        "Deportes"
-      ],
-      "adjuntos": [],
-      "contenido": "Fútbol: 1° Escuadrón A, 2° Escuadrón B. Básquetbol: 1° Escuadrón B, 2° Escuadrón A. Volleyball mixto: 1° Equipo Norte, 2° Equipo Sur. Felicitaciones a todos los participantes."
-    },
     {
       "id": 7,
       "titulo": "Reglamento de Convivencia Estudiantil 2026",
