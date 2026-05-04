@@ -558,6 +558,142 @@
       font-weight: 700;
     }
 
+
+    /* ── NEWS TICKER BAR ── */
+    #news-ticker {
+      background: linear-gradient(90deg, var(--header-bg) 0%, #2a4020 50%, var(--header-bg) 100%);
+      color: var(--header-text);
+      padding: 0;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent);
+      overflow: hidden;
+      position: relative;
+      z-index: 99;
+    }
+    #news-ticker .ticker-label {
+      background: var(--accent);
+      color: #fff;
+      padding: 0 16px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      font-family: monospace;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border-right: 2px solid var(--accent2);
+      box-shadow: 3px 0 10px rgba(0,0,0,.3);
+    }
+    #news-ticker .ticker-label span { margin-right: 6px; animation: pulse-dot 1.5s infinite; }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; } 50% { opacity:.3; }
+    }
+    #news-ticker .ticker-track {
+      flex: 1;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    #news-ticker .ticker-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      animation: ticker-scroll 40s linear infinite;
+      white-space: nowrap;
+      will-change: transform;
+    }
+    #news-ticker .ticker-inner:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 28px;
+      font-size: .82rem;
+      font-family: 'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;
+      color: var(--header-text);
+      letter-spacing: .03em;
+      gap: 10px;
+    }
+    .ticker-item-icon {
+      color: var(--accent);
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .ticker-sep {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 1rem;
+      padding: 0 8px;
+      opacity: .5;
+    }
+    .ticker-item.crit  { color: #ff9090; }
+    .ticker-item.urg   { color: #ffcc80; }
+    .ticker-item.imp   { color: var(--header-text); }
+
+    /* ── Improved font sizes ── */
+    .brand-title        { font-size: 1.15rem !important; font-weight: 800 !important; letter-spacing: .05em !important; }
+    .brand-sub          { font-size: .72rem !important; letter-spacing: .24em !important; }
+    .nav-btn            { font-size: .88rem !important; padding: 7px 16px !important; }
+    .hero h1            { font-size: 2.4rem !important; }
+    .hero p             { font-size: 1rem !important; }
+    .hero-sub           { font-size: .72rem !important; letter-spacing: .3em !important; }
+    .hero-accent        { font-size: 1.2rem !important; }
+    .sec-title h2       { font-size: 1.2rem !important; letter-spacing: .06em !important; }
+    .sec-title-bar      { height: 3px !important; width: 80px !important; }
+    .metric-val         { font-size: 2.1rem !important; }
+    .metric-label       { font-size: .78rem !important; letter-spacing: .07em !important; }
+    .metric-icon        { font-size: 1.4rem !important; }
+    .metric-card        { padding: 20px 16px !important; }
+    .pub-card-title     { font-size: 1.02rem !important; font-weight: 700 !important; }
+    .pub-card-date      { font-size: .78rem !important; }
+    .pub-card-body      { font-size: .88rem !important; line-height: 1.65 !important; }
+    .badge              { font-size: .72rem !important; padding: 3px 9px !important; }
+    .ev-card-title      { font-size: .96rem !important; font-weight: 700 !important; }
+    .ev-card-date       { font-size: .78rem !important; }
+    .ev-card-lugar      { font-size: .82rem !important; }
+    .tbl th             { font-size: .72rem !important; padding: 11px 14px !important; letter-spacing: .12em !important; }
+    .tbl td             { font-size: .86rem !important; }
+    .sub-lbl            { font-size: .72rem !important; letter-spacing: .2em !important; margin-bottom: 10px !important; }
+    input, select, textarea { font-size: .9rem !important; padding: 10px 13px !important; }
+    .btn-p, .btn-s      { font-size: .88rem !important; padding: 10px 22px !important; letter-spacing: .06em !important; }
+    footer              { font-size: .72rem !important; letter-spacing: .22em !important; padding: 28px 20px !important; }
+    .bday-name          { font-size: 1rem !important; }
+    .bday-meta          { font-size: .8rem !important; }
+    .vacio              { font-size: .94rem !important; }
+    header              { box-shadow: 0 3px 20px var(--shadow) !important; }
+    .header-inner       { height: 64px !important; }
+    .brand-logo         { width: 52px !important; height: 52px !important; font-size: 1.3rem !important; }
+
+    /* ── Hero enhanced ── */
+    .hero { padding: 48px 44px 40px !important; border-radius: 6px !important; }
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -60px; bottom: -60px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: var(--accent2);
+      opacity: .04;
+      pointer-events: none;
+    }
+
+    /* ── Card hover ── */
+    .pub-card { border-radius: 5px !important; padding: 18px 20px !important; }
+    .pub-card:hover { box-shadow: 0 6px 22px var(--shadow) !important; transform: translateY(-2px) !important; }
+    .ev-card { border-radius: 5px !important; padding: 15px 18px !important; }
+    .metric-card { border-radius: 5px !important; border-top-width: 4px !important; }
+
+    /* ── Footer enhanced ── */
+    footer { border-top: 3px solid var(--accent) !important; }
+
   </style>
 </head>
 <body>
@@ -586,6 +722,16 @@
   </div>
   <div id="mob-menu"></div>
 </header>
+
+<!-- BARRA DE NOTICIAS DESLIZANTE -->
+<div id="news-ticker">
+  <div class="ticker-label"><span>●</span> NOTICIAS</div>
+  <div class="ticker-track">
+    <div class="ticker-inner" id="ticker-inner">
+      <!-- Se llena con JavaScript -->
+    </div>
+  </div>
+</div>
 
 <!-- CONTENIDO -->
 <main>
@@ -2175,6 +2321,7 @@ function eliminarBday(id) {
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 buildNav();
 renderInicio();
+buildTicker();
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
@@ -2291,6 +2438,60 @@ setInterval(() => {
 
   document.addEventListener('touchend', () => { isDragging = false; panel.classList.remove('dragging'); });
 })();
+
+
+// ═══════════════════════════════════════════════════════════
+// BARRA DE NOTICIAS
+// ═══════════════════════════════════════════════════════════
+function buildTicker() {
+  const act = pubsActivas();
+  const prox = proxEventos();
+
+  const items = [];
+
+  // Publicaciones críticas y urgentes primero
+  act.filter(p => p.prioridad === 'critico').forEach(p => {
+    items.push({ text: p.titulo, icon: '▲', cls: 'crit', date: fmt(p.fecha) });
+  });
+  act.filter(p => p.prioridad === 'urgente').forEach(p => {
+    items.push({ text: p.titulo, icon: '⚠', cls: 'urg', date: fmt(p.fecha) });
+  });
+  act.filter(p => p.prioridad === 'importante').forEach(p => {
+    items.push({ text: p.titulo, icon: '◈', cls: 'imp', date: fmt(p.fecha) });
+  });
+  // Próximos eventos
+  prox.slice(0, 4).forEach(e => {
+    items.push({ text: e.titulo + (e.hora ? ' — ' + e.hora + ' hrs' : ''), icon: '◫', cls: 'imp', date: fmt(e.fecha) });
+  });
+  // Noticias normales
+  act.filter(p => p.prioridad === 'normal').slice(0, 5).forEach(p => {
+    items.push({ text: p.titulo, icon: '◎', cls: '', date: fmt(p.fecha) });
+  });
+
+  if (items.length === 0) {
+    document.getElementById('news-ticker').style.display = 'none';
+    return;
+  }
+
+  // Duplicar para loop continuo
+  const doubled = [...items, ...items];
+  const html = doubled.map((item, i) =>
+    `<span class="ticker-item ${item.cls}">
+      <span class="ticker-item-icon">${item.icon}</span>
+      <span>${esc(item.date)} · ${esc(item.text)}</span>
+    </span><span class="ticker-sep">◆</span>`
+  ).join('');
+
+  const ti = document.getElementById('ticker-inner');
+  ti.innerHTML = html;
+
+  // Ajustar velocidad según cantidad de contenido
+  const totalWidth = ti.scrollWidth;
+  const speed = Math.max(30, Math.min(80, totalWidth / 80));
+  ti.style.animationDuration = speed + 's';
+}
+
+// Llamar buildTicker al init y cuando cambian las publicaciones
 
 </script>
 </body>
