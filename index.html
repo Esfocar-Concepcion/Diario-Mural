@@ -1382,6 +1382,21 @@
 // Minimal stable bootstrap
 let esAdmin = false;
 let secActual = 'inicio';
+
+let esAdmin = true;
+function doLogin(){ esAdmin = true; buildNav(); renderAdmin(); showSec('admin'); }
+function doLogout(){ esAdmin = false; buildNav(); showSec('inicio'); }
+function renderAdmin(){
+  const box = document.getElementById('admin-box');
+  if (!box) return;
+  box.innerHTML = `
+    <div class="metric-card"><div class="metric-val">${pubs.length}</div><div class="metric-label">Publicaciones</div></div>
+    <div class="metric-card"><div class="metric-val">${galerias.length}</div><div class="metric-label">Galerías</div></div>
+    <div class="metric-card"><div class="metric-val">${destacados.length}</div><div class="metric-label">Destacados</div></div>
+  `;
+  ['btn-add-pub','btn-add-ev','btn-add-doc','btn-add-galeria','btn-add-dest','btn-add-bday','btn-doc-svc','btn-add-svc','btn-edit-orden'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display = esAdmin ? '' : 'none'; });
+}
+
 let galerias = [];
 let destacados = [];
 
@@ -1429,7 +1444,7 @@ function buildNav(){
     {id:'servicios', lbl:'Servicios'},
     {id:'cumpleanos', lbl:'Cumpleaños'}
   ];
-  nd.innerHTML = items.map(n => `<button class="nav-btn ${secActual===n.id?'active':''}" onclick="showSec('${n.id}')">${n.lbl}</button>`).join('') + '<button class="icon-btn" onclick="openCfg()">☁</button>';
+  nd.innerHTML = items.map(n => `<button class="nav-btn ${secActual===n.id?'active':''}" onclick="showSec('${n.id}')">${n.lbl}</button>`).join('') + `<button class="nav-btn" onclick="showSec('admin')">⚙ Admin</button><button class="icon-btn" onclick="openCfg()">☁</button>`;
   mm.innerHTML = nd.innerHTML;
 }
 function openCfg(){ const m=document.getElementById('modal-cfg'); if(m) m.style.display='flex'; }
@@ -1450,7 +1465,7 @@ function renderPubs(){}
 function renderDocsSvc(){}
 function renderBdays(){}
 function buildTicker(){ const el=document.getElementById('ticker-inner'); if(el) el.textContent='SIN AVISOS ACTIVOS'; }
-window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderPubs(); renderGaleria(); renderDestacados(); buildTicker(); });
+window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderPubs(); renderGaleria(); renderDestacados(); renderAdmin(); buildTicker(); });
 </script>
 <div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
