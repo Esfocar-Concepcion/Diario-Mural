@@ -1,24 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:14.000Z",
+  "updatedAt": "2026-05-04T14:56:42.068Z",
   "pubs": [
-    {
-      "id": 1,
-      "titulo": "Formación Extraordinaria — 1 de Mayo",
-      "categoria": "avisos",
-      "autor": "Inspectoría General",
-      "fecha": "2026-04-28",
-      "prioridad": "critico",
-      "fijada": true,
-      "activa": true,
-      "etiquetas": [
-        "Ceremonial",
-        "Formación",
-        "Disciplina"
-      ],
-      "adjuntos": [],
-      "contenido": "Se comunica a todos los alumnos del Grupo Concepción que el día viernes 01 de mayo se realizará una formación extraordinaria en el patio central a las 07:30 hrs. Uniforme de gala completo, calzado lustrado y gorra reglamentaria. La inasistencia injustificada será sancionada."
-    },
     {
       "id": 2,
       "titulo": "Instrucciones Revista de Dormitorio — Semana 28 Abril",
@@ -338,16 +321,6 @@
       "mes": 12,
       "anio": 1980,
       "escuadron": ""
-    },
-    {
-      "id": 1777906573472,
-      "nombre": "MIGUEL PULGAR",
-      "grado": "SARGENTO 1RO.",
-      "cat": "instructores",
-      "dia": 8,
-      "mes": 9,
-      "anio": 1985,
-      "escuadron": "2DO. ESCUADRON"
     }
   ]
 }
