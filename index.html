@@ -2355,8 +2355,8 @@ function jbLoad() {
     showCloudMsg('Configura JSONBin en el boton NUBE', '#4a7c59');
     return Promise.resolve();
   }
-  return fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
-    headers: { 'X-Master-Key': apiKey }
+  return fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest?ts=' + Date.now(), {
+    headers: { 'X-Master-Key': apiKey, 'Cache-Control': 'no-cache' }
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
@@ -2379,27 +2379,11 @@ function jbSave() {
   var binId  = window._JB_BIN;
   var apiKey = window._JB_KEY;
   if (!binId || !apiKey) return;
-  var pubsLight = pubs.map(function(p) {
-    return {
-      id: p.id, titulo: p.titulo, contenido: p.contenido,
-      categoria: p.categoria, prioridad: p.prioridad,
-      autor: p.autor, fecha: p.fecha, fijada: p.fijada,
-      activa: p.activa, etiquetas: p.etiquetas, adjuntos: []
-    };
-  });
-  var docsSvcLight = docsSvc.map(function(d) {
-    return {
-      id: d.id, titulo: d.titulo, descripcion: d.descripcion,
-      fecha: d.fecha, autor: d.autor,
-      archivo: { nombre: d.archivo ? d.archivo.nombre : '',
-                 tipo:   d.archivo ? d.archivo.tipo   : '' }
-    };
-  });
   var payload = {
-    pubs: pubsLight,
+    pubs: pubs,
     eventos: eventos,
     servicios: servicios,
-    docsSvc: docsSvcLight,
+    docsSvc: docsSvc,
     ordenDia: ordenDia,
     cumpleanos: cumpleanos
   };
