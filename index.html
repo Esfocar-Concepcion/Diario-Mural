@@ -2329,13 +2329,13 @@ const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITH
 const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`;
 
 function ghToken() {
-  return sessionStorage.getItem('dm_github_token') || '';
+  return localStorage.getItem('dm_github_token') || '';
 }
 function setGhToken(token) {
-  if (token) sessionStorage.setItem('dm_github_token', token.trim());
+  if (token) localStorage.setItem('dm_github_token', token.trim());
 }
 function clearGhToken() {
-  sessionStorage.removeItem('dm_github_token');
+  localStorage.removeItem('dm_github_token');
 }
 function ensureGhToken() {
   let token = ghToken();
@@ -2378,18 +2378,27 @@ function buildDataPayload() {
 }
 async function githubLoadData() {
   try {
-    const r = await fetch(GITHUB_RAW_URL + '?t=' + Date.now(), { cache:'no-store' });
-    if (!r.ok) return false;
+    showCloudMsg(true, '⟳ CARGANDO DATOS...');
+    const r = await fetch(GITHUB_RAW_URL + '?t=' + Date.now(), {
+      cache: 'no-store',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!r.ok) {
+      showCloudMsg(false, '✕ NO SE PUDO CARGAR datos.json');
+      return false;
+    }
     const data = await r.json();
-    if (Array.isArray(data.pubs)) pubs = data.pubs;
-    if (Array.isArray(data.eventos)) eventos = data.eventos;
-    if (Array.isArray(data.servicios)) servicios = data.servicios;
-    if (Array.isArray(data.docsSvc)) docsSvc = data.docsSvc;
-    if (Array.isArray(data.cumpleanos)) cumpleanos = data.cumpleanos;
-    if (data.ordenDia && typeof data.ordenDia === 'object') ordenDia = data.ordenDia;
+    if (Array.isArray(data.pubs)        && data.pubs.length > 0)        pubs        = data.pubs;
+    if (Array.isArray(data.eventos)     && data.eventos.length > 0)     eventos     = data.eventos;
+    if (Array.isArray(data.servicios)   && data.servicios.length > 0)   servicios   = data.servicios;
+    if (Array.isArray(data.docsSvc)     && data.docsSvc.length > 0)     docsSvc     = data.docsSvc;
+    if (Array.isArray(data.cumpleanos)  && data.cumpleanos.length > 0)  cumpleanos  = data.cumpleanos;
+    if (data.ordenDia && typeof data.ordenDia === 'object' && data.ordenDia.fecha) ordenDia = data.ordenDia;
+    showCloudMsg(true, '✓ DATOS CARGADOS');
     return true;
   } catch(e) {
     console.warn('No se pudo leer datos.json desde GitHub', e);
+    showCloudMsg(false, '✕ ERROR AL CARGAR DATOS');
     return false;
   }
 }
@@ -2428,7 +2437,7 @@ async function githubSaveAllData() {
       showCloudMsg(false, '✕ TOKEN O PERMISOS INCORRECTOS');
       return false;
     }
-    showCloudMsg(true, '✓ GUARDADO EN GITHUB');
+    showCloudMsg(true, '✓ GUARDADO EN GITHUB ✓');
     return true;
   } catch(e) {
     console.warn('Error guardando en GitHub', e);
@@ -2458,7 +2467,7 @@ function wrapGitHubSaves() {
   const ed = eliminarDocSvc;
   eliminarDocSvc = async function() { ed.apply(this, arguments); await githubSaveAllData(); };
   const tp = togglePub;
-  togglePub = async function() { tp.apply(this, arguments); await githubSaveAllData(); };
+  togglePub = async function() { tp.apply(this, arguments); await githubSaveAllData(); renderInicio(); buildTicker(); };
   const te = toggleOrdenEdicion;
   toggleOrdenEdicion = async function() { te.apply(this, arguments); await githubSaveAllData(); };
 }
@@ -2469,7 +2478,10 @@ function wrapGitHubSaves() {
 // ═══════════════════════════════════════════════════════════
 async function initApp() {
   document.getElementById("footer-year").textContent = new Date().getFullYear();
-  await githubLoadData();
+  const loaded = await githubLoadData();
+  if (!loaded) {
+    console.warn('Usando datos locales del código fuente');
+  }
   buildNav();
   renderInicio();
   buildTicker();
