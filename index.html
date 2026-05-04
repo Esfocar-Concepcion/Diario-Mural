@@ -1050,16 +1050,20 @@ function toggleEtq(e) {
   renderEtqBtns();
 }
 
-function handleAdjuntos(input) {
-  const files=Array.from(input.files);
-  files.forEach(f=>{
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      adjuntosTemp.push({nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)});
-      document.getElementById("adj-preview").innerHTML=adjuntosTemp.map(a=>`<div class="adj-item">${iconAdj(a.tipo,a.nombre)} ${esc(a.nombre)} <span style="color:var(--text3);font-size:.7rem">${a.size}</span></div>`).join("");
-    };
-    reader.readAsDataURL(f);
-  });
+async function handleAdjuntos(input) {
+  const files = Array.from(input.files);
+  if(!files.length) return;
+  showCloud("⏳ Subiendo archivos a GitHub...");
+  for(const f of files) {
+    const resultado = await subirArchivoGitHub(f);
+    if(resultado) adjuntosTemp.push(resultado);
+  }
+  document.getElementById("adj-preview").innerHTML = adjuntosTemp.map((a,i)=>`
+    <div class="adj-item">${iconAdj(a.tipo,a.nombre)} ${esc(a.nombre)}
+    <span style="color:var(--text3);font-size:.7rem">${a.size||""}</span>
+    <button class="mini-btn" onclick="adjuntosTemp.splice(${i},1);document.getElementById('adj-preview').innerHTML=adjuntosTemp.map((b,j)=>'<div class=adj-item>'+iconAdj(b.tipo,b.nombre)+' '+esc(b.nombre)+'</div>').join('')" style="color:var(--danger)">✕</button>
+    </div>`).join("");
+  if(adjuntosTemp.length) showCloud("✓ " + adjuntosTemp.length + " archivo(s) subido(s) a GitHub");
 }
 
 function guardarPub() {
@@ -1185,15 +1189,17 @@ function openModalDocSvc() {
   showErr("doc-form-err","");
   openModal("modal-doc-svc");
 }
-function handleDocSvc(input) {
-  const f=input.files[0]; if(!f) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    docSvcTemp={nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)};
-    document.getElementById("fd-preview").textContent="📄 "+f.name+" ("+formatSize(f.size)+")";
-  };
-  reader.readAsDataURL(f);
+async function handleDocSvc(input) {
+  const f = input.files[0]; if(!f) return;
+  showCloud("⏳ Subiendo documento a GitHub...");
+  const resultado = await subirArchivoGitHub(f);
+  if(resultado) {
+    docSvcTemp = resultado;
+    document.getElementById("fd-preview").textContent = "📄 " + f.name + " (" + formatSize(f.size) + ")";
+    showCloud("✓ Documento subido a GitHub");
+  }
 }
+
 function guardarDocSvc() {
   const titulo=document.getElementById("fd-titulo").value.trim();
   if(!titulo||!docSvcTemp){ showErr("doc-form-err","Título y archivo son obligatorios."); return; }
@@ -1245,46 +1251,127 @@ function eliminarBday(id) {
 // ═══════════════════════════════════════════════════════════
 // NUBE / JSONBIN
 // ═══════════════════════════════════════════════════════════
-const STORAGE_KEY = "diarioMuralCfg";
-function jbBinId()  { try { return (JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")).binId||"";  } catch(e){ return ""; } }
-function jbApiKey() { try { return (JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")).apiKey||""; } catch(e){ return ""; } }
+
+// ═══════════════════════════════════════════════════════════
+// JSONBIN — GUARDAR Y CARGAR
+// ═══════════════════════════════════════════════════════════
+function getCfg() {
+  const raw = localStorage.getItem("jb_cfg") || "";
+  const [binId, ...rest] = raw.split("|");
+  const apiKey = rest.join("|");
+  return { binId: (binId||"").trim(), apiKey: (apiKey||"").trim() };
+}
 
 async function jbSave() {
-  const binId=jbBinId(), apiKey=jbApiKey();
-  if(!binId||!apiKey) return;
+  const { binId, apiKey } = getCfg();
+  if(!binId || !apiKey) return;
   try {
     await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-      method:"PUT",
-      headers:{"Content-Type":"application/json","X-Master-Key":apiKey,"X-Bin-Versioning":"false"},
-      body:JSON.stringify({pubs,eventos,servicios,docsSvc,cumpleanos,ordenDia})
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "X-Master-Key": apiKey, "X-Bin-Versioning": "false" },
+      body: JSON.stringify({ pubs, eventos, servicios, docsSvc, cumpleanos, ordenDia })
     });
-  } catch(e){ console.warn("jbSave error:",e); }
+  } catch(e) { console.warn("jbSave error:", e); }
 }
 
 async function jbLoad() {
-  const binId=jbBinId(), apiKey=jbApiKey();
-  if(!binId||!apiKey) return;
-  const r=await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`,{headers:{"X-Master-Key":apiKey}});
-  if(!r.ok) throw new Error("jbLoad HTTP "+r.status);
-  const d=(await r.json()).record;
-  if(d.pubs      && Array.isArray(d.pubs))      pubs       = d.pubs;
-  if(d.eventos   && Array.isArray(d.eventos))    eventos    = d.eventos;
-  if(d.servicios && Array.isArray(d.servicios))  servicios  = d.servicios;
-  if(d.docsSvc   && Array.isArray(d.docsSvc))    docsSvc    = d.docsSvc;
-  if(d.cumpleanos&& Array.isArray(d.cumpleanos)) cumpleanos = d.cumpleanos;
-  if(d.ordenDia  && typeof d.ordenDia==="object") ordenDia  = d.ordenDia;
+  const { binId, apiKey } = getCfg();
+  if(!binId || !apiKey) return;
+  const r = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { "X-Master-Key": apiKey } });
+  if(!r.ok) throw new Error("jbLoad HTTP " + r.status);
+  const d = (await r.json()).record;
+  if(d.pubs       && Array.isArray(d.pubs))       pubs       = d.pubs;
+  if(d.eventos    && Array.isArray(d.eventos))     eventos    = d.eventos;
+  if(d.servicios  && Array.isArray(d.servicios))   servicios  = d.servicios;
+  if(d.docsSvc    && Array.isArray(d.docsSvc))     docsSvc    = d.docsSvc;
+  if(d.cumpleanos && Array.isArray(d.cumpleanos))  cumpleanos = d.cumpleanos;
+  if(d.ordenDia   && typeof d.ordenDia==="object") ordenDia   = d.ordenDia;
+  showCloud("☁ Datos cargados desde la nube");
 }
 
+// ═══════════════════════════════════════════════════════════
+// GITHUB — SUBIR FOTOS Y PDF
+// ═══════════════════════════════════════════════════════════
+function getGhCfg() {
+  const raw = localStorage.getItem("gh_cfg") || "";
+  const [usuario, repo, ...tokenParts] = raw.split("|");
+  return { usuario: (usuario||"").trim(), repo: (repo||"").trim(), token: tokenParts.join("|").trim() };
+}
+
+async function subirArchivoGitHub(archivo) {
+  const { usuario, repo, token } = getGhCfg();
+  if(!usuario || !repo || !token) {
+    showCloud("⚠ Configura GitHub primero (botón NUBE)", "warn");
+    return null;
+  }
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result.split(",")[1];
+      const nombre = Date.now() + "_" + archivo.name.replace(/\s+/g,"_");
+      const url = `https://api.github.com/repos/${usuario}/${repo}/contents/adjuntos/${nombre}`;
+      try {
+        const r = await fetch(url, {
+          method: "PUT",
+          headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ message: `Subir: ${nombre}`, content: base64 })
+        });
+        const json = await r.json();
+        if(json.content?.download_url) {
+          resolve({ nombre: archivo.name, url: json.content.download_url, tipo: archivo.type, size: formatSize(archivo.size) });
+        } else {
+          showCloud("✕ Error al subir a GitHub: " + (json.message||""), "err");
+          resolve(null);
+        }
+      } catch(e) { showCloud("✕ Error de conexión con GitHub", "err"); resolve(null); }
+    };
+    reader.readAsDataURL(archivo);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONFIGURACIÓN (modal NUBE)
+// ═══════════════════════════════════════════════════════════
 function openCfg() {
-  const cur = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-  const val = prompt("Configuración JSONBin\n\nFormato: BINID|APIKEY\n\nDeja en blanco para borrar:", cur.binId&&cur.apiKey?cur.binId+"|"+cur.apiKey:"");
-  if(val===null) return;
-  if(!val.trim()){ localStorage.removeItem(STORAGE_KEY); showCloud("☁ Configuración borrada"); return; }
-  const [binId,...rest] = val.trim().split("|");
-  const apiKey = rest.join("|");
-  if(!binId||!apiKey){ alert("Formato incorrecto. Usa: BINID|APIKEY"); return; }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({binId,apiKey}));
+  const cfgHtml = `
+    <div style="font-family:monospace;font-size:.78rem;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      Configura la nube para que los datos se guarden y sincronicen.
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="sub-lbl">JSONBIN — Formato: BINID|APIKEY</div>
+      <input id="cfg-jb" placeholder="69f8bb86...|$2a$10$..." value="${localStorage.getItem('jb_cfg')||''}">
+      <div style="font-size:.68rem;color:var(--text3);margin-top:3px">Guarda publicaciones, eventos, servicios y más.</div>
+    </div>
+    <div style="margin-bottom:18px">
+      <div class="sub-lbl">GITHUB — Formato: USUARIO|REPOSITORIO|TOKEN</div>
+      <input id="cfg-gh" placeholder="esfocar-concepcion|esfocar-archivos|ghp_..." value="${localStorage.getItem('gh_cfg')||''}">
+      <div style="font-size:.68rem;color:var(--text3);margin-top:3px">Para subir fotos y PDFs adjuntos. El repo debe existir en GitHub.</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-p" onclick="guardarCfg()">✓ Guardar</button>
+      <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cancelar</button>
+    </div>`;
+  let modal = document.getElementById("modal-cfg");
+  if(!modal) {
+    modal = document.createElement("div");
+    modal.id = "modal-cfg";
+    modal.className = "modal-overlay";
+    modal.onclick = (e) => { if(e.target===e.currentTarget) modal.style.display="none"; };
+    modal.innerHTML = `<div class="modal-box"><h3>⚙ Configuración de Nube</h3><div id="cfg-body"></div></div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById("cfg-body").innerHTML = cfgHtml;
+  modal.style.display = "flex";
+}
+
+function guardarCfg() {
+  const jb = document.getElementById("cfg-jb").value.trim();
+  const gh = document.getElementById("cfg-gh").value.trim();
+  if(jb) localStorage.setItem("jb_cfg", jb); else localStorage.removeItem("jb_cfg");
+  if(gh) localStorage.setItem("gh_cfg", gh); else localStorage.removeItem("gh_cfg");
+  document.getElementById("modal-cfg").style.display = "none";
   showCloud("✓ Configuración guardada");
+  setTimeout(() => jbLoad().then(() => renderSection(secActual)).catch(()=>{}), 500);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1323,7 +1410,7 @@ function toggleInfoPanel() {
       <div class="info-section-title">SISTEMA</div>
       <div class="info-row"><span class="info-row-lbl">Fecha actual</span><span class="info-row-val">${fmt(HOY)}</span></div>
       <div class="info-row"><span class="info-row-lbl">Modo</span><span class="info-row-val">${darkMode?"Oscuro":"Claro"}</span></div>
-      <div class="info-row"><span class="info-row-lbl">JSONBin</span><span class="info-row-val" style="color:${jbBinId()?"var(--accent)":"var(--text3)"}">${jbBinId()?"Configurado":"No configurado"}</span></div>
+      <div class="info-row"><span class="info-row-lbl">JSONBin</span><span class="info-row-val" style="color:${getCfg().binId?"var(--accent)":"var(--text3)"}">${getCfg().binId?"Configurado":"No configurado"}</span></div>
       <div class="info-row"><span class="info-row-lbl">Sesión</span><span class="info-row-val" style="color:${esAdmin?"var(--accent)":"var(--text3)"}">${esAdmin?"Admin":"Invitado"}</span></div>
     </div>`;
   const badge=document.getElementById("info-fab-badge");
@@ -1384,9 +1471,9 @@ async function loadDataJson() {
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 (async () => {
-  const hasCreds = jbBinId() && jbApiKey();
+  const { binId: _bid, apiKey: _akey } = getCfg(); const hasCreds = _bid && _akey;
   if(hasCreds) {
-    try { await jbLoad(); } catch(e) { await loadDataJson(); }
+    try { await jbLoad(); } catch(e) { console.warn("jbLoad falló:", e); await loadDataJson(); }
   } else {
     await loadDataJson();
   }
