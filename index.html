@@ -928,6 +928,32 @@
   </div>
 </div>
 
+<div id="modal-cfg" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box" style="max-width:440px">
+    <h3>Configuracion JSONBin (Nube)</h3>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:16px">Ingresa tus credenciales de jsonbin.io para activar la persistencia en la nube.</p>
+    <div class="form-col">
+      <div>
+        <div class="sub-lbl">BIN ID</div>
+        <input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0">
+      </div>
+      <div>
+        <div class="sub-lbl">API KEY (X-Master-Key)</div>
+        <input id="cfg-key" type="password" placeholder="$2a$10$...">
+      </div>
+      <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="saveCfg()">Guardar</button>
+        <button class="btn-s" onclick="testCfg()">Probar conexion</button>
+        <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cerrar</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:8px">
+        Las credenciales se guardan en este navegador (localStorage).
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONSTANTES
@@ -2181,10 +2207,10 @@ function eliminarBday(id) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT — arranca DESPUÉS de cargar datos desde la nube
+// INIT
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
-jbLoad().then(() => {
+jbLoad().then(function() {
   buildNav();
   renderInicio();
 });
@@ -2309,171 +2335,149 @@ setInterval(() => {
 // ═══════════════════════════════════════════════════════════
 // ════════════ JSONBIN ENGINE ════════════════════════════════
 // ═══════════════════════════════════════════════════════════
-(function initJBCfg() {
-  const saved = localStorage.getItem('jb_cfg');
-  if (saved) {
-    try {
-      const cfg = JSON.parse(saved);
-      if (cfg.binId)  window._JB_BIN  = cfg.binId;
-      if (cfg.apiKey) window._JB_KEY  = cfg.apiKey;
-    } catch(e){}
-  }
+
+(function initJB() {
+  try {
+    var s = localStorage.getItem('jb_cfg');
+    if (s) {
+      var c = JSON.parse(s);
+      if (c.binId)  window._JB_BIN = c.binId;
+      if (c.apiKey) window._JB_KEY = c.apiKey;
+    }
+  } catch(e) {}
 })();
 
-async function jbSave() {
-  const binId  = window._JB_BIN;
-  const apiKey = window._JB_KEY;
-  if (!binId || !apiKey) return;
-
-  // Strip adjuntos/archivos grandes para no superar 100KB de JSONBin free
-  const pubsLight = pubs.map(p => ({ ...p, adjuntos: [] }));
-  const docsSvcLight = docsSvc.map(d => ({ ...d, archivo: { nombre: d.archivo?.nombre, tipo: d.archivo?.tipo, tamano: d.archivo?.tamano } }));
-
-  const payload = {
-    pubs: pubsLight,
-    eventos,
-    servicios,
-    docsSvc: docsSvcLight,
-    ordenDia,
-    cumpleanos,
-  };
-
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': apiKey,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (res.ok) {
-      showCloudMsg('✅ Guardado en la nube', '#2a7a3a');
-    } else {
-      const err = await res.json();
-      showCloudMsg('⚠ Error al guardar: ' + (err.message||res.status), '#b84c37');
-      console.error('jbSave error:', err);
-    }
-  } catch(e) {
-    showCloudMsg('⚠ Sin conexión — cambios solo locales', '#a06030');
-    console.error('jbSave catch:', e);
+function jbLoad() {
+  var binId  = window._JB_BIN;
+  var apiKey = window._JB_KEY;
+  if (!binId || !apiKey) {
+    showCloudMsg('Configura JSONBin en el boton NUBE', '#4a7c59');
+    return Promise.resolve();
   }
+  return fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
+    headers: { 'X-Master-Key': apiKey }
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    var rec = data.record;
+    if (!rec) return;
+    if (rec.pubs      && rec.pubs.length)      pubs       = rec.pubs;
+    if (rec.eventos   && rec.eventos.length)   eventos    = rec.eventos;
+    if (rec.servicios)                         servicios  = rec.servicios;
+    if (rec.docsSvc)                           docsSvc    = rec.docsSvc;
+    if (rec.ordenDia)                          ordenDia   = rec.ordenDia;
+    if (rec.cumpleanos && rec.cumpleanos.length) cumpleanos = rec.cumpleanos;
+    showCloudMsg('Datos cargados desde la nube', '#4a7c59');
+  })
+  .catch(function() {
+    showCloudMsg('Sin conexion - mostrando datos locales', '#a06030');
+  });
 }
 
-async function jbLoad() {
-  const binId  = window._JB_BIN;
-  const apiKey = window._JB_KEY;
-  if (!binId || !apiKey) {
-    showCloudMsg('☁ Configura JSONBin en ⚙ NUBE para persistencia', '#4a7c59');
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: { 'X-Master-Key': apiKey },
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      showCloudMsg('⚠ Error al cargar: ' + (err.message||res.status), '#b84c37');
-      console.error('jbLoad error:', err);
-      return;
-    }
-    const data = await res.json();
-    const rec  = data.record;
-    if (rec.pubs        && Array.isArray(rec.pubs))        pubs        = rec.pubs;
-    if (rec.eventos     && Array.isArray(rec.eventos))     eventos     = rec.eventos;
-    if (rec.servicios   && Array.isArray(rec.servicios))   servicios   = rec.servicios;
-    if (rec.docsSvc     && Array.isArray(rec.docsSvc))     docsSvc     = rec.docsSvc;
-    if (rec.ordenDia    && typeof rec.ordenDia === 'object') ordenDia  = rec.ordenDia;
-    if (rec.cumpleanos  && Array.isArray(rec.cumpleanos))  cumpleanos  = rec.cumpleanos;
-    showCloudMsg('☁ Datos cargados desde la nube', '#4a7c59');
-  } catch(e) {
-    showCloudMsg('⚠ Sin conexión — mostrando datos locales', '#a06030');
-    console.error('jbLoad catch:', e);
-  }
+function jbSave() {
+  var binId  = window._JB_BIN;
+  var apiKey = window._JB_KEY;
+  if (!binId || !apiKey) return;
+  var pubsLight = pubs.map(function(p) {
+    return {
+      id: p.id, titulo: p.titulo, contenido: p.contenido,
+      categoria: p.categoria, prioridad: p.prioridad,
+      autor: p.autor, fecha: p.fecha, fijada: p.fijada,
+      activa: p.activa, etiquetas: p.etiquetas, adjuntos: []
+    };
+  });
+  var docsSvcLight = docsSvc.map(function(d) {
+    return {
+      id: d.id, titulo: d.titulo, descripcion: d.descripcion,
+      fecha: d.fecha, autor: d.autor,
+      archivo: { nombre: d.archivo ? d.archivo.nombre : '',
+                 tipo:   d.archivo ? d.archivo.tipo   : '' }
+    };
+  });
+  var payload = {
+    pubs: pubsLight,
+    eventos: eventos,
+    servicios: servicios,
+    docsSvc: docsSvcLight,
+    ordenDia: ordenDia,
+    cumpleanos: cumpleanos
+  };
+  fetch('https://api.jsonbin.io/v3/b/' + binId, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': apiKey
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) {
+    if (res.ok) showCloudMsg('Guardado en la nube', '#2a7a3a');
+    else        showCloudMsg('Error al guardar', '#b84c37');
+  })
+  .catch(function() {
+    showCloudMsg('Sin conexion - cambio guardado localmente', '#a06030');
+  });
 }
 
 function showCloudMsg(txt, color) {
-  const el = document.getElementById('cloud-msg');
+  var el = document.getElementById('cloud-msg');
   if (!el) return;
   el.textContent = txt;
   el.style.background = color;
   el.style.opacity = '1';
   clearTimeout(window._cloudTimer);
-  window._cloudTimer = setTimeout(() => { el.style.opacity = '0'; }, 3000);
+  window._cloudTimer = setTimeout(function() { el.style.opacity = '0'; }, 3000);
 }
 
 function openCfg() {
-  const saved = localStorage.getItem('jb_cfg');
-  let binId = '', apiKey = '';
-  if (saved) { try { const c = JSON.parse(saved); binId = c.binId||''; apiKey = c.apiKey||''; } catch(e){} }
-  document.getElementById('cfg-bin').value = binId;
-  document.getElementById('cfg-key').value = apiKey;
+  var b = '', k = '';
+  try {
+    var s = localStorage.getItem('jb_cfg');
+    if (s) { var c = JSON.parse(s); b = c.binId||''; k = c.apiKey||''; }
+  } catch(e) {}
+  document.getElementById('cfg-bin').value = b;
+  document.getElementById('cfg-key').value = k;
   document.getElementById('cfg-status').textContent = '';
   document.getElementById('modal-cfg').style.display = 'flex';
 }
 
 function saveCfg() {
-  const binId  = document.getElementById('cfg-bin').value.trim();
-  const apiKey = document.getElementById('cfg-key').value.trim();
-  if (!binId || !apiKey) return alert('Ambos campos son obligatorios.');
-  localStorage.setItem('jb_cfg', JSON.stringify({ binId, apiKey }));
-  window._JB_BIN = binId;
-  window._JB_KEY = apiKey;
-  document.getElementById('cfg-status').textContent = '✅ Configuración guardada';
-  document.getElementById('cfg-status').style.color = 'var(--accent)';
+  var b = document.getElementById('cfg-bin').value.trim();
+  var k = document.getElementById('cfg-key').value.trim();
+  if (!b || !k) { alert('Ambos campos son obligatorios.'); return; }
+  localStorage.setItem('jb_cfg', JSON.stringify({ binId: b, apiKey: k }));
+  window._JB_BIN = b;
+  window._JB_KEY = k;
+  var st = document.getElementById('cfg-status');
+  st.textContent = 'Configuracion guardada correctamente';
+  st.style.color = 'var(--accent)';
 }
 
-async function testCfg() {
-  const binId  = document.getElementById('cfg-bin').value.trim();
-  const apiKey = document.getElementById('cfg-key').value.trim();
-  if (!binId || !apiKey) return alert('Completa ambos campos primero.');
-  document.getElementById('cfg-status').textContent = '⏳ Probando…';
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: { 'X-Master-Key': apiKey }
-    });
+function testCfg() {
+  var b = document.getElementById('cfg-bin').value.trim();
+  var k = document.getElementById('cfg-key').value.trim();
+  if (!b || !k) { alert('Completa ambos campos primero.'); return; }
+  var st = document.getElementById('cfg-status');
+  st.textContent = 'Probando conexion...';
+  st.style.color = 'var(--text3)';
+  fetch('https://api.jsonbin.io/v3/b/' + b + '/latest', {
+    headers: { 'X-Master-Key': k }
+  })
+  .then(function(res) {
     if (res.ok) {
-      document.getElementById('cfg-status').textContent = '✅ Conexión exitosa con JSONBin';
-      document.getElementById('cfg-status').style.color = 'var(--accent)';
+      st.textContent = 'Conexion exitosa con JSONBin';
+      st.style.color = 'var(--accent)';
     } else {
-      const err = await res.json();
-      document.getElementById('cfg-status').textContent = '❌ Error: ' + (err.message||res.status);
-      document.getElementById('cfg-status').style.color = 'var(--danger)';
+      st.textContent = 'Error: ' + res.status + ' - verifica las credenciales';
+      st.style.color = 'var(--danger)';
     }
-  } catch(e) {
-    document.getElementById('cfg-status').textContent = '❌ Sin conexión';
-    document.getElementById('cfg-status').style.color = 'var(--danger)';
-  }
+  })
+  .catch(function() {
+    st.textContent = 'Sin conexion a internet';
+    st.style.color = 'var(--danger)';
+  });
 }
-
 
 </script>
-
-<div id="modal-cfg" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal-box" style="max-width:440px">
-    <h3>☁ Configuración JSONBin</h3>
-    <p style="font-size:.78rem;color:var(--text3);margin-bottom:16px">Ingresa tus credenciales de <a href="https://jsonbin.io" target="_blank" style="color:var(--accent)">jsonbin.io</a> para persistencia en la nube.</p>
-    <div class="form-col">
-      <div>
-        <div class="sub-lbl">BIN ID</div>
-        <input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0">
-      </div>
-      <div>
-        <div class="sub-lbl">API KEY (X-Master-Key)</div>
-        <input id="cfg-key" type="password" placeholder="$2a$10$...">
-      </div>
-      <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
-      <div class="form-btns">
-        <button class="btn-p" onclick="saveCfg()">💾 Guardar</button>
-        <button class="btn-s" onclick="testCfg()">🔍 Probar</button>
-        <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cerrar</button>
-      </div>
-      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:4px">
-        Las credenciales se guardan solo en este navegador (localStorage).
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>
