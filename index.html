@@ -1382,6 +1382,8 @@
 // Minimal stable bootstrap
 let esAdmin = false;
 let secActual = 'inicio';
+let galerias = [];
+let destacados = [];
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showSec(id){
   const secs = document.querySelectorAll('.section');
@@ -1419,20 +1421,14 @@ function openModalBday(){ const m=document.getElementById('modal-bday'); if(m) m
 function openModalGaleria(){ const m=document.getElementById('modal-galeria'); if(m) m.style.display='flex'; }
 function openModalDest(){ const m=document.getElementById('modal-destacados'); if(m) m.style.display='flex'; }
 function renderAdmin(){}
-function renderGaleria(){ const g=document.getElementById('album-grid'); if(g) g.innerHTML='<div class="empty">Galería lista.</div>'; }
-function renderDestacados(){ const g=document.getElementById('dest-grid'); if(g) g.innerHTML='<div class="empty">Destacados listos.</div>'; }
+function renderGaleria(){ const g=document.getElementById('album-grid'); if(g) g.innerHTML=(galerias.length?galerias.map(a=>'<div class="pub-card"><div class="pub-title">'+esc(a.titulo||'Álbum')+'</div></div>').join(''):'<div class="empty">Galería lista.</div>'); }
+function renderDestacados(){ const g=document.getElementById('dest-grid'); if(g) g.innerHTML=(destacados.length?destacados.map(d=>'<div class="pub-card"><div class="pub-title">'+esc(d.titulo||'Destacado')+'</div></div>').join(''):'<div class="empty">Destacados listos.</div>'); }
 function renderInicio(){}
 function renderPubs(){}
 function renderDocsSvc(){}
 function renderBdays(){}
 function buildTicker(){ const el=document.getElementById('ticker-inner'); if(el) el.textContent='SIN AVISOS ACTIVOS'; }
-window.addEventListener('DOMContentLoaded', () => {
-  buildNav();
-  showSec('inicio');
-  renderGaleria();
-  renderDestacados();
-  buildTicker();
-});
+window.addEventListener('DOMContentLoaded', () => { buildNav(); showSec('inicio'); renderGaleria(); renderDestacados(); buildTicker(); });
 </script>
 <div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
 </body>
