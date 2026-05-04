@@ -1,4 +1,5 @@
-!DOCTYPE html>
+<!-- DIARIO MURAL ESFOCAR v4.1 | JSONBIN FIX EMPTY ARRAYS -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -2406,12 +2407,12 @@ async function jbLoad() {
     if (!r.ok) { showMsg(false, '✕ Error al cargar'); return false; }
     const j = await r.json();
     const d = j.record;
-    if (Array.isArray(d.pubs)        && d.pubs.length)       pubs       = d.pubs;
-    if (Array.isArray(d.eventos)     && d.eventos.length)    eventos    = d.eventos;
-    if (Array.isArray(d.servicios)   && d.servicios.length)  servicios  = d.servicios;
-    if (Array.isArray(d.docsSvc)     && d.docsSvc.length)    docsSvc    = d.docsSvc;
-    if (Array.isArray(d.cumpleanos)  && d.cumpleanos.length) cumpleanos = d.cumpleanos;
-    if (d.ordenDia && d.ordenDia.fecha) ordenDia = d.ordenDia;
+    if (Array.isArray(d.pubs))       pubs       = d.pubs;
+    if (Array.isArray(d.eventos))    eventos    = d.eventos;
+    if (Array.isArray(d.servicios))  servicios  = d.servicios;
+    if (Array.isArray(d.docsSvc))    docsSvc    = d.docsSvc;
+    if (Array.isArray(d.cumpleanos)) cumpleanos = d.cumpleanos;
+    if (d.ordenDia && typeof d.ordenDia === 'object') ordenDia = d.ordenDia;
     showMsg(true, '✓ Datos cargados');
     return true;
   } catch(e) { showMsg(false, '✕ Error de red'); return false; }
@@ -2501,18 +2502,18 @@ function wrapSaves() {
     ep:eliminarPub, ee:eliminarEv, es_:eliminarSvc, eb:eliminarBday, ed:eliminarDocSvc,
     tp:togglePub, to:toggleOrdenEdicion
   };
-  guardarPub         = async function(){o.gp.apply(this,arguments);await jbSave();buildTicker();};
-  guardarEv          = async function(){o.ge.apply(this,arguments);await jbSave();buildTicker();};
-  guardarSvc         = async function(){o.gs.apply(this,arguments);await jbSave();};
-  guardarBday        = async function(){o.gb.apply(this,arguments);await jbSave();};
-  guardarDocSvc      = async function(){o.gd.apply(this,arguments);await jbSave();};
-  eliminarPub        = async function(){o.ep.apply(this,arguments);await jbSave();buildTicker();};
-  eliminarEv         = async function(){o.ee.apply(this,arguments);await jbSave();buildTicker();};
-  eliminarSvc        = async function(){o.es_.apply(this,arguments);await jbSave();};
-  eliminarBday       = async function(){o.eb.apply(this,arguments);await jbSave();};
-  eliminarDocSvc     = async function(){o.ed.apply(this,arguments);await jbSave();};
+  guardarPub         = async function(){o.gp.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
+  guardarEv          = async function(){o.ge.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
+  guardarSvc         = async function(){o.gs.apply(this,arguments);await jbSave();renderServicios();};
+  guardarBday        = async function(){o.gb.apply(this,arguments);await jbSave();renderCumpleanos();};
+  guardarDocSvc      = async function(){o.gd.apply(this,arguments);await jbSave();renderDocsSvc();};
+  eliminarPub        = async function(){o.ep.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
+  eliminarEv         = async function(){o.ee.apply(this,arguments);await jbSave();renderInicio();renderAdmin();buildTicker();};
+  eliminarSvc        = async function(){o.es_.apply(this,arguments);await jbSave();renderServicios();};
+  eliminarBday       = async function(){o.eb.apply(this,arguments);await jbSave();renderCumpleanos();};
+  eliminarDocSvc     = async function(){o.ed.apply(this,arguments);await jbSave();renderDocsSvc();};
   togglePub          = async function(){o.tp.apply(this,arguments);await jbSave();renderInicio();buildTicker();};
-  toggleOrdenEdicion = async function(){o.to.apply(this,arguments);await jbSave();};
+  toggleOrdenEdicion = async function(){o.to.apply(this,arguments);await jbSave();renderOrdenDia();};
 }
 
 // ── INIT ──
