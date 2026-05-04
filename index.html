@@ -689,6 +689,49 @@
       font-weight: 700;
     }
 
+  
+    /* ── Galería institucional ── */
+    #sec-galeria .feature-card {
+      border: 1px solid rgba(74,124,89,.18);
+      box-shadow: 0 6px 20px rgba(0,0,0,.08);
+      position: relative;
+    }
+    #sec-galeria .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-top: 3px solid var(--accent);
+      pointer-events: none;
+      opacity: .9;
+    }
+    #sec-galeria .feature-kicker {
+      background: var(--accent3);
+      color: var(--accent2);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    #sec-galeria .feature-title {
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    #sec-galeria .feature-meta {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    #sec-galeria .feature-meta::after {
+      content: 'ÁLBUM OFICIAL';
+      font-size: .62rem;
+      color: var(--accent);
+      letter-spacing: .12em;
+      font-family: monospace;
+      font-weight: 700;
+    }
+
   </style>
 </head>
 <body>
@@ -883,7 +926,7 @@
   <!-- ═══ ÁLBUMES ═══ -->
   <div id="sec-galeria" class="section">
     <div class="flex-sb mb-16">
-      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div>
+      <div class="sec-title" style="margin:0"><h2>📷 Galería de Fotos y Actividades</h2><div class="sec-title-bar"></div></div><div style="font-size:.76rem;color:var(--text3);margin:10px 0 14px;font-family:monospace;letter-spacing:.08em">REGISTRO VISUAL DE ACTIVIDADES E INSTANCIAS INSTITUCIONALES</div>
       <button class="btn-p" id="btn-add-galeria" style="display:none" onclick="openModalGaleria()">+ Nuevo álbum</button>
     </div>
     <div class="grid-auto-sm" id="album-grid"></div>
