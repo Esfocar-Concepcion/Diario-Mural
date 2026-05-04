@@ -1,23 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:46.036Z",
+  "updatedAt": "2026-05-04T14:56:47.739Z",
   "pubs": [
-    {
-      "id": 4,
-      "titulo": "Grupo Concepción en Ejercicio Regional — Evaluación Sobresaliente",
-      "categoria": "noticias",
-      "autor": "Secretaría ESFOCAR",
-      "fecha": "2026-04-22",
-      "prioridad": "normal",
-      "fijada": false,
-      "activa": true,
-      "etiquetas": [
-        "Formación",
-        "Académico"
-      ],
-      "adjuntos": [],
-      "contenido": "Alumnos del Grupo Concepción participaron exitosamente en el ejercicio de simulacro regional. La unidad obtuvo evaluación 'Sobresaliente' en orden cerrado, primeros auxilios y control de disturbios. Felicitaciones a toda la unidad."
-    },
     {
       "id": 5,
       "titulo": "Calendario Semanal — 28 Abril al 4 Mayo",
