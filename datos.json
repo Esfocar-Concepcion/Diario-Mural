@@ -1,23 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T14:56:42.068Z",
+  "updatedAt": "2026-05-04T14:56:44.250Z",
   "pubs": [
-    {
-      "id": 2,
-      "titulo": "Instrucciones Revista de Dormitorio — Semana 28 Abril",
-      "categoria": "instrucciones",
-      "autor": "Oficial de Cuartel",
-      "fecha": "2026-04-27",
-      "prioridad": "importante",
-      "fijada": false,
-      "activa": true,
-      "etiquetas": [
-        "Disciplina",
-        "Uniforme"
-      ],
-      "adjuntos": [],
-      "contenido": "Para la revista de dormitorio de esta semana se verificará: 1) Tendido de camas según reglamento. 2) Casilleros ordenados y cerrados. 3) Calzado alineado y lustrado. 4) Área de baños limpia. 5) Ventanas abiertas para ventilación. Incumplimientos serán registrados."
-    },
     {
       "id": 3,
       "titulo": "Comunicado: Normas de Presentación Personal",
