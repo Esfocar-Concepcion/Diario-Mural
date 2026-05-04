@@ -1318,7 +1318,7 @@
       </div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
-        <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
+        <button class="btn-s" onclick="closeModal('modal-galeria')">Cancelar</button>
       </div>
     </div>
   </div>
@@ -1350,7 +1350,7 @@
 </div>
 
 
-<div id="modal-album" class="modal-overlay" style="display:none" onclick="closeModal('modal-album',event)">
+<div id="modal-galeria" class="modal-overlay" style="display:none" onclick="closeModal('modal-galeria',event)">
   <div class="modal-box" style="max-width:560px">
     <h3>📷 Nuevo Álbum</h3>
     <div class="form-col">
@@ -1372,7 +1372,7 @@
       </div>
       <div class="form-btns">
         <button class="btn-p" onclick="guardarGaleria()">Guardar Álbum</button>
-        <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
+        <button class="btn-s" onclick="closeModal('modal-galeria')">Cancelar</button>
       </div>
     </div>
   </div>
@@ -2537,10 +2537,11 @@ function destIcon(tipo) {
   return '🏅';
 }
 
-function openModalGaleria() { document.getElementById('modal-album').style.display = 'flex'; }
+function openModalGaleria() { document.getElementById('modal-galeria').style.display = 'flex'; }
 
 function openModalDest() {
-  if (document.getElementById('modal-destacados')) document.getElementById('modal-destacados').style.display = 'flex';
+  var m = document.getElementById('modal-destacados');
+  if (m) m.style.display = 'flex';
 }
 
 function renderGaleria() {
@@ -2633,7 +2634,7 @@ function openModalAlbum() {
   document.getElementById('fa-fotos').value = '';
   document.getElementById('fg-portada-prev').textContent = '';
   document.getElementById('fg-fotos-prev').textContent = '';
-  document.getElementById('modal-album').style.display = 'flex';
+  document.getElementById('modal-galeria').style.display = 'flex';
 }
 
 function _uploadImageToGitHub(file) {
@@ -2694,7 +2695,7 @@ function guardarGaleria() {
     fotos: galeriaFotosTemp
   };
   galerias = [album].concat(galerias || []);
-  closeModal('modal-album');
+  closeModal('modal-galeria');
   renderGaleria();
   jbSave();
 }
