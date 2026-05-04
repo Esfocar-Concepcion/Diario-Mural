@@ -2306,6 +2306,14 @@ function openModalGaleria() {
   alert('Falta el modal de álbumes. Si quieres, en el siguiente paso lo dejamos completo con carga de imágenes y portada.');
 }
 
+
+function destIcon(tipo) {
+  if (tipo === 'alumno') return '🎖️';
+  if (tipo === 'seccion') return '🏛️';
+  if (tipo === 'funcionario') return '⭐';
+  return '🏅';
+}
+
 function openModalDest() {
   alert('Falta el modal de destacados. Puedo dejarlo implementado completo en el siguiente paso.');
 }
@@ -2331,7 +2339,7 @@ function renderDestacados() {
     <div class="feature-card">
       <div class="feature-cover">${d.foto && d.foto.url ? `<img src="${d.foto.url}" alt="${esc(d.titulo)}">` : '<div style="color:#fff;opacity:.75;font-size:.8rem">Sin foto</div>'}</div>
       <div class="feature-body">
-        <div class="feature-kicker">${esc((d.tipo||'').toUpperCase())}</div>
+        <div class="feature-kicker">${destIcon(d.tipo)} ${esc((d.tipo||'').toUpperCase())}</div>
         <div class="feature-title">${esc(d.titulo||'Destacado')}</div>
         <div class="feature-desc">${esc(d.motivo||'')}</div>
         <div class="feature-meta">${esc(d.fecha||'')}</div>
