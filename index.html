@@ -643,6 +643,52 @@
     .feature-desc { font-size:.8rem; color:var(--text2); line-height:1.5; margin:0 0 10px; }
     .feature-meta { font-size:.7rem; color:var(--text3); font-family:monospace; }
 
+  
+    /* ── Destacados institucionales ── */
+    #sec-destacados .feature-card {
+      border: 1px solid rgba(201,168,76,.35);
+      box-shadow: 0 6px 20px rgba(0,0,0,.08);
+      position: relative;
+    }
+    #sec-destacados .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-top: 3px solid #c9a84c;
+      pointer-events: none;
+      opacity: .9;
+    }
+    #sec-destacados .feature-kicker {
+      background: #c9a84c;
+      color: #1a2a0a;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    #sec-destacados .feature-title {
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    #sec-destacados .feature-desc {
+      min-height: 42px;
+    }
+    #sec-destacados .feature-meta {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    #sec-destacados .feature-meta::after {
+      content: 'RECONOCIMIENTO';
+      font-size: .62rem;
+      color: var(--accent);
+      letter-spacing: .12em;
+      font-family: monospace;
+      font-weight: 700;
+    }
+
   </style>
 </head>
 <body>
@@ -845,7 +891,7 @@
 
   <!-- ═══ DESTACADOS ═══ -->
   <div id="sec-destacados" class="section">
-    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button>
+    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button><div style="font-size:.76rem;color:var(--text3);margin:10px 0 14px;font-family:monospace;letter-spacing:.08em">RECONOCIMIENTOS DESTACADOS DEL GRUPO CONCEPCIÓN</div>
     <div class="dest-tabs" id="dest-tabs"></div>
     <div class="grid-auto-sm" id="dest-grid"></div>
   </div>
