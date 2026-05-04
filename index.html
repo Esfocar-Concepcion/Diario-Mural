@@ -808,7 +808,7 @@
 
   <!-- ═══ DESTACADOS ═══ -->
   <div id="sec-destacados" class="section">
-    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div>
+    <div class="sec-title"><h2>🏅 Destacados Institucionales</h2><div class="sec-title-bar"></div></div><button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button>
     <div class="dest-tabs" id="dest-tabs"></div>
     <div class="grid-auto-sm" id="dest-grid"></div>
   </div>
@@ -1047,6 +1047,32 @@
     </div>
   </div>
 </div>
+<div id="modal-destacados" class="modal-overlay" style="display:none" onclick="closeModal('modal-destacados',event)">
+  <div class="modal-box" style="max-width:560px">
+    <h3>🏅 Nuevo Destacado</h3>
+    <div class="form-col">
+      <div><div class="sub-lbl">TIPO</div>
+        <select id="fdest-tipo">
+          <option value="alumno">Carabinero Alumno</option>
+          <option value="seccion">Sección</option>
+          <option value="funcionario" selected>Funcionario</option>
+        </select>
+      </div>
+      <div><div class="sub-lbl">NOMBRE / SECCIÓN *</div><input id="fdest-titulo" placeholder="Ej: Alumno destacado / Sección C / Sgto. Pérez"></div>
+      <div><div class="sub-lbl">MOTIVO</div><input id="fdest-motivo" placeholder="Reconocimiento breve"></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">FECHA</div><input id="fdest-fecha" type="date"></div>
+        <div><div class="sub-lbl">FOTO</div><input id="fdest-foto" type="file" accept="image/*" onchange="handleDestFoto(this)"></div>
+      </div>
+      <div id="fdest-prev" style="font-size:.75rem;color:var(--accent);font-family:monospace"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarDestacado()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-destacados')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONSTANTES
@@ -2207,12 +2233,78 @@ function renderGaleria() {
 }
 
 function renderDestacados() {
-  const g = document.getElementById('dest-grid'); if (!g) return;
-  g.innerHTML = (destacados||[]).map(d => `<div class="pub-card"><div class="pub-title">${esc(d.titulo||'Destacado')}</div><div style="color:var(--text3);font-size:.8rem">${esc(d.motivo||'')}</div></div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
+  const tabs = document.getElementById('dest-tabs');
+  const g = document.getElementById('dest-grid');
+  if (!g || !tabs) return;
+  const tipos = [
+    {id:'todos', lbl:'Todos'},
+    {id:'alumno', lbl:'Carabinero Alumno'},
+    {id:'seccion', lbl:'Sección'},
+    {id:'funcionario', lbl:'Funcionario'}
+  ];
+  tabs.innerHTML = tipos.map(t => `<button class="nav-btn ${destTab===t.id?'active':''}" onclick="setDestTab('${t.id}')">${t.lbl}</button>`).join('');
+  const list = (destacados||[]).filter(d => destTab==='todos' ? true : d.tipo===destTab);
+  g.innerHTML = list.map(d => `
+    <div class="pub-card" style="overflow:hidden">
+      <div style="height:170px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden">
+        ${d.foto && d.foto.url ? `<img src="${d.foto.url}" alt="${esc(d.titulo)}" style="width:100%;height:100%;object-fit:cover">` : '<div style="color:var(--text3);font-size:.8rem">Sin foto</div>'}
+      </div>
+      <div style="padding:14px">
+        <div class="pub-title">${esc(d.titulo||'Destacado')}</div>
+        <div style="font-size:.72rem;color:var(--accent);font-family:monospace;margin:4px 0 8px;text-transform:uppercase">${esc(d.tipo||'')}</div>
+        <div style="color:var(--text3);font-size:.8rem;line-height:1.5">${esc(d.motivo||'')}</div>
+        <div style="font-size:.72rem;color:var(--text3);font-family:monospace;margin-top:10px">${esc(d.fecha||'')}</div>
+      </div>
+    </div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
 }
 
 
 
+
+
+function setDestTab(t) {
+  destTab = t;
+  renderDestacados();
+}
+
+function openModalDest() {
+  destTemp = null;
+  document.getElementById('fdest-titulo').value = '';
+  document.getElementById('fdest-tipo').value = 'funcionario';
+  document.getElementById('fdest-motivo').value = '';
+  document.getElementById('fdest-fecha').value = '';
+  document.getElementById('fdest-foto').value = '';
+  document.getElementById('fdest-prev').textContent = '';
+  document.getElementById('modal-destacados').style.display = 'flex';
+}
+
+function handleDestFoto(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  document.getElementById('fdest-prev').textContent = '⏳ Subiendo foto...';
+  _uploadImageToGitHub(f).then(u => {
+    destTemp = u;
+    document.getElementById('fdest-prev').textContent = '✓ ' + u.nombre;
+  }).catch(err => {
+    document.getElementById('fdest-prev').textContent = '✗ ' + err;
+  });
+}
+
+function guardarDestacado() {
+  const titulo = document.getElementById('fdest-titulo').value.trim();
+  if (!titulo) return alert('El nombre/título es obligatorio.');
+  destacados = [{
+    id: Date.now(),
+    titulo,
+    tipo: document.getElementById('fdest-tipo').value,
+    motivo: document.getElementById('fdest-motivo').value.trim(),
+    fecha: document.getElementById('fdest-fecha').value || HOY,
+    foto: destTemp
+  }].concat(destacados || []);
+  closeModal('modal-destacados');
+  renderDestacados();
+  jbSave();
+}
 let galeriaPortadaTemp = null;
 let galeriaFotosTemp = [];
 
