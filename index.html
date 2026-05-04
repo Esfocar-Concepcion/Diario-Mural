@@ -2211,6 +2211,13 @@ function eliminarBday(id) {
 // INIT
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
+// Cargar credenciales ANTES de jbLoad
+(function() {
+  try {
+    var s = localStorage.getItem('jb_cfg');
+    if (s) { var c = JSON.parse(s); window._JB_BIN = c.binId||''; window._JB_KEY = c.apiKey||''; }
+  } catch(e) {}
+})();
 jbLoad().then(function() {
   buildNav();
   renderInicio();
