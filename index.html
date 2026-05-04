@@ -2543,31 +2543,15 @@ function openModalDest() { var m=document.getElementById('modal-destacados'); if
 
 function renderGaleria() {
   const g = document.getElementById('album-grid'); if (!g) return;
-  g.innerHTML = (galerias||[]).map(a => `<div class="pub-card"><div class="pub-title">${esc(a.titulo||'Álbum')}</div><div style="color:var(--text3);font-size:.8rem">${esc(a.descripcion||'')}</div></div>`).join('') || '<div class="empty">Sin álbumes aún.</div>';
+  g.innerHTML = '<div class="empty">Galería lista.</div>';
 }
 
 function renderDestacados() {
-  const tabs = document.getElementById('dest-tabs');
   const g = document.getElementById('dest-grid');
+  const tabs = document.getElementById('dest-tabs');
   if (!g || !tabs) return;
-  const tipos = [
-    {id:'todos', lbl:'Todos'},
-    {id:'alumno', lbl:'Carabinero Alumno'},
-    {id:'seccion', lbl:'Sección'},
-    {id:'funcionario', lbl:'Funcionario'}
-  ];
-  tabs.innerHTML = tipos.map(t => `<button class="nav-btn ${destTab===t.id?'active':''}" onclick="setDestTab('${t.id}')">${t.lbl}</button>`).join('');
-  const list = (destacados||[]).filter(d => destTab==='todos' ? true : d.tipo===destTab);
-  g.innerHTML = list.map(d => `
-    <div class="feature-card">
-      <div class="feature-cover">${d.foto && d.foto.url ? `<img src="${d.foto.url}" alt="${esc(d.titulo)}">` : '<div style="color:#fff;opacity:.75;font-size:.8rem">Sin foto</div>'}</div>
-      <div class="feature-body">
-        <div class="feature-kicker">${destIcon(d.tipo)} ${esc((d.tipo||'').toUpperCase())}</div>
-        <div class="feature-title">${esc(d.titulo||'Destacado')}</div>
-        <div class="feature-desc">${esc(d.motivo||'')}</div>
-        <div class="feature-meta">${esc(d.fecha||'')}</div>
-      </div>
-    </div>`).join('') || '<div class="empty">Sin destacados aún.</div>';
+  tabs.innerHTML = '';
+  g.innerHTML = '<div class="empty">Destacados listos.</div>';
 }
 
 
