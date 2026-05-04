@@ -902,6 +902,7 @@
 
 <footer>
   <div>ESCUELA DE FORMACIÓN DE CARABINEROS — GRUPO CONCEPCIÓN</div>
+  <button onclick="openDiag()" style="margin-top:10px;background:transparent;border:1px solid #3a4832;color:#6a7a60;padding:5px 14px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.65rem;letter-spacing:.1em">⚙ CONFIGURAR GITHUB</button>
   <div style="margin-top:4px">Diario Mural Institucional · <span id="footer-year"></span></div>
 </footer>
 
@@ -2055,6 +2056,34 @@ function imprimirOrden() {
   <span id="info-fab-badge" id="info-fab-badge" style="display:none"></span>
 </button>
 
+
+<!-- PANEL DIAGNÓSTICO -->
+<div id="diag-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:99999;padding:30px;overflow-y:auto">
+  <div style="background:#1e2d1a;border:1px solid #4a7c59;border-radius:6px;max-width:580px;margin:0 auto;padding:28px">
+    <h3 style="color:#d8e8d0;font-family:monospace;margin:0 0 18px;letter-spacing:.1em">⚙ CONFIGURACIÓN GITHUB</h3>
+    <div style="font-family:monospace;font-size:.78rem;color:#a8b89a;margin-bottom:14px">
+      Repo: <span style="color:#5a9468">Esfocar-Concepcion / Diario-Mural</span><br>
+      Archivo: <span style="color:#5a9468">datos.json</span><br>
+      Rama: <span style="color:#5a9468">main</span>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:.72rem;color:#6a7a60;font-family:monospace;margin-bottom:6px">TOKEN ACTUAL (guardado)</div>
+      <div id="diag-token-val" style="font-family:monospace;font-size:.75rem;color:#d8e8d0;background:#111;padding:8px 12px;border-radius:3px;word-break:break-all;min-height:32px"></div>
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-size:.72rem;color:#6a7a60;font-family:monospace;margin-bottom:6px">PEGAR NUEVO TOKEN</div>
+      <input id="diag-token-inp" type="text" placeholder="ghp_..." style="width:100%;background:#111;border:1px solid #4a7c59;color:#d8e8d0;padding:9px 12px;font-family:monospace;font-size:.8rem;border-radius:3px;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+      <button onclick="diagGuardarToken()" style="background:#4a7c59;color:#fff;border:none;padding:9px 18px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.8rem">💾 Guardar token</button>
+      <button onclick="diagBorrarToken()" style="background:#7a1a1a;color:#fff;border:none;padding:9px 18px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.8rem">🗑 Borrar token</button>
+      <button onclick="diagTestToken()" style="background:#3a6147;color:#fff;border:none;padding:9px 18px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.8rem">🔍 Probar conexión</button>
+    </div>
+    <div id="diag-result" style="font-family:monospace;font-size:.78rem;padding:10px 12px;border-radius:3px;background:#111;color:#a8b89a;min-height:36px;margin-bottom:18px"></div>
+    <button onclick="document.getElementById('diag-panel').style.display='none'" style="background:transparent;color:#6a7a60;border:1px solid #3a4832;padding:8px 18px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:.8rem;width:100%">✕ Cerrar</button>
+  </div>
+</div>
+
 </body></html>`;
   const w = window.open('','_blank');
   w.document.write(html);
@@ -2658,6 +2687,71 @@ function buildTicker() {
 }
 
 // Llamar buildTicker al init y cuando cambian las publicaciones
+
+
+// ── DIAGNÓSTICO ──
+function openDiag() {
+  const panel = document.getElementById('diag-panel');
+  panel.style.display = 'block';
+  const tok = localStorage.getItem('dm_github_token') || '(ninguno guardado)';
+  document.getElementById('diag-token-val').textContent = tok.length > 8 ? tok.substring(0,6)+'...'+tok.slice(-4) : tok;
+  document.getElementById('diag-result').textContent = '';
+}
+function diagGuardarToken() {
+  const v = document.getElementById('diag-token-inp').value.trim();
+  if (!v) { document.getElementById('diag-result').textContent = '⚠ Pega un token primero'; return; }
+  localStorage.setItem('dm_github_token', v);
+  const tok = localStorage.getItem('dm_github_token');
+  document.getElementById('diag-token-val').textContent = tok.substring(0,6)+'...'+tok.slice(-4);
+  document.getElementById('diag-token-inp').value = '';
+  document.getElementById('diag-result').style.color = '#5a9468';
+  document.getElementById('diag-result').textContent = '✓ Token guardado. Ahora prueba la conexión.';
+}
+function diagBorrarToken() {
+  localStorage.removeItem('dm_github_token');
+  document.getElementById('diag-token-val').textContent = '(ninguno guardado)';
+  document.getElementById('diag-result').style.color = '#d45c44';
+  document.getElementById('diag-result').textContent = 'Token borrado. Pega uno nuevo arriba.';
+}
+async function diagTestToken() {
+  const token = localStorage.getItem('dm_github_token');
+  const el = document.getElementById('diag-result');
+  if (!token || token === '(ninguno guardado)') {
+    el.style.color = '#d45c44';
+    el.textContent = '⚠ No hay token guardado. Pega uno primero.';
+    return;
+  }
+  el.style.color = '#a8b89a';
+  el.textContent = '⟳ Probando conexión con GitHub...';
+  try {
+    const r = await fetch('https://api.github.com/repos/Esfocar-Concepcion/Diario-Mural/contents/datos.json', {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+    const data = await r.json();
+    if (r.status === 200 && data.sha) {
+      el.style.color = '#5a9468';
+      el.textContent = '✓ CONEXIÓN OK — datos.json encontrado. SHA: ' + data.sha.substring(0,10) + '...';
+    } else if (r.status === 401 || data.message === 'Bad credentials') {
+      el.style.color = '#d45c44';
+      el.textContent = '✕ TOKEN INVÁLIDO — Genera un nuevo token clásico con permiso repo.';
+    } else if (r.status === 403) {
+      el.style.color = '#d45c44';
+      el.textContent = '✕ SIN PERMISO DE ESCRITURA — El token necesita permiso repo completo.';
+    } else if (r.status === 404) {
+      el.style.color = '#d45c44';
+      el.textContent = '✕ NO ENCONTRADO (404) — Verifica que el repo sea Esfocar-Concepcion/Diario-Mural y exista datos.json';
+    } else {
+      el.style.color = '#d45c44';
+      el.textContent = '✕ Error ' + r.status + ': ' + (data.message || 'desconocido');
+    }
+  } catch(e) {
+    el.style.color = '#d45c44';
+    el.textContent = '✕ Error de red: ' + e.message;
+  }
+}
 
 </script>
 </body>
