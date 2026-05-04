@@ -2537,12 +2537,9 @@ function destIcon(tipo) {
   return '🏅';
 }
 
-function openModalGaleria() { document.getElementById('modal-galeria').style.display = 'flex'; }
+function openModalGaleria() { var m=document.getElementById('modal-galeria'); if (m) m.style.display='flex'; }
 
-function openModalDest() {
-  var m = document.getElementById('modal-destacados');
-  if (m) m.style.display = 'flex';
-}
+function openModalDest() { var m=document.getElementById('modal-destacados'); if (m) m.style.display='flex'; }
 
 function renderGaleria() {
   const g = document.getElementById('album-grid'); if (!g) return;
