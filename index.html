@@ -910,6 +910,7 @@
   <div class="modal-box">
     <h3>🔐 Acceso Administrador</h3>
     <p style="font-size:.8rem;color:var(--text3);margin-bottom:14px">Ingrese la contraseña institucional.</p>
+    <p style="font-size:.74rem;color:var(--text3);margin-bottom:14px">Al ingresar como administrador, el sistema te pedirá tu token de GitHub para guardar datos en la nube.</p>
     <input type="password" id="inp-pass" placeholder="Contraseña" class="mb-12"
       onkeydown="if(event.key==='Enter')doLogin()">
     <div id="pass-err" style="color:var(--danger);font-size:.78rem;margin-bottom:10px;display:none">Contraseña incorrecta.</div>
@@ -1292,8 +1293,9 @@ function closeModal(id, e) {
 // LOGIN
 // ═══════════════════════════════════════════════════════════
 function doLogin() {
-  const p = document.getElementById("inp-pass").value;
-  if (p === ADMIN_PASS) {
+  const v = document.getElementById("inp-pass").value;
+  if (v === ADMIN_PASS) {
+    if (!ensureGhToken()) return;
     esAdmin = true;
     closeModal("modal-login");
     document.getElementById("inp-pass").value = "";
@@ -2315,13 +2317,165 @@ function eliminarBday(id) {
   renderCumpleanos();
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// GITHUB PERSISTENCIA
+// ═══════════════════════════════════════════════════════════
+const GITHUB_OWNER = "Esfocar-Concepcion";
+const GITHUB_REPO = "diario-mural-web";
+const GITHUB_BRANCH = "main";
+const GITHUB_DATA_PATH = "datos.json";
+const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${GITHUB_DATA_PATH}`;
+const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`;
+
+function ghToken() {
+  return sessionStorage.getItem('dm_github_token') || '';
+}
+function setGhToken(token) {
+  if (token) sessionStorage.setItem('dm_github_token', token.trim());
+}
+function clearGhToken() {
+  sessionStorage.removeItem('dm_github_token');
+}
+function ensureGhToken() {
+  let token = ghToken();
+  if (token) return true;
+  token = prompt('Pega tu token de GitHub para habilitar el guardado en la nube:');
+  if (!token || !token.trim()) {
+    alert('Sin token no podrás guardar cambios en GitHub.');
+    return false;
+  }
+  setGhToken(token);
+  return true;
+}
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function showCloudMsg(ok, txt) {
+  let el = document.getElementById('gh-save-msg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'gh-save-msg';
+    el.style.cssText = 'position:fixed;left:20px;bottom:24px;z-index:9999;padding:9px 14px;border-radius:4px;color:#fff;font-family:monospace;font-size:.76rem;letter-spacing:.08em;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .25s';
+    document.body.appendChild(el);
+  }
+  el.textContent = txt || (ok ? '✓ GUARDADO EN GITHUB' : '✕ ERROR AL GUARDAR');
+  el.style.background = ok ? 'var(--accent)' : 'var(--danger)';
+  el.style.opacity = '1';
+  setTimeout(() => el.style.opacity = '0', 2600);
+}
+function buildDataPayload() {
+  return {
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    pubs,
+    eventos,
+    servicios,
+    docsSvc,
+    ordenDia,
+    cumpleanos
+  };
+}
+async function githubLoadData() {
+  try {
+    const r = await fetch(GITHUB_RAW_URL + '?t=' + Date.now(), { cache:'no-store' });
+    if (!r.ok) return false;
+    const data = await r.json();
+    if (Array.isArray(data.pubs)) pubs = data.pubs;
+    if (Array.isArray(data.eventos)) eventos = data.eventos;
+    if (Array.isArray(data.servicios)) servicios = data.servicios;
+    if (Array.isArray(data.docsSvc)) docsSvc = data.docsSvc;
+    if (Array.isArray(data.cumpleanos)) cumpleanos = data.cumpleanos;
+    if (data.ordenDia && typeof data.ordenDia === 'object') ordenDia = data.ordenDia;
+    return true;
+  } catch(e) {
+    console.warn('No se pudo leer datos.json desde GitHub', e);
+    return false;
+  }
+}
+async function githubSaveAllData() {
+  const token = ghToken();
+  if (!token) return false;
+  try {
+    let sha = undefined;
+    const getR = await fetch(GITHUB_API_URL, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (getR.ok) {
+      const prev = await getR.json();
+      sha = prev.sha;
+    }
+    const payload = buildDataPayload();
+    const content = utf8ToBase64(JSON.stringify(payload, null, 2));
+    const putBody = {
+      message: 'Actualizar datos del diario mural',
+      content,
+      branch: GITHUB_BRANCH
+    };
+    if (sha) putBody.sha = sha;
+    const putR = await fetch(GITHUB_API_URL, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(putBody)
+    });
+    if (!putR.ok) {
+      const errTxt = await putR.text();
+      console.warn('GitHub save error:', errTxt);
+      showCloudMsg(false, '✕ TOKEN O PERMISOS INCORRECTOS');
+      return false;
+    }
+    showCloudMsg(true, '✓ GUARDADO EN GITHUB');
+    return true;
+  } catch(e) {
+    console.warn('Error guardando en GitHub', e);
+    showCloudMsg(false, '✕ ERROR DE CONEXIÓN');
+    return false;
+  }
+}
+function wrapGitHubSaves() {
+  const gp = guardarPub;
+  guardarPub = async function() { gp.apply(this, arguments); await githubSaveAllData(); };
+  const ge = guardarEv;
+  guardarEv = async function() { ge.apply(this, arguments); await githubSaveAllData(); };
+  const gs = guardarSvc;
+  guardarSvc = async function() { gs.apply(this, arguments); await githubSaveAllData(); };
+  const gb = guardarBday;
+  guardarBday = async function() { gb.apply(this, arguments); await githubSaveAllData(); };
+  const gd = guardarDocSvc;
+  guardarDocSvc = async function() { gd.apply(this, arguments); await githubSaveAllData(); };
+  const ep = eliminarPub;
+  eliminarPub = async function() { ep.apply(this, arguments); await githubSaveAllData(); };
+  const ee = eliminarEv;
+  eliminarEv = async function() { ee.apply(this, arguments); await githubSaveAllData(); };
+  const es = eliminarSvc;
+  eliminarSvc = async function() { es.apply(this, arguments); await githubSaveAllData(); };
+  const eb = eliminarBday;
+  eliminarBday = async function() { eb.apply(this, arguments); await githubSaveAllData(); };
+  const ed = eliminarDocSvc;
+  eliminarDocSvc = async function() { ed.apply(this, arguments); await githubSaveAllData(); };
+  const tp = togglePub;
+  togglePub = async function() { tp.apply(this, arguments); await githubSaveAllData(); };
+  const te = toggleOrdenEdicion;
+  toggleOrdenEdicion = async function() { te.apply(this, arguments); await githubSaveAllData(); };
+}
+
+
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-document.getElementById("footer-year").textContent = new Date().getFullYear();
-buildNav();
-renderInicio();
-buildTicker();
+async function initApp() {
+  document.getElementById("footer-year").textContent = new Date().getFullYear();
+  await githubLoadData();
+  buildNav();
+  renderInicio();
+  buildTicker();
+  wrapGitHubSaves();
+}
+initApp();
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
