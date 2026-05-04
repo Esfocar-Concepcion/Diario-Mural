@@ -558,6 +558,116 @@
       font-weight: 700;
     }
 
+  
+    /* ── Ticker de noticias ── */
+    #ticker-wrap {
+      background: var(--accent);
+      color: #fff;
+      padding: 7px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      z-index: 99;
+      border-bottom: 2px solid var(--accent2);
+    }
+    #ticker-wrap::before {
+      content: '📢 AVISOS';
+      position: absolute; left: 0; top: 0;
+      background: var(--accent2);
+      color: #fff;
+      padding: 7px 16px;
+      font-size: .68rem;
+      font-family: monospace;
+      font-weight: 700;
+      letter-spacing: .12em;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    #ticker-inner {
+      display: inline-block;
+      animation: ticker-scroll 35s linear infinite;
+      padding-left: 110px;
+      font-size: .76rem;
+      font-family: monospace;
+      letter-spacing: .04em;
+    }
+    #ticker-inner:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+    .ticker-sep { margin: 0 24px; opacity: .5; }
+
+    /* ── Header mejorado ── */
+    header {
+      background: linear-gradient(135deg, #0d1a0a 0%, #1e2d1a 60%, #162210 100%) !important;
+      border-bottom: 2px solid var(--accent);
+    }
+    .brand-logo {
+      background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+      box-shadow: 0 0 14px rgba(74,124,89,.5) !important;
+    }
+
+    /* ── Hero mejorado ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1a0a 0%, #1e2d1a 70%, #1a2e1a 100%) !important;
+      border-left: 4px solid #c9a84c !important;
+      border-radius: 6px !important;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -60px; bottom: -60px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .04;
+      pointer-events: none;
+    }
+
+    /* ── Cards mejoradas ── */
+    .pub-card {
+      border-radius: 6px !important;
+      transition: box-shadow .2s, transform .15s, border-color .2s !important;
+    }
+    .pub-card:hover {
+      box-shadow: 0 6px 24px rgba(74,124,89,.18) !important;
+      transform: translateY(-3px) !important;
+    }
+    .ev-card { border-radius: 5px !important; }
+    .metric-card {
+      border-radius: 6px !important;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px var(--shadow); }
+
+    /* ── Footer mejorado ── */
+    footer {
+      background: linear-gradient(135deg, #0d1a0a, #1e2d1a) !important;
+      border-top: 2px solid var(--accent);
+    }
+
+    /* ── Botones mejorados ── */
+    .btn-p {
+      border-radius: 4px !important;
+      transition: background .2s, transform .1s, box-shadow .2s !important;
+      box-shadow: 0 2px 8px rgba(74,124,89,.3);
+    }
+    .btn-p:hover { transform: translateY(-1px) !important; box-shadow: 0 4px 14px rgba(74,124,89,.4) !important; }
+    .btn-s { border-radius: 4px !important; transition: all .2s !important; }
+    .btn-s:hover { background: var(--accent3) !important; }
+
+    /* ── Nav btn activo mejorado ── */
+    .nav-btn.active {
+      border-radius: 3px;
+      box-shadow: 0 0 8px rgba(74,124,89,.3);
+    }
+
+    /* ── Modal mejorado ── */
+    .modal-box { border-radius: 8px !important; }
+
   </style>
 </head>
 <body>
@@ -586,6 +696,11 @@
   </div>
   <div id="mob-menu"></div>
 </header>
+
+<!-- TICKER DE NOTICIAS -->
+<div id="ticker-wrap">
+  <div id="ticker-inner" id="ticker-inner">Cargando avisos...</div>
+</div>
 
 <!-- CONTENIDO -->
 <main>
@@ -1567,20 +1682,20 @@ function guardarPub() {
   }
   closeModal("modal-pub");
   renderAdmin();
-  jbSave();
+  jbSave(); buildTicker();
 }
 
 function eliminarPub(id) {
   if (!confirm("¿Eliminar publicación?")) return;
   pubs = pubs.filter(p => p.id !== id);
   renderAdmin();
-  jbSave();
+  jbSave(); buildTicker();
 }
 
 function togglePub(id, campo) {
   pubs = pubs.map(p => p.id === id ? { ...p, [campo]: !p[campo] } : p);
   renderAdmin();
-  jbSave();
+  jbSave(); buildTicker();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2221,6 +2336,7 @@ document.getElementById("footer-year").textContent = new Date().getFullYear();
 jbLoad().then(function() {
   buildNav();
   renderInicio();
+  buildTicker();
 });
 
 // ═══════════════════════════════════════════════════════════
