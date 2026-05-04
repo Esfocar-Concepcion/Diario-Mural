@@ -561,112 +561,48 @@
   
     /* ── Ticker de noticias ── */
     #ticker-wrap {
-      background: var(--accent);
-      color: #fff;
-      padding: 7px 0;
+      background: #1a4a1a;
+      color: #f5c518;
+      padding: 8px 0;
       overflow: hidden;
       white-space: nowrap;
       position: relative;
       z-index: 99;
-      border-bottom: 2px solid var(--accent2);
+      border-top: 2px solid #2d6a2d;
+      border-bottom: 2px solid #2d6a2d;
     }
-    #ticker-wrap::before {
-      content: '📢 AVISOS';
+    #ticker-label {
       position: absolute; left: 0; top: 0;
-      background: var(--accent2);
-      color: #fff;
-      padding: 7px 16px;
+      background: #c9a84c;
+      color: #1a2a0a;
+      padding: 0 16px;
       font-size: .68rem;
       font-family: monospace;
-      font-weight: 700;
-      letter-spacing: .12em;
+      font-weight: 900;
+      letter-spacing: .15em;
       z-index: 2;
       height: 100%;
       display: flex;
       align-items: center;
+      text-transform: uppercase;
     }
     #ticker-inner {
       display: inline-block;
-      animation: ticker-scroll 35s linear infinite;
-      padding-left: 110px;
-      font-size: .76rem;
+      animation: ticker-scroll 40s linear infinite;
+      padding-left: 120px;
+      font-size: .78rem;
       font-family: monospace;
-      letter-spacing: .04em;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: #f5c518;
+      text-transform: uppercase;
     }
-    #ticker-inner:hover { animation-play-state: paused; }
+    #ticker-inner:hover { animation-play-state: paused; cursor: pointer; }
     @keyframes ticker-scroll {
       0%   { transform: translateX(100vw); }
       100% { transform: translateX(-100%); }
     }
-    .ticker-sep { margin: 0 24px; opacity: .5; }
-
-    /* ── Header mejorado ── */
-    header {
-      background: linear-gradient(135deg, #0d1a0a 0%, #1e2d1a 60%, #162210 100%) !important;
-      border-bottom: 2px solid var(--accent);
-    }
-    .brand-logo {
-      background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
-      box-shadow: 0 0 14px rgba(74,124,89,.5) !important;
-    }
-
-    /* ── Hero mejorado ── */
-    .hero {
-      background: linear-gradient(135deg, #0d1a0a 0%, #1e2d1a 70%, #1a2e1a 100%) !important;
-      border-left: 4px solid #c9a84c !important;
-      border-radius: 6px !important;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      left: -60px; bottom: -60px;
-      width: 280px; height: 280px;
-      border-radius: 50%;
-      background: var(--accent);
-      opacity: .04;
-      pointer-events: none;
-    }
-
-    /* ── Cards mejoradas ── */
-    .pub-card {
-      border-radius: 6px !important;
-      transition: box-shadow .2s, transform .15s, border-color .2s !important;
-    }
-    .pub-card:hover {
-      box-shadow: 0 6px 24px rgba(74,124,89,.18) !important;
-      transform: translateY(-3px) !important;
-    }
-    .ev-card { border-radius: 5px !important; }
-    .metric-card {
-      border-radius: 6px !important;
-      transition: transform .15s, box-shadow .15s;
-    }
-    .metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px var(--shadow); }
-
-    /* ── Footer mejorado ── */
-    footer {
-      background: linear-gradient(135deg, #0d1a0a, #1e2d1a) !important;
-      border-top: 2px solid var(--accent);
-    }
-
-    /* ── Botones mejorados ── */
-    .btn-p {
-      border-radius: 4px !important;
-      transition: background .2s, transform .1s, box-shadow .2s !important;
-      box-shadow: 0 2px 8px rgba(74,124,89,.3);
-    }
-    .btn-p:hover { transform: translateY(-1px) !important; box-shadow: 0 4px 14px rgba(74,124,89,.4) !important; }
-    .btn-s { border-radius: 4px !important; transition: all .2s !important; }
-    .btn-s:hover { background: var(--accent3) !important; }
-
-    /* ── Nav btn activo mejorado ── */
-    .nav-btn.active {
-      border-radius: 3px;
-      box-shadow: 0 0 8px rgba(74,124,89,.3);
-    }
-
-    /* ── Modal mejorado ── */
-    .modal-box { border-radius: 8px !important; }
+    .ticker-sep { margin: 0 20px; color: #c9a84c; }
 
   </style>
 </head>
@@ -697,9 +633,10 @@
   <div id="mob-menu"></div>
 </header>
 
-<!-- TICKER DE NOTICIAS -->
+<!-- TICKER -->
 <div id="ticker-wrap">
-  <div id="ticker-inner">Cargando avisos...</div>
+  <div id="ticker-label">📢 AVISOS</div>
+  <div id="ticker-inner">Cargando...</div>
 </div>
 
 <!-- CONTENIDO -->
@@ -1043,28 +980,21 @@
   </div>
 </div>
 
+
 <div id="modal-cfg" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
   <div class="modal-box" style="max-width:440px">
-    <h3>Configuracion JSONBin (Nube)</h3>
+    <h3>☁ Configuración JSONBin (Nube)</h3>
     <p style="font-size:.78rem;color:var(--text3);margin-bottom:16px">Ingresa tus credenciales de jsonbin.io para activar la persistencia en la nube.</p>
     <div class="form-col">
-      <div>
-        <div class="sub-lbl">BIN ID</div>
-        <input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0">
-      </div>
-      <div>
-        <div class="sub-lbl">API KEY (X-Master-Key)</div>
-        <input id="cfg-key" type="password" placeholder="$2a$10$...">
-      </div>
+      <div><div class="sub-lbl">BIN ID</div><input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0"></div>
+      <div><div class="sub-lbl">API KEY (X-Master-Key)</div><input id="cfg-key" type="password" placeholder="$2a$10$..."></div>
       <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="saveCfg()">Guardar</button>
-        <button class="btn-s" onclick="testCfg()">Probar conexion</button>
+        <button class="btn-s" onclick="testCfg()">Probar conexión</button>
         <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cerrar</button>
       </div>
-      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:8px">
-        Las credenciales se guardan en este navegador (localStorage).
-      </div>
+      <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-top:8px">Las credenciales se guardan en este navegador (localStorage).</div>
     </div>
   </div>
 </div>
@@ -1220,7 +1150,7 @@ function buildNav() {
       onclick="showSec('${n.id}')">${esc(n.lbl)}</button>
   `).join("") + `
     <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="Modo oscuro" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>
-    <button class="icon-btn" onclick="openCfg()" title="Configurar nube JSONBin" style="opacity:.75;color:var(--header-text)">☁</button>
+    <button class="icon-btn" onclick="openCfg()" title="Configurar nube" style="opacity:.75;color:var(--header-text)">☁</button>
     ${esAdmin
       ? `<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
       : `<button class="nav-btn" onclick="openModal('modal-login')" style="border:1px solid var(--accent);color:var(--accent2);margin-left:4px">🔐 Admin</button>`
@@ -2326,18 +2256,9 @@ function eliminarBday(id) {
 // INIT
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
-// Cargar credenciales ANTES de jbLoad
-(function() {
-  try {
-    var s = localStorage.getItem('jb_cfg');
-    if (s) { var c = JSON.parse(s); window._JB_BIN = c.binId||''; window._JB_KEY = c.apiKey||''; }
-  } catch(e) {}
-})();
-jbLoad().then(function() {
-  buildNav();
-  renderInicio();
-  buildTicker();
-});
+// Cargar credenciales antes de jbLoad
+try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);window._JB_BIN=_c.binId||'';window._JB_KEY=_c.apiKey||'';}  } catch(e){}
+jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); });
 
 // ═══════════════════════════════════════════════════════════
 // PANEL DE INFORMACIÓN FLOTANTE — DRAG & TOGGLE
@@ -2455,94 +2376,56 @@ setInterval(() => {
   document.addEventListener('touchend', () => { isDragging = false; panel.classList.remove('dragging'); });
 })();
 
-
 // ═══════════════════════════════════════════════════════════
-// ════════════ JSONBIN ENGINE ════════════════════════════════
+// JSONBIN ENGINE
 // ═══════════════════════════════════════════════════════════
-
-(function initJB() {
-  try {
-    var s = localStorage.getItem('jb_cfg');
-    if (s) {
-      var c = JSON.parse(s);
-      if (c.binId)  window._JB_BIN = c.binId;
-      if (c.apiKey) window._JB_KEY = c.apiKey;
-    }
-  } catch(e) {}
-})();
-
 function jbLoad() {
   var binId  = window._JB_BIN;
   var apiKey = window._JB_KEY;
-  if (!binId || !apiKey) {
-    showCloudMsg('Configura JSONBin en el boton NUBE', '#4a7c59');
-    return Promise.resolve();
-  }
-  return fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest?ts=' + Date.now(), {
+  if (!binId || !apiKey) { showCloudMsg('Configura JSONBin: botón ☁', '#4a7c59'); return Promise.resolve(); }
+  return fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest?t=' + Date.now(), {
     headers: { 'X-Master-Key': apiKey, 'Cache-Control': 'no-cache' }
   })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    var rec = data.record;
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var rec = d.record;
     if (!rec) return;
-    if (rec.pubs      && rec.pubs.length)      pubs       = rec.pubs;
-    if (rec.eventos   && rec.eventos.length)   eventos    = rec.eventos;
-    if (rec.servicios)                         servicios  = rec.servicios;
-    if (rec.docsSvc)                           docsSvc    = rec.docsSvc;
-    if (rec.ordenDia)                          ordenDia   = rec.ordenDia;
-    if (rec.cumpleanos && rec.cumpleanos.length) cumpleanos = rec.cumpleanos;
-    showCloudMsg('Datos cargados desde la nube', '#4a7c59');
+    if (rec.pubs       && rec.pubs.length)       pubs       = rec.pubs;
+    if (rec.eventos    && rec.eventos.length)     eventos    = rec.eventos;
+    if (rec.servicios)                            servicios  = rec.servicios;
+    if (rec.docsSvc)                              docsSvc    = rec.docsSvc;
+    if (rec.ordenDia)                             ordenDia   = rec.ordenDia;
+    if (rec.cumpleanos && rec.cumpleanos.length)  cumpleanos = rec.cumpleanos;
+    showCloudMsg('✓ Datos cargados desde la nube', '#2a7a3a');
   })
-  .catch(function() {
-    showCloudMsg('Sin conexion - mostrando datos locales', '#a06030');
-  });
+  .catch(function(){ showCloudMsg('Sin conexión — datos locales', '#a06030'); });
 }
 
 function jbSave() {
   var binId  = window._JB_BIN;
   var apiKey = window._JB_KEY;
   if (!binId || !apiKey) return;
-  var payload = {
-    pubs: pubs,
-    eventos: eventos,
-    servicios: servicios,
-    docsSvc: docsSvc,
-    ordenDia: ordenDia,
-    cumpleanos: cumpleanos
-  };
+  var payload = { pubs:pubs, eventos:eventos, servicios:servicios, docsSvc:docsSvc, ordenDia:ordenDia, cumpleanos:cumpleanos };
   fetch('https://api.jsonbin.io/v3/b/' + binId, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': apiKey
-    },
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey },
     body: JSON.stringify(payload)
   })
-  .then(function(res) {
-    if (res.ok) showCloudMsg('Guardado en la nube', '#2a7a3a');
-    else        showCloudMsg('Error al guardar', '#b84c37');
-  })
-  .catch(function() {
-    showCloudMsg('Sin conexion - cambio guardado localmente', '#a06030');
-  });
+  .then(function(r){ showCloudMsg(r.ok ? '✓ Guardado en la nube' : '✗ Error al guardar', r.ok ? '#2a7a3a' : '#b84c37'); })
+  .catch(function(){ showCloudMsg('Sin conexión', '#a06030'); });
 }
 
 function showCloudMsg(txt, color) {
   var el = document.getElementById('cloud-msg');
   if (!el) return;
-  el.textContent = txt;
-  el.style.background = color;
-  el.style.opacity = '1';
-  clearTimeout(window._cloudTimer);
-  window._cloudTimer = setTimeout(function() { el.style.opacity = '0'; }, 3000);
+  el.textContent = txt; el.style.background = color; el.style.opacity = '1';
+  clearTimeout(window._ct);
+  window._ct = setTimeout(function(){ el.style.opacity = '0'; }, 3000);
 }
 
 function openCfg() {
   var b = '', k = '';
-  try {
-    var s = localStorage.getItem('jb_cfg');
-    if (s) { var c = JSON.parse(s); b = c.binId||''; k = c.apiKey||''; }
-  } catch(e) {}
+  try { var s = localStorage.getItem('jb_cfg'); if (s) { var c = JSON.parse(s); b = c.binId||''; k = c.apiKey||''; } } catch(e){}
   document.getElementById('cfg-bin').value = b;
   document.getElementById('cfg-key').value = k;
   document.getElementById('cfg-status').textContent = '';
@@ -2553,12 +2436,10 @@ function saveCfg() {
   var b = document.getElementById('cfg-bin').value.trim();
   var k = document.getElementById('cfg-key').value.trim();
   if (!b || !k) { alert('Ambos campos son obligatorios.'); return; }
-  localStorage.setItem('jb_cfg', JSON.stringify({ binId: b, apiKey: k }));
-  window._JB_BIN = b;
-  window._JB_KEY = k;
-  var st = document.getElementById('cfg-status');
-  st.textContent = 'Configuracion guardada correctamente';
-  st.style.color = 'var(--accent)';
+  localStorage.setItem('jb_cfg', JSON.stringify({ binId:b, apiKey:k }));
+  window._JB_BIN = b; window._JB_KEY = k;
+  document.getElementById('cfg-status').textContent = '✓ Configuración guardada';
+  document.getElementById('cfg-status').style.color = 'var(--accent)';
 }
 
 function testCfg() {
@@ -2566,43 +2447,28 @@ function testCfg() {
   var k = document.getElementById('cfg-key').value.trim();
   if (!b || !k) { alert('Completa ambos campos primero.'); return; }
   var st = document.getElementById('cfg-status');
-  st.textContent = 'Probando conexion...';
-  st.style.color = 'var(--text3)';
-  fetch('https://api.jsonbin.io/v3/b/' + b + '/latest', {
-    headers: { 'X-Master-Key': k }
+  st.textContent = 'Probando...'; st.style.color = 'var(--text3)';
+  fetch('https://api.jsonbin.io/v3/b/' + b + '/latest', { headers: { 'X-Master-Key': k } })
+  .then(function(r){
+    st.textContent = r.ok ? '✓ Conexión exitosa con JSONBin' : '✗ Error ' + r.status + ' — verifica credenciales';
+    st.style.color = r.ok ? 'var(--accent)' : 'var(--danger)';
   })
-  .then(function(res) {
-    if (res.ok) {
-      st.textContent = 'Conexion exitosa con JSONBin';
-      st.style.color = 'var(--accent)';
-    } else {
-      st.textContent = 'Error: ' + res.status + ' - verifica las credenciales';
-      st.style.color = 'var(--danger)';
-    }
-  })
-  .catch(function() {
-    st.textContent = 'Sin conexion a internet';
-    st.style.color = 'var(--danger)';
-  });
+  .catch(function(){ st.textContent = '✗ Sin conexión a internet'; st.style.color = 'var(--danger)'; });
 }
 
-// ── Ticker de noticias ──
+// ── Ticker ──
 function buildTicker() {
   var el = document.getElementById('ticker-inner');
   if (!el) return;
   var items = pubs.filter(function(p){ return p.activa; })
-    .sort(function(a,b){
-      var o={critico:0,urgente:1,importante:2,normal:3};
-      return o[a.prioridad]-o[b.prioridad];
-    })
+    .sort(function(a,b){ var o={critico:0,urgente:1,importante:2,normal:3}; return o[a.prioridad]-o[b.prioridad]; })
     .slice(0,12);
-  if (!items.length) { el.textContent='Sin avisos activos.'; return; }
-  var icons={critico:'🔴',urgente:'🟠',importante:'🟡',normal:'🟢'};
+  if (!items.length) { el.textContent = 'SIN AVISOS ACTIVOS'; return; }
+  var icons = { critico:'🔴', urgente:'🟠', importante:'🟡', normal:'🟢' };
   el.innerHTML = items.map(function(p){
-    return '<span>' + icons[p.prioridad] + ' ' + p.titulo.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span><span class="ticker-sep">◆</span>';
+    return '<span>' + icons[p.prioridad] + ' ' + p.titulo.replace(/</g,'&lt;').replace(/>/g,'&gt;').toUpperCase() + '</span><span class="ticker-sep">◆</span>';
   }).join('');
 }
-
 
 </script>
 <div id="cloud-msg" style="position:fixed;bottom:86px;right:24px;z-index:600;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.72rem;font-family:monospace;letter-spacing:.06em;opacity:0;transition:opacity .5s;pointer-events:none;max-width:260px;text-align:center"></div>
