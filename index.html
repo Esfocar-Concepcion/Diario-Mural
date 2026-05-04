@@ -990,6 +990,7 @@
     <div class="form-col">
       <div><div class="sub-lbl">BIN ID</div><input id="cfg-bin" placeholder="ej: 69f8bb86856a682189a5cda0"></div>
       <div><div class="sub-lbl">API KEY (X-Master-Key)</div><input id="cfg-key" type="password" placeholder="$2a$10$..."></div>
+      <div><div class="sub-lbl">GITHUB TOKEN (para adjuntos)</div><input id="cfg-ghtoken" type="password" placeholder="ghp_..."></div>
       <div id="cfg-status" style="font-size:.78rem;min-height:18px"></div>
       <div class="form-btns">
         <button class="btn-p" onclick="saveCfg()">Guardar</button>
@@ -1328,7 +1329,7 @@ function showDetalle(id) {
       <div class="sub-lbl">DOCUMENTOS ADJUNTOS (${p.adjuntos.length})</div>
       <div class="adj-list">
         ${p.adjuntos.map(a=>`
-          <a href="${a.data}" download="${esc(a.nombre)}" class="adj-item" style="text-decoration:none;color:var(--text)">
+          <a href="${a.url||a.data||'#'}" target="_blank" download="${esc(a.nombre)}" class="adj-item" style="text-decoration:none;color:var(--text)">
             <span style="font-size:1.2rem">${iconAdj(a.tipo,a.nombre)}</span>
             <span style="flex:1">${esc(a.nombre)}</span>
             <span style="color:var(--text3);font-size:.72rem">${(a.tamaño/1024).toFixed(0)} KB</span>
@@ -1563,16 +1564,47 @@ function toggleEtq(e) {
 
 function handleAdjuntos(inp) {
   const files = Array.from(inp.files);
-  const proms = files.map(f => new Promise(res => {
+  const ghToken = window._GH_TOKEN;
+  if (!ghToken) {
+    alert('Para subir adjuntos necesitas configurar el GitHub Token en el botón ☁');
+    inp.value = '';
+    return;
+  }
+  const prevEl = document.getElementById('adj-preview');
+  if (prevEl) prevEl.innerHTML = '<span style="color:var(--text3);font-size:.8rem">⏳ Subiendo archivos...</span>';
+  const proms = files.map(f => new Promise((res, rej) => {
     const r = new FileReader();
-    r.onload = ev => res({ nombre:f.name, tipo:f.type, tamaño:f.size, data:ev.target.result });
+    r.onload = ev => {
+      const b64 = ev.target.result.split(',')[1];
+      const path = 'adjuntos/' + Date.now() + '_' + f.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+      fetch('https://api.github.com/repos/Esfocar-Concepcion/Diario-Mural/contents/' + path, {
+        method: 'PUT',
+        headers: { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'adjunto: ' + f.name, content: b64 })
+      })
+      .then(r2 => r2.json())
+      .then(d => {
+        if (d.content && d.content.download_url) {
+          res({ nombre: f.name, tipo: f.type, tamaño: f.size, url: d.content.download_url });
+        } else {
+          rej('Error subiendo ' + f.name + ': ' + JSON.stringify(d.message||d));
+        }
+      })
+      .catch(rej);
+    };
     r.readAsDataURL(f);
   }));
-  Promise.all(proms).then(nuevos => {
-    adjuntosTemp = [...adjuntosTemp, ...nuevos];
-    renderAdjPreview();
-    inp.value = "";
-  });
+  Promise.all(proms)
+    .then(nuevos => {
+      adjuntosTemp = [...adjuntosTemp, ...nuevos];
+      renderAdjPreview();
+      inp.value = '';
+    })
+    .catch(err => {
+      alert('Error al subir adjunto: ' + err);
+      renderAdjPreview();
+      inp.value = '';
+    });
 }
 
 function renderAdjPreview() {
@@ -2023,7 +2055,7 @@ function renderDocsSvc() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
           <div style="font-size:.68rem;color:var(--text3);font-family:monospace">${fmt(d.fecha)}${d.autor?" · "+esc(d.autor):""}</div>
           <div style="display:flex;gap:6px">
-            <a href="${d.archivo.data}" download="${esc(d.archivo.nombre)}"
+            <a href="${d.archivo.url||d.archivo.data||'#'}" download="${esc(d.archivo.nombre)}"
               style="font-size:.72rem;background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:3px 10px;text-decoration:none;font-family:monospace;font-weight:600">
               ⬇ Descargar
             </a>
@@ -2046,10 +2078,40 @@ function openModalDocSvc() {
 function handleDocSvc(inp) {
   const f = inp.files[0];
   if (!f) return;
+  const ghToken = window._GH_TOKEN;
+  if (!ghToken) {
+    alert('Para subir documentos necesitas configurar el GitHub Token en el botón ☁');
+    inp.value = '';
+    return;
+  }
+  const prev = document.getElementById('fd-preview');
+  prev.textContent = '⏳ Subiendo ' + f.name + '...';
   const r = new FileReader();
   r.onload = ev => {
-    docSvcTemp = { nombre:f.name, tipo:f.type, tamano:f.size, data:ev.target.result };
-    document.getElementById("fd-preview").textContent = "✓ " + f.name + " (" + (f.size/1024).toFixed(0) + " KB)";
+    const b64 = ev.target.result.split(',')[1];
+    const path = 'adjuntos/' + Date.now() + '_' + f.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    fetch('https://api.github.com/repos/Esfocar-Concepcion/Diario-Mural/contents/' + path, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'doc: ' + f.name, content: b64 })
+    })
+    .then(r2 => r2.json())
+    .then(d => {
+      if (d.content && d.content.download_url) {
+        docSvcTemp = { nombre: f.name, tipo: f.type, tamano: f.size, url: d.content.download_url };
+        prev.textContent = '✓ ' + f.name + ' subido correctamente';
+        prev.style.color = 'var(--accent)';
+      } else {
+        prev.textContent = '✗ Error: ' + (d.message||'desconocido');
+        prev.style.color = 'var(--danger)';
+        inp.value = '';
+      }
+    })
+    .catch(() => {
+      prev.textContent = '✗ Error de conexión';
+      prev.style.color = 'var(--danger)';
+      inp.value = '';
+    });
   };
   r.readAsDataURL(f);
 }
@@ -2260,7 +2322,7 @@ function eliminarBday(id) {
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 // Cargar credenciales antes de jbLoad
 window._JB_BIN = '69f8bb86856a682189a5cda0';
-try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);if(_c.apiKey)window._JB_KEY=_c.apiKey;} } catch(e){}
+try { var _s=localStorage.getItem('jb_cfg'); if(_s){var _c=JSON.parse(_s);if(_c.apiKey)window._JB_KEY=_c.apiKey;if(_c.ghToken)window._GH_TOKEN=_c.ghToken;} } catch(e){}
 jbLoad().then(function(){ buildNav(); renderInicio(); buildTicker(); });
 
 // ═══════════════════════════════════════════════════════════
@@ -2427,10 +2489,11 @@ function showCloudMsg(txt, color) {
 }
 
 function openCfg() {
-  var b = '69f8bb86856a682189a5cda0', k = '';
-  try { var s = localStorage.getItem('jb_cfg'); if (s) { var c = JSON.parse(s); if(c.apiKey) k = c.apiKey; } } catch(e){}
+  var b = '69f8bb86856a682189a5cda0', k = '', gh = '';
+  try { var s = localStorage.getItem('jb_cfg'); if (s) { var c = JSON.parse(s); if(c.apiKey) k = c.apiKey; if(c.ghToken) gh = c.ghToken; } } catch(e){}
   document.getElementById('cfg-bin').value = b;
   document.getElementById('cfg-key').value = k;
+  document.getElementById('cfg-ghtoken').value = gh;
   document.getElementById('cfg-status').textContent = '';
   document.getElementById('modal-cfg').style.display = 'flex';
 }
@@ -2438,9 +2501,10 @@ function openCfg() {
 function saveCfg() {
   var b = document.getElementById('cfg-bin').value.trim();
   var k = document.getElementById('cfg-key').value.trim();
-  if (!b || !k) { alert('Ambos campos son obligatorios.'); return; }
-  localStorage.setItem('jb_cfg', JSON.stringify({ binId:b, apiKey:k }));
-  window._JB_BIN = b; window._JB_KEY = k;
+  var gh = document.getElementById('cfg-ghtoken').value.trim();
+  if (!b || !k) { alert('BIN ID y API Key son obligatorios.'); return; }
+  localStorage.setItem('jb_cfg', JSON.stringify({ binId:b, apiKey:k, ghToken:gh }));
+  window._JB_BIN = b; window._JB_KEY = k; window._GH_TOKEN = gh;
   document.getElementById('cfg-status').textContent = '✓ Configuración guardada';
   document.getElementById('cfg-status').style.color = 'var(--accent)';
 }
