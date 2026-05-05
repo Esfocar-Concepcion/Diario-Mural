@@ -122,6 +122,38 @@
     .bday-badge-hoy { background:rgba(201,168,76,.2);color:#8a6a10;border:1px solid #c9a84c;border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;font-family:monospace;letter-spacing:.06em;white-space:nowrap; }
     .bday-badge-mes { background:var(--accent3);color:var(--accent);border:1px solid var(--accent);border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 7px;font-family:monospace;letter-spacing:.06em;white-space:nowrap; }
     .bday-dias { font-size:.68rem;color:var(--text3);font-family:monospace;margin-left:auto;text-align:right;white-space:nowrap; }
+    /* ÁLBUMES */
+    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .1s; }
+    .album-card:hover { box-shadow:0 4px 16px var(--shadow);transform:translateY(-2px); }
+    .album-cover { width:100%;height:160px;object-fit:cover;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2.5rem; }
+    .album-cover img { width:100%;height:100%;object-fit:cover; }
+    .album-info { padding:12px 14px; }
+    .album-title { font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:4px; }
+    .album-meta { font-size:.7rem;color:var(--text3);font-family:monospace; }
+    .foto-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:16px; }
+    .foto-item { position:relative;border-radius:3px;overflow:hidden;aspect-ratio:1;background:var(--bg3); }
+    .foto-item img { width:100%;height:100%;object-fit:cover;cursor:pointer;transition:opacity .15s; }
+    .foto-item img:hover { opacity:.85; }
+    .foto-del { position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:2px;padding:2px 6px;font-size:.65rem;cursor:pointer;display:none; }
+    .foto-item:hover .foto-del { display:block; }
+    .foto-caption { font-size:.65rem;color:var(--text3);padding:3px 4px;background:var(--bg3);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    /* LIGHTBOX */
+    #lightbox { position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column; }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:92vw;max-height:82vh;object-fit:contain;border-radius:3px; }
+    #lightbox-caption { color:#ccc;font-size:.8rem;margin-top:10px;font-family:monospace; }
+    #lightbox-close { position:absolute;top:16px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;line-height:1; }
+    /* DESTACADOS */
+    .dest-card { background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;display:flex;gap:16px;align-items:flex-start; }
+    .dest-card.gold { border-color:#c9a84c;background:rgba(201,168,76,.05); }
+    .dest-foto { width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--bg3);border:3px solid var(--accent);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;overflow:hidden; }
+    .dest-foto img { width:100%;height:100%;object-fit:cover; }
+    .dest-card.gold .dest-foto { border-color:#c9a84c; }
+    .dest-nombre { font-size:1rem;font-weight:700;color:var(--text);margin-bottom:3px; }
+    .dest-grado { font-size:.72rem;color:var(--accent);font-family:monospace;margin-bottom:6px; }
+    .dest-motivo { font-size:.82rem;color:var(--text2);line-height:1.6; }
+    .dest-mes { font-size:.65rem;color:var(--text3);font-family:monospace;margin-top:6px; }
+    .dest-badge { background:rgba(201,168,76,.2);color:#8a6a10;border:1px solid #c9a84c;border-radius:2px;font-size:.62rem;font-weight:700;padding:2px 8px;font-family:monospace;letter-spacing:.06em; }
     ::-webkit-scrollbar { width:6px;height:6px; }
     ::-webkit-scrollbar-track { background:var(--bg); }
     ::-webkit-scrollbar-thumb { background:var(--border2);border-radius:3px; }
@@ -324,6 +356,28 @@
     <div class="bday-tabs" id="bday-tabs"></div>
     <div id="bday-content"></div>
   </div>
+
+  <!-- ÁLBUMES DE FOTOS -->
+  <div id="sec-albums" class="section">
+    <div class="flex-sb mb-16">
+      <div class="sec-title" style="margin:0"><h2>📸 Álbumes de Fotos</h2><div class="sec-title-bar"></div></div>
+      <button class="btn-p" id="btn-add-album" style="display:none" onclick="openModalAlbum()">+ Nuevo álbum</button>
+    </div>
+    <div id="album-vista">
+      <!-- lista de álbumes o vista interior de álbum -->
+      <div class="grid-auto-sm" id="albums-grid"></div>
+    </div>
+  </div>
+
+  <!-- PERSONAL DESTACADO -->
+  <div id="sec-destacados" class="section">
+    <div class="flex-sb mb-16">
+      <div class="sec-title" style="margin:0"><h2>⭐ Personal Destacado</h2><div class="sec-title-bar"></div></div>
+      <button class="btn-p" id="btn-add-dest" style="display:none" onclick="openModalDest()">+ Agregar destacado</button>
+    </div>
+    <div class="bday-tabs" id="dest-tabs"></div>
+    <div id="dest-content"></div>
+  </div>
 </main>
 <footer>
   <div>ESCUELA DE FORMACIÓN DE CARABINEROS — GRUPO CONCEPCIÓN</div>
@@ -331,6 +385,107 @@
 </footer>
 
 <!-- ═══════════════════ MODALES ═══════════════════ -->
+
+<!-- MODAL ÁLBUM -->
+<div id="modal-album" class="modal-overlay" style="display:none" onclick="closeModal('modal-album',event)">
+  <div class="modal-box">
+    <h3>Nuevo Álbum de Fotos</h3>
+    <div class="form-col">
+      <input id="fa-titulo" placeholder="Nombre del álbum *">
+      <input id="fa-desc" placeholder="Descripción (opcional)">
+      <div><div class="sub-lbl">FECHA</div><input id="fa-fecha" type="date"></div>
+      <div id="album-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarAlbum()">Crear álbum</button>
+        <button class="btn-s" onclick="closeModal('modal-album')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DESTACADO -->
+<div id="modal-dest" class="modal-overlay" style="display:none" onclick="closeModal('modal-dest',event)">
+  <div class="modal-box">
+    <h3 id="modal-dest-title">Agregar Destacado</h3>
+    <div class="form-col">
+      <input id="fd2-nombre" placeholder="Nombre completo *">
+      <div class="form-row">
+        <div><div class="sub-lbl">GRADO / CARGO</div><input id="fd2-grado" placeholder="Ej: Sgto. 1°"></div>
+        <div><div class="sub-lbl">CATEGORÍA</div>
+          <select id="fd2-cat">
+            <option value="alumnos">Alumnos</option>
+            <option value="instructores">Instructores</option>
+            <option value="planta">Personal de Planta</option>
+          </select>
+        </div>
+      </div>
+      <input id="fd2-escuadron" placeholder="Escuadrón / Sección (opcional)">
+      <div><div class="sub-lbl">MOTIVO DEL DESTAQUE</div><textarea id="fd2-motivo" placeholder="Describe el logro o motivo..." style="min-height:80px"></textarea></div>
+      <div class="form-row">
+        <div><div class="sub-lbl">MES</div>
+          <select id="fd2-mes">
+            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+            <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+          </select>
+        </div>
+        <div><div class="sub-lbl">AÑO</div><input id="fd2-anio" type="number" min="2020" max="2040" placeholder="2026"></div>
+      </div>
+      <div>
+        <div class="sub-lbl">FOTO (opcional)</div>
+        <input type="file" id="fd2-foto" accept="image/*" onchange="handleDestFoto(this)">
+        <div id="fd2-foto-preview" style="font-size:.75rem;margin-top:4px;font-family:monospace"></div>
+      </div>
+      <div id="dest-form-err" style="color:var(--danger);font-size:.78rem;display:none"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarDest()">Guardar</button>
+        <button class="btn-s" onclick="closeModal('modal-dest')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lightbox-caption"></div>
+</div>
+
+<!-- MODAL CONFIGURACIÓN -->
+<div id="modal-cfg" class="modal-overlay" style="display:none" onclick="closeModal('modal-cfg',event)">
+  <div class="modal-box" style="max-width:560px">
+    <h3>⚙ Configuración de Servicios</h3>
+    <div class="form-col">
+      <div style="background:var(--accent3);border:1px solid var(--accent);border-radius:3px;padding:12px 14px;font-size:.78rem;color:var(--accent2)">
+        ☁ <strong>JSONBin</strong> — sincronización de datos entre dispositivos
+      </div>
+      <div class="form-row">
+        <div><div class="sub-lbl">BIN ID</div><input id="cfg-binid" placeholder="6812abc..."></div>
+        <div><div class="sub-lbl">API KEY (Master)</div><input id="cfg-apikey" type="password" placeholder="$2b$10$..."></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;background:var(--bg3);border-radius:3px;padding:12px 14px;font-size:.78rem;color:var(--text2)">
+        🖼 <strong>ImgBB</strong> — almacenamiento de imágenes y fotos
+      </div>
+      <div><div class="sub-lbl">IMGBB API KEY</div><input id="cfg-imgbb" placeholder="03346e8b..."></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;background:var(--bg3);border-radius:3px;padding:12px 14px;font-size:.78rem;color:var(--text2)">
+        📄 <strong>Cloudinary</strong> — almacenamiento de PDFs y documentos
+      </div>
+      <div class="form-row">
+        <div><div class="sub-lbl">CLOUD NAME</div><input id="cfg-cld-name" placeholder="ddrfuehpf"></div>
+        <div><div class="sub-lbl">API KEY</div><input id="cfg-cld-key" placeholder="432359..."></div>
+      </div>
+      <div><div class="sub-lbl">API SECRET</div><input id="cfg-cld-secret" type="password" placeholder="aofXx..."></div>
+      <div id="cfg-status" style="font-size:.78rem;min-height:18px;font-family:monospace"></div>
+      <div class="form-btns">
+        <button class="btn-p" onclick="guardarCfg()">💾 Guardar</button>
+        <button class="btn-s" onclick="probarCfg()">🔌 Probar JSONBin</button>
+        <button class="btn-s" onclick="closeModal('modal-cfg')" style="flex:0;padding:8px 12px">✕</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div id="modal-login" class="modal-overlay" style="display:none" onclick="closeModal('modal-login',event)">
@@ -509,7 +664,7 @@
     <h3 id="confirm-title">Confirmar acción</h3>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="form-btns">
-      <button class="btn-p" id="confirm-ok" style="background:var(--danger);border-color:var(--danger)">Eliminar</button>
+      <button class="btn-p" id="confirm-ok" onclick="doConfirmOk()" style="background:var(--danger);border-color:var(--danger)">Eliminar</button>
       <button class="btn-s" onclick="closeConfirm()">Cancelar</button>
     </div>
   </div>
@@ -581,6 +736,8 @@ let eventos = [
 ];
 
 let cumpleanos = [];
+let albums = [];       // [{id, titulo, desc, fecha, fotos:[{url,caption}]}]
+let destacados = [];   // [{id, nombre, grado, categoria, motivo, mes, anio, fotoUrl}]
 
 // ═══════════════════════════════════════════════════════════
 // UTILIDADES
@@ -606,9 +763,9 @@ function showConfirm(msg, cb, titulo) {
   document.getElementById("confirm-title").textContent = titulo || "Confirmar eliminación";
   document.getElementById("modal-confirm").style.display = "flex";
   _confirmCb = cb;
-  document.getElementById("confirm-ok").onclick = () => { closeConfirm(); if(_confirmCb) _confirmCb(); };
 }
 function closeConfirm() { document.getElementById("modal-confirm").style.display="none"; _confirmCb=null; }
+function doConfirmOk() { var cb = _confirmCb; closeConfirm(); if(cb) cb(); }
 
 // ═══════════════════════════════════════════════════════════
 // NAVEGACIÓN
@@ -620,6 +777,8 @@ const NAV_ITEMS = [
   {id:"documentos",    lbl:"Documentos"},
   {id:"servicios",     lbl:"Servicios"},
   {id:"cumpleanos",    lbl:"🎂 Cumpleaños"},
+  {id:"albums",        lbl:"📸 Álbumes"},
+  {id:"destacados",    lbl:"⭐ Destacados"},
 ];
 
 function buildNav() {
@@ -654,6 +813,8 @@ function renderSection(id) {
   if(id==="admin")         renderAdmin();
   if(id==="servicios")     renderServicios();
   if(id==="cumpleanos")    renderCumpleanos();
+  if(id==="albums")        renderAlbums();
+  if(id==="destacados")    renderDestacados();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1050,22 +1211,6 @@ function toggleEtq(e) {
   renderEtqBtns();
 }
 
-async function handleAdjuntos(input) {
-  const files = Array.from(input.files);
-  if(!files.length) return;
-  showCloud("⏳ Subiendo archivos a GitHub...");
-  for(const f of files) {
-    const resultado = await subirArchivoGitHub(f);
-    if(resultado) adjuntosTemp.push(resultado);
-  }
-  document.getElementById("adj-preview").innerHTML = adjuntosTemp.map((a,i)=>`
-    <div class="adj-item">${iconAdj(a.tipo,a.nombre)} ${esc(a.nombre)}
-    <span style="color:var(--text3);font-size:.7rem">${a.size||""}</span>
-    <button class="mini-btn" onclick="adjuntosTemp.splice(${i},1);document.getElementById('adj-preview').innerHTML=adjuntosTemp.map((b,j)=>'<div class=adj-item>'+iconAdj(b.tipo,b.nombre)+' '+esc(b.nombre)+'</div>').join('')" style="color:var(--danger)">✕</button>
-    </div>`).join("");
-  if(adjuntosTemp.length) showCloud("✓ " + adjuntosTemp.length + " archivo(s) subido(s) a GitHub");
-}
-
 function guardarPub() {
   const titulo=document.getElementById("fp-titulo").value.trim();
   const contenido=document.getElementById("fp-contenido").value.trim();
@@ -1189,17 +1334,6 @@ function openModalDocSvc() {
   showErr("doc-form-err","");
   openModal("modal-doc-svc");
 }
-async function handleDocSvc(input) {
-  const f = input.files[0]; if(!f) return;
-  showCloud("⏳ Subiendo documento a GitHub...");
-  const resultado = await subirArchivoGitHub(f);
-  if(resultado) {
-    docSvcTemp = resultado;
-    document.getElementById("fd-preview").textContent = "📄 " + f.name + " (" + formatSize(f.size) + ")";
-    showCloud("✓ Documento subido a GitHub");
-  }
-}
-
 function guardarDocSvc() {
   const titulo=document.getElementById("fd-titulo").value.trim();
   if(!titulo||!docSvcTemp){ showErr("doc-form-err","Título y archivo son obligatorios."); return; }
@@ -1249,129 +1383,430 @@ function eliminarBday(id) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// NUBE / JSONBIN
+// ÁLBUMES DE FOTOS
 // ═══════════════════════════════════════════════════════════
+let albumActualId = null;
 
-// ═══════════════════════════════════════════════════════════
-// JSONBIN — GUARDAR Y CARGAR
-// ═══════════════════════════════════════════════════════════
-function getCfg() {
-  const raw = localStorage.getItem("jb_cfg") || "";
-  const [binId, ...rest] = raw.split("|");
-  const apiKey = rest.join("|");
-  return { binId: (binId||"").trim(), apiKey: (apiKey||"").trim() };
+function renderAlbums() {
+  if(esAdmin) document.getElementById("btn-add-album").style.display="block";
+  albumActualId = null;
+  const grid = document.getElementById("albums-grid");
+  if(!albums.length){ grid.innerHTML=`<div class="vacio">Sin álbumes creados</div>`; return; }
+  grid.innerHTML = albums.map(a=>{
+    const portada = a.fotos && a.fotos.length ? a.fotos[0].url : null;
+    return `<div class="album-card" onclick="verAlbum(${a.id})">
+      <div class="album-cover">${portada?`<img src="${esc(portada)}" alt="${esc(a.titulo)}">`:'📸'}</div>
+      <div class="album-info">
+        <div class="album-title">${esc(a.titulo)}</div>
+        <div class="album-meta">${fmt(a.fecha)} · ${a.fotos?a.fotos.length:0} foto${a.fotos&&a.fotos.length!==1?"s":""}</div>
+        ${a.desc?`<div style="font-size:.76rem;color:var(--text2);margin-top:4px">${esc(a.desc)}</div>`:""}
+        ${esAdmin?`<div style="margin-top:8px;display:flex;gap:6px">
+          <button class="mini-btn" onclick="event.stopPropagation();subirFotosAlbum(${a.id})">📷 Fotos</button>
+          <button class="mini-btn" onclick="event.stopPropagation();eliminarAlbum(${a.id})" style="color:var(--danger)">🗑</button>
+        </div>`:""}
+      </div>
+    </div>`;
+  }).join("");
 }
 
-async function jbSave() {
-  const { binId, apiKey } = getCfg();
-  if(!binId || !apiKey) return;
-  try {
-    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", "X-Master-Key": apiKey, "X-Bin-Versioning": "false" },
-      body: JSON.stringify({ pubs, eventos, servicios, docsSvc, cumpleanos, ordenDia })
-    });
-  } catch(e) { console.warn("jbSave error:", e); }
+function verAlbum(id) {
+  const a = albums.find(x=>x.id===id); if(!a) return;
+  albumActualId = id;
+  const vista = document.getElementById("album-vista");
+  vista.innerHTML = `
+    <button class="btn-s mb-16" onclick="renderAlbums();document.getElementById('album-vista').innerHTML='<div class=grid-auto-sm id=albums-grid></div>';renderAlbums()">← Volver a álbumes</button>
+    <div class="flex-sb mb-16">
+      <div>
+        <div class="sec-title" style="margin:0"><h2>📸 ${esc(a.titulo)}</h2><div class="sec-title-bar"></div></div>
+        <div style="font-size:.72rem;color:var(--text3);font-family:monospace;margin-top:4px">${fmt(a.fecha)}${a.desc?" · "+esc(a.desc):""}</div>
+      </div>
+      ${esAdmin?`<button class="btn-p" onclick="subirFotosAlbum(${a.id})">📷 Agregar fotos</button>`:""}
+    </div>
+    <div class="foto-grid" id="foto-grid-${id}"></div>`;
+  renderFotos(id);
 }
 
-async function jbLoad() {
-  const { binId, apiKey } = getCfg();
-  if(!binId || !apiKey) return;
-  const r = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { "X-Master-Key": apiKey } });
-  if(!r.ok) throw new Error("jbLoad HTTP " + r.status);
-  const d = (await r.json()).record;
-  if(d.pubs       && Array.isArray(d.pubs))       pubs       = d.pubs;
-  if(d.eventos    && Array.isArray(d.eventos))     eventos    = d.eventos;
-  if(d.servicios  && Array.isArray(d.servicios))   servicios  = d.servicios;
-  if(d.docsSvc    && Array.isArray(d.docsSvc))     docsSvc    = d.docsSvc;
-  if(d.cumpleanos && Array.isArray(d.cumpleanos))  cumpleanos = d.cumpleanos;
-  if(d.ordenDia   && typeof d.ordenDia==="object") ordenDia   = d.ordenDia;
-  showCloud("☁ Datos cargados desde la nube");
+function renderFotos(albumId) {
+  const a = albums.find(x=>x.id===albumId); if(!a) return;
+  const grid = document.getElementById("foto-grid-"+albumId);
+  if(!grid) return;
+  if(!a.fotos||!a.fotos.length){ grid.innerHTML=`<div class="vacio" style="grid-column:1/-1">Sin fotos en este álbum</div>`; return; }
+  grid.innerHTML = a.fotos.map((f,i)=>`
+    <div class="foto-item">
+      <img src="${esc(f.url)}" alt="${esc(f.caption||'')}" onclick="openLightbox('${esc(f.url)}','${esc(f.caption||'')}')">
+      ${esAdmin?`<button class="foto-del" onclick="eliminarFoto(${albumId},${i})">✕</button>`:""}
+      ${f.caption?`<div class="foto-caption">${esc(f.caption)}</div>`:""}
+    </div>`).join("");
 }
 
-// ═══════════════════════════════════════════════════════════
-// GITHUB — SUBIR FOTOS Y PDF
-// ═══════════════════════════════════════════════════════════
-function getGhCfg() {
-  const raw = localStorage.getItem("gh_cfg") || "";
-  const [usuario, repo, ...tokenParts] = raw.split("|");
-  return { usuario: (usuario||"").trim(), repo: (repo||"").trim(), token: tokenParts.join("|").trim() };
-}
-
-async function subirArchivoGitHub(archivo) {
-  const { usuario, repo, token } = getGhCfg();
-  if(!usuario || !repo || !token) {
-    showCloud("⚠ Configura GitHub primero (botón NUBE)", "warn");
-    return null;
-  }
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const base64 = ev.target.result.split(",")[1];
-      const nombre = Date.now() + "_" + archivo.name.replace(/\s+/g,"_");
-      const url = `https://api.github.com/repos/${usuario}/${repo}/contents/adjuntos/${nombre}`;
+function subirFotosAlbum(albumId) {
+  const inp = document.createElement("input");
+  inp.type="file"; inp.multiple=true; inp.accept="image/*";
+  inp.onchange = async () => {
+    const files = Array.from(inp.files);
+    if(!files.length) return;
+    showCloud("⏳ Subiendo "+files.length+" foto(s)...", "warn");
+    const a = albums.find(x=>x.id===albumId);
+    if(!a) return;
+    if(!a.fotos) a.fotos=[];
+    let ok=0, err=0;
+    for(const f of files){
       try {
-        const r = await fetch(url, {
-          method: "PUT",
-          headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ message: `Subir: ${nombre}`, content: base64 })
-        });
-        const json = await r.json();
-        if(json.content?.download_url) {
-          resolve({ nombre: archivo.name, url: json.content.download_url, tipo: archivo.type, size: formatSize(archivo.size) });
-        } else {
-          showCloud("✕ Error al subir a GitHub: " + (json.message||""), "err");
-          resolve(null);
-        }
-      } catch(e) { showCloud("✕ Error de conexión con GitHub", "err"); resolve(null); }
-    };
-    reader.readAsDataURL(archivo);
+        const res = await subirImgBB(f);
+        a.fotos.push({url:res.url, caption:f.name.replace(/\.[^.]+$/,"")});
+        ok++;
+      } catch(e){ err++; console.warn(e); }
+    }
+    jbSave();
+    if(albumActualId===albumId) renderFotos(albumId);
+    else renderAlbums();
+    showCloud(`✓ ${ok} foto(s) subida(s)${err?" · "+err+" error(es)":""}`);
+  };
+  inp.click();
+}
+
+function eliminarFoto(albumId, idx) {
+  showConfirm("¿Eliminar esta foto?", ()=>{
+    const a = albums.find(x=>x.id===albumId); if(!a||!a.fotos) return;
+    a.fotos.splice(idx,1);
+    jbSave(); renderFotos(albumId); showCloud("✓ Foto eliminada");
+  });
+}
+
+function eliminarAlbum(id) {
+  showConfirm("¿Eliminar este álbum y todas sus fotos?", ()=>{
+    albums = albums.filter(a=>a.id!==id);
+    jbSave(); renderAlbums(); showCloud("✓ Álbum eliminado");
+  });
+}
+
+function openModalAlbum() { openModal("modal-album"); document.getElementById("fa-titulo").value=""; document.getElementById("fa-desc").value=""; document.getElementById("fa-fecha").value=HOY; showErr("album-form-err",""); }
+
+function guardarAlbum() {
+  const titulo = document.getElementById("fa-titulo").value.trim();
+  if(!titulo){ showErr("album-form-err","El título es obligatorio."); return; }
+  albums.push({id:Date.now(), titulo, desc:document.getElementById("fa-desc").value.trim(), fecha:document.getElementById("fa-fecha").value||HOY, fotos:[]});
+  closeModal("modal-album"); jbSave(); renderAlbums(); showCloud("✓ Álbum creado");
+}
+
+// LIGHTBOX
+function openLightbox(url, caption) {
+  document.getElementById("lightbox").classList.add("open");
+  document.getElementById("lb-img").src = url;
+  document.getElementById("lightbox-caption").textContent = caption||"";
+}
+function closeLightbox() { document.getElementById("lightbox").classList.remove("open"); }
+
+// ═══════════════════════════════════════════════════════════
+// PERSONAL DESTACADO
+// ═══════════════════════════════════════════════════════════
+const DEST_CATS = [{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores"},{id:"planta",l:"Personal de Planta"}];
+const DEST_MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+function renderDestacados() {
+  if(esAdmin) document.getElementById("btn-add-dest").style.display="block";
+  const tabActivo = window._destTab || "alumnos";
+  document.getElementById("dest-tabs").innerHTML = DEST_CATS.map(c=>`<button class="bday-tab-btn ${tabActivo===c.id?"active":""}" onclick="window._destTab='${c.id}';renderDestacados()">${c.l}</button>`).join("");
+  let list = destacados.filter(d=>d.categoria===tabActivo);
+  // Ordenar: más reciente primero
+  list.sort((a,b)=>{ const fa=a.anio*12+a.mes, fb=b.anio*12+b.mes; return fb-fa; });
+  const cont = document.getElementById("dest-content");
+  if(!list.length){ cont.innerHTML=`<div class="vacio">Sin personal destacado en esta categoría</div>`; return; }
+  // Agrupar por mes/año
+  const grupos = {};
+  list.forEach(d=>{ const k=`${DEST_MESES[d.mes-1]} ${d.anio}`; if(!grupos[k]) grupos[k]=[]; grupos[k].push(d); });
+  cont.innerHTML = Object.entries(grupos).map(([mes,items])=>`
+    <div style="margin-bottom:28px">
+      <div style="font-size:.65rem;letter-spacing:.18em;color:var(--accent);font-family:monospace;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span>⭐ DESTACADOS — ${mes.toUpperCase()}</span>
+      </div>
+      <div class="flex-col">
+        ${items.map(d=>`
+          <div class="dest-card gold">
+            <div class="dest-foto">
+              ${d.fotoUrl?`<img src="${esc(d.fotoUrl)}" alt="${esc(d.nombre)}">`:'⭐'}
+            </div>
+            <div style="flex:1">
+              <div class="dest-nombre">${esc(d.nombre)}</div>
+              <div class="dest-grado">${esc(d.grado||"")}${d.escuadron?" · "+esc(d.escuadron):""}</div>
+              <div class="dest-motivo">${esc(d.motivo||"")}</div>
+              <div class="dest-mes">Destacado ${DEST_MESES[d.mes-1]} ${d.anio}</div>
+            </div>
+            ${esAdmin?`<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+              <button class="mini-btn" onclick="editDest(${d.id})">✏</button>
+              <button class="mini-btn" onclick="eliminarDest(${d.id})" style="color:var(--danger)">🗑</button>
+            </div>`:""}
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+function openModalDest(id) {
+  const d = id ? destacados.find(x=>x.id===id) : null;
+  document.getElementById("modal-dest-title").textContent = d ? "Editar destacado" : "Agregar destacado";
+  document.getElementById("fd2-nombre").value   = d?.nombre   || "";
+  document.getElementById("fd2-grado").value    = d?.grado    || "";
+  document.getElementById("fd2-escuadron").value= d?.escuadron|| "";
+  document.getElementById("fd2-cat").value      = d?.categoria|| "alumnos";
+  document.getElementById("fd2-motivo").value   = d?.motivo   || "";
+  document.getElementById("fd2-mes").value      = d?.mes      || (new Date().getMonth()+1);
+  document.getElementById("fd2-anio").value     = d?.anio     || new Date().getFullYear();
+  document.getElementById("fd2-foto-preview").textContent = d?.fotoUrl ? "✓ Foto cargada" : "";
+  document.getElementById("fd2-foto-preview").style.color = "var(--accent)";
+  window._destEditId = id || null;
+  window._destFotoUrl = d?.fotoUrl || null;
+  showErr("dest-form-err","");
+  openModal("modal-dest");
+}
+function editDest(id) { openModalDest(id); }
+
+async function handleDestFoto(input) {
+  const f = input.files[0]; if(!f) return;
+  const prev = document.getElementById("fd2-foto-preview");
+  prev.textContent="⏳ Subiendo foto..."; prev.style.color="var(--text3)";
+  try {
+    const res = await subirImgBB(f);
+    window._destFotoUrl = res.url;
+    prev.textContent="✓ Foto subida a ImgBB"; prev.style.color="var(--accent)";
+  } catch(e) {
+    prev.textContent="✕ Error: "+e.message; prev.style.color="var(--danger)";
+  }
+}
+
+function guardarDest() {
+  const nombre = document.getElementById("fd2-nombre").value.trim();
+  const mes    = parseInt(document.getElementById("fd2-mes").value);
+  const anio   = parseInt(document.getElementById("fd2-anio").value);
+  if(!nombre||!mes||!anio){ showErr("dest-form-err","Nombre, mes y año son obligatorios."); return; }
+  showErr("dest-form-err","");
+  const data = {
+    nombre, mes, anio,
+    grado:     document.getElementById("fd2-grado").value.trim(),
+    escuadron: document.getElementById("fd2-escuadron").value.trim(),
+    categoria: document.getElementById("fd2-cat").value,
+    motivo:    document.getElementById("fd2-motivo").value.trim(),
+    fotoUrl:   window._destFotoUrl || null,
+  };
+  if(window._destEditId) {
+    const i = destacados.findIndex(x=>x.id===window._destEditId);
+    if(i>=0) destacados[i]={...destacados[i],...data};
+  } else {
+    destacados.push({id:Date.now(),...data});
+  }
+  closeModal("modal-dest"); jbSave(); renderDestacados(); showCloud("✓ Destacado guardado");
+}
+
+function eliminarDest(id) {
+  showConfirm("¿Eliminar este destacado?", ()=>{
+    destacados=destacados.filter(d=>d.id!==id); jbSave(); renderDestacados(); showCloud("✓ Eliminado");
   });
 }
 
 // ═══════════════════════════════════════════════════════════
-// CONFIGURACIÓN (modal NUBE)
+// NUBE / JSONBIN
 // ═══════════════════════════════════════════════════════════
+const STORAGE_KEY = "diarioMuralCfg";
+function getCfg() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); } catch(e){ return {}; } }
+function jbBinId()  { return getCfg().binId  || ""; }
+function jbApiKey() { return getCfg().apiKey || ""; }
+
+async function jbSave() {
+  const binId=jbBinId(), apiKey=jbApiKey();
+  if(!binId||!apiKey) return;
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json","X-Master-Key":apiKey,"X-Bin-Versioning":"false"},
+      body:JSON.stringify({pubs,eventos,servicios,docsSvc,cumpleanos,ordenDia,albums,destacados})
+    });
+  } catch(e){ console.warn("jbSave error:",e); }
+}
+
+async function jbLoad() {
+  const binId=jbBinId(), apiKey=jbApiKey();
+  if(!binId||!apiKey) return;
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`,{headers:{"X-Master-Key":apiKey}});
+  if(!r.ok) throw new Error("jbLoad HTTP "+r.status);
+  const d=(await r.json()).record;
+  if(d.pubs      && Array.isArray(d.pubs))      pubs       = d.pubs;
+  if(d.eventos   && Array.isArray(d.eventos))    eventos    = d.eventos;
+  if(d.servicios && Array.isArray(d.servicios))  servicios  = d.servicios;
+  if(d.docsSvc   && Array.isArray(d.docsSvc))    docsSvc    = d.docsSvc;
+  if(d.cumpleanos&& Array.isArray(d.cumpleanos)) cumpleanos = d.cumpleanos;
+  if(d.albums    && Array.isArray(d.albums))     albums     = d.albums;
+  if(d.destacados&& Array.isArray(d.destacados)) destacados = d.destacados;
+  if(d.ordenDia  && typeof d.ordenDia==="object") ordenDia  = d.ordenDia;
+}
+
+function saveCfgData(obj) { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+
 function openCfg() {
-  const cfgHtml = `
-    <div style="font-family:monospace;font-size:.78rem;color:var(--text2);margin-bottom:14px;line-height:1.6">
-      Configura la nube para que los datos se guarden y sincronicen.
-    </div>
-    <div style="margin-bottom:14px">
-      <div class="sub-lbl">JSONBIN — Formato: BINID|APIKEY</div>
-      <input id="cfg-jb" placeholder="69f8bb86...|$2a$10$..." value="${localStorage.getItem('jb_cfg')||''}">
-      <div style="font-size:.68rem;color:var(--text3);margin-top:3px">Guarda publicaciones, eventos, servicios y más.</div>
-    </div>
-    <div style="margin-bottom:18px">
-      <div class="sub-lbl">GITHUB — Formato: USUARIO|REPOSITORIO|TOKEN</div>
-      <input id="cfg-gh" placeholder="esfocar-concepcion|esfocar-archivos|ghp_..." value="${localStorage.getItem('gh_cfg')||''}">
-      <div style="font-size:.68rem;color:var(--text3);margin-top:3px">Para subir fotos y PDFs adjuntos. El repo debe existir en GitHub.</div>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn-p" onclick="guardarCfg()">✓ Guardar</button>
-      <button class="btn-s" onclick="document.getElementById('modal-cfg').style.display='none'">Cancelar</button>
-    </div>`;
-  let modal = document.getElementById("modal-cfg");
-  if(!modal) {
-    modal = document.createElement("div");
-    modal.id = "modal-cfg";
-    modal.className = "modal-overlay";
-    modal.onclick = (e) => { if(e.target===e.currentTarget) modal.style.display="none"; };
-    modal.innerHTML = `<div class="modal-box"><h3>⚙ Configuración de Nube</h3><div id="cfg-body"></div></div>`;
-    document.body.appendChild(modal);
-  }
-  document.getElementById("cfg-body").innerHTML = cfgHtml;
-  modal.style.display = "flex";
+  const cur = getCfg();
+  document.getElementById("cfg-binid").value  = cur.binId  || "";
+  document.getElementById("cfg-apikey").value = cur.apiKey || "";
+  document.getElementById("cfg-imgbb").value  = cur.imgbbKey || "";
+  document.getElementById("cfg-cld-name").value   = cur.cldName   || "";
+  document.getElementById("cfg-cld-key").value    = cur.cldKey    || "";
+  document.getElementById("cfg-cld-secret").value = cur.cldSecret || "";
+  document.getElementById("cfg-status").textContent = "";
+  openModal("modal-cfg");
 }
 
 function guardarCfg() {
-  const jb = document.getElementById("cfg-jb").value.trim();
-  const gh = document.getElementById("cfg-gh").value.trim();
-  if(jb) localStorage.setItem("jb_cfg", jb); else localStorage.removeItem("jb_cfg");
-  if(gh) localStorage.setItem("gh_cfg", gh); else localStorage.removeItem("gh_cfg");
-  document.getElementById("modal-cfg").style.display = "none";
+  const obj = {
+    binId:     document.getElementById("cfg-binid").value.trim(),
+    apiKey:    document.getElementById("cfg-apikey").value.trim(),
+    imgbbKey:  document.getElementById("cfg-imgbb").value.trim(),
+    cldName:   document.getElementById("cfg-cld-name").value.trim(),
+    cldKey:    document.getElementById("cfg-cld-key").value.trim(),
+    cldSecret: document.getElementById("cfg-cld-secret").value.trim(),
+  };
+  saveCfgData(obj);
+  document.getElementById("cfg-status").textContent = "✓ Configuración guardada";
+  document.getElementById("cfg-status").style.color = "var(--accent)";
   showCloud("✓ Configuración guardada");
-  setTimeout(() => jbLoad().then(() => renderSection(secActual)).catch(()=>{}), 500);
+}
+
+async function probarCfg() {
+  const st = document.getElementById("cfg-status");
+  st.textContent = "Probando JSONBin..."; st.style.color = "var(--text3)";
+  guardarCfg();
+  try {
+    await jbLoad();
+    st.textContent = "✓ JSONBin conectado correctamente";
+    st.style.color = "var(--accent)";
+    renderInicio();
+  } catch(e) {
+    st.textContent = "✕ Error JSONBin: " + e.message;
+    st.style.color = "var(--danger)";
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUBIDA DE ARCHIVOS — ImgBB + Cloudinary
+// ═══════════════════════════════════════════════════════════
+function getImgbbKey()  { return getCfg().imgbbKey  || ""; }
+function getCldName()   { return getCfg().cldName   || ""; }
+function getCldKey()    { return getCfg().cldKey    || ""; }
+function getCldSecret() { return getCfg().cldSecret || ""; }
+
+function esImagen(tipo, nombre) {
+  return tipo.startsWith("image/") || /\.(jpg|jpeg|png|gif|webp)$/i.test(nombre);
+}
+
+async function subirImgBB(file) {
+  const key = getImgbbKey();
+  if(!key) throw new Error("Sin API Key de ImgBB");
+  const fd = new FormData();
+  fd.append("image", file);
+  const r = await fetch(`https://api.imgbb.com/1/upload?key=${key}`, { method:"POST", body:fd });
+  const d = await r.json();
+  if(!d.success) throw new Error(d.error?.message||"ImgBB error");
+  return { url: d.data.url, nombre: file.name, tipo: file.type, size: formatSize(file.size) };
+}
+
+async function subirCloudinary(file) {
+  const name = getCldName(), key = getCldKey(), secret = getCldSecret();
+  if(!name||!key||!secret) throw new Error("Sin credenciales Cloudinary");
+  const ts = Math.round(Date.now()/1000);
+  // Firma: timestamp + api_secret
+  const strToSign = `timestamp=${ts}${secret}`;
+  // Usamos SubtleCrypto para SHA1
+  const msgBuf = new TextEncoder().encode(strToSign);
+  const hashBuf = await crypto.subtle.digest("SHA-1", msgBuf);
+  const sig = Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("api_key", key);
+  fd.append("timestamp", ts);
+  fd.append("signature", sig);
+  fd.append("folder", "esfocar");
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${name}/auto/upload`, { method:"POST", body:fd });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return { url: d.secure_url, nombre: file.name, tipo: file.type, size: formatSize(file.size) };
+}
+
+async function subirArchivo(file) {
+  if(esImagen(file.type, file.name)) {
+    return await subirImgBB(file);
+  } else {
+    return await subirCloudinary(file);
+  }
+}
+
+async function handleAdjuntos(input) {
+  const files = Array.from(input.files);
+  if(!files.length) return;
+  const preview = document.getElementById("adj-preview");
+  const errEl   = document.getElementById("pub-form-err");
+  const hasCloud = getCldName() && getCldKey() && getCldSecret();
+  const hasImgbb = getImgbbKey();
+
+  for(const f of files) {
+    const isImg = esImagen(f.type, f.name);
+    // Si no hay credenciales, usar base64
+    if((isImg && !hasImgbb) || (!isImg && !hasCloud)) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        adjuntosTemp.push({nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)});
+        renderAdjPreview();
+      };
+      reader.readAsDataURL(f);
+      continue;
+    }
+    // Subir a servicio externo
+    const loadId = "adj-loading-" + Date.now();
+    preview.insertAdjacentHTML("beforeend",`<div id="${loadId}" class="adj-item" style="color:var(--text3)">⏳ Subiendo ${esc(f.name)}...</div>`);
+    try {
+      const result = await subirArchivo(f);
+      adjuntosTemp.push(result);
+      const el = document.getElementById(loadId);
+      if(el) el.remove();
+      renderAdjPreview();
+    } catch(e) {
+      const el = document.getElementById(loadId);
+      if(el) el.remove();
+      showErr("pub-form-err", "Error subiendo " + f.name + ": " + e.message);
+    }
+  }
+}
+
+function renderAdjPreview() {
+  document.getElementById("adj-preview").innerHTML = adjuntosTemp.map(a=>`
+    <div class="adj-item">
+      <span>${iconAdj(a.tipo,a.nombre)}</span>
+      <span style="flex:1">${esc(a.nombre)}</span>
+      <span style="color:var(--text3);font-size:.7rem">${a.size||""}</span>
+      ${a.url.startsWith("http")?'<span style="color:var(--accent);font-size:.65rem;font-family:monospace">☁ NUBE</span>':'<span style="color:var(--text3);font-size:.65rem;font-family:monospace">LOCAL</span>'}
+    </div>`).join("");
+}
+
+async function handleDocSvc(input) {
+  const f = input.files[0]; if(!f) return;
+  const preview = document.getElementById("fd-preview");
+  preview.textContent = "⏳ Subiendo " + f.name + "...";
+  const hasCloud = getCldName() && getCldKey() && getCldSecret();
+  if(!hasCloud) {
+    // fallback base64
+    const reader = new FileReader();
+    reader.onload = ev => {
+      docSvcTemp = {nombre:f.name,tipo:f.type,url:ev.target.result,size:formatSize(f.size)};
+      preview.textContent = "📄 " + f.name + " (" + formatSize(f.size) + ") — LOCAL";
+    };
+    reader.readAsDataURL(f);
+    return;
+  }
+  try {
+    const result = await subirCloudinary(f);
+    docSvcTemp = result;
+    preview.textContent = "📄 " + f.name + " (" + formatSize(f.size) + ") ☁ NUBE";
+    preview.style.color = "var(--accent)";
+  } catch(e) {
+    preview.textContent = "✕ Error: " + e.message;
+    preview.style.color = "var(--danger)";
+    docSvcTemp = null;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1410,7 +1845,7 @@ function toggleInfoPanel() {
       <div class="info-section-title">SISTEMA</div>
       <div class="info-row"><span class="info-row-lbl">Fecha actual</span><span class="info-row-val">${fmt(HOY)}</span></div>
       <div class="info-row"><span class="info-row-lbl">Modo</span><span class="info-row-val">${darkMode?"Oscuro":"Claro"}</span></div>
-      <div class="info-row"><span class="info-row-lbl">JSONBin</span><span class="info-row-val" style="color:${getCfg().binId?"var(--accent)":"var(--text3)"}">${getCfg().binId?"Configurado":"No configurado"}</span></div>
+      <div class="info-row"><span class="info-row-lbl">JSONBin</span><span class="info-row-val" style="color:${jbBinId()?"var(--accent)":"var(--text3)"}">${jbBinId()?"Configurado":"No configurado"}</span></div>
       <div class="info-row"><span class="info-row-lbl">Sesión</span><span class="info-row-val" style="color:${esAdmin?"var(--accent)":"var(--text3)"}">${esAdmin?"Admin":"Invitado"}</span></div>
     </div>`;
   const badge=document.getElementById("info-fab-badge");
@@ -1471,9 +1906,22 @@ async function loadDataJson() {
 // ═══════════════════════════════════════════════════════════
 document.getElementById("footer-year").textContent = new Date().getFullYear();
 (async () => {
-  const { binId: _bid, apiKey: _akey } = getCfg(); const hasCreds = _bid && _akey;
+  // Pre-cargar credenciales conocidas si no hay configuración previa
+  const cur = getCfg();
+  if(!cur.imgbbKey && !cur.cldName) {
+    const defaults = {
+      binId:     cur.binId  || "",
+      apiKey:    cur.apiKey || "",
+      imgbbKey:  "03346e8bfb0bbf795554af9b3157bdef",
+      cldName:   "ddrfuehpf",
+      cldKey:    "432359831444321",
+      cldSecret: "aofXxmzOW7Sfq_qr1N5O2GkUrFg",
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+  }
+  const hasCreds = jbBinId() && jbApiKey();
   if(hasCreds) {
-    try { await jbLoad(); } catch(e) { console.warn("jbLoad falló:", e); await loadDataJson(); }
+    try { await jbLoad(); } catch(e) { await loadDataJson(); }
   } else {
     await loadDataJson();
   }
