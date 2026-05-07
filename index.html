@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Diario Mural — ESFOCAR Concepción</title>
+  <title>Diario Mural v20260507-1842 — ESFOCAR Concepción</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -819,8 +819,10 @@ function buildNav(){
   _syncCfgBtn();
 }
 function showSec(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  const el=document.getElementById("sec-"+id);if(el)el.classList.add("active");
+  document.querySelectorAll(".section").forEach(s=>{s.classList.remove("active");});
+  const el=document.getElementById("sec-"+id);
+  if(!el){console.warn("showSec: no existe sec-"+id);return;}
+  el.classList.add("active");
   secActual=id;buildNav();renderSection(id);window.scrollTo(0,0);
 }
 function renderSection(id){
