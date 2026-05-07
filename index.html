@@ -864,12 +864,14 @@ async function doLoginFuncionario(){
   const rut=normalizaRut((document.getElementById("inp-rut-login")||{}).value);
   const err=document.getElementById("login-func-err");
   if(!cod||!rut){if(err){err.textContent="Ingrese código y RUT.";err.style.display="block";}return;}
+  // Cargar datos frescos antes de validar (asegura usuarios[] actualizado)
+  try{await jbLoad();}catch(e){}
   // Admin hardcodeado
   if(cod===ADMIN_CODE&&rut===ADMIN_RUT){
     sesionActual={cod,nombre:"Administrador",rol:"admin"};
     setSesion(sesionActual);esAdmin=true;
     ocultarLogin();
-    try{await jbLoad();}catch(e){}
+    try{await jbLoad();}catch(e){console.warn("jbLoad error:",e);}
     buildNav();renderInicio();buildTicker();return;
   }
   // Buscar en lista
@@ -879,7 +881,7 @@ async function doLoginFuncionario(){
   sesionActual={cod:u.cod,nombre:u.nombre,rol:u.rol||"alumno"};
   setSesion(sesionActual);esAdmin=(u.rol==="admin");
   ocultarLogin();
-  try{await jbLoad();}catch(e){}
+  try{await jbLoad();}catch(e){console.warn("jbLoad error:",e);}
   buildNav();renderInicio();buildTicker();
 }
 
