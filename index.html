@@ -1282,7 +1282,7 @@ function eliminarDest(id){showConfirm("¿Eliminar este destacado?",()=>{destacad
 // JSONBIN — CORREGIDO: no sobreescribe datos si bin está vacío
 // ═══════════════════════════════════════════════════════════
 const STORAGE_KEY="diarioMuralCfg";
-function getCfg(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");}catch(e){return{};}}
+function getCfg(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch(e){return{};}}
 function jbBinId(){return getCfg().binId||"";}
 function jbApiKey(){return getCfg().apiKey||"";}
 
@@ -1486,11 +1486,11 @@ document.getElementById("footer-year").textContent=new Date().getFullYear();
 (async()=>{
   const cur=getCfg();
   if(!cur.imgbbKey&&!cur.cldName){
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({
-      binId:cur.binId||"",apiKey:cur.apiKey||"",
+    saveCfgData({
+      ...cur,
       imgbbKey:"03346e8bfb0bbf795554af9b3157bdef",
       cldName:"ddrfuehpf",cldKey:"432359831444321",cldSecret:"aofXxmzOW7Sfq_qr1N5O2GkUrFg",
-    }));
+    });
   }
   if(jbBinId()&&jbApiKey()){try{await jbLoad();}catch(e){await loadDataJson();}}
   else{await loadDataJson();}
