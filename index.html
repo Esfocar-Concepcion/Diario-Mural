@@ -1484,7 +1484,7 @@ document.getElementById("footer-year").textContent=new Date().getFullYear();
     apiKey:   cur.apiKey   || "$2a$10$lSCPlgt078DytTWN3gEchuZL/QNjiBa3DYhM0rTw0oOHijLgb2ZgK",
     imgbbKey: cur.imgbbKey || "03346e8bfb0bbf795554af9b3157bdef",
     cldName:  cur.cldName  || "ddrfuehpf",
-    cldKey:   cur.cldKey   || "432359831444321",
+    cldKey:   (cur.cldKey&&cur.cldKey!=="4.32359831444321e+14"?cur.cldKey:"432359831444321"),
     cldSecret:cur.cldSecret|| "aofXxmzOW7Sfq_qr1N5O2GkUrFg",
   });
   let loaded=false;
