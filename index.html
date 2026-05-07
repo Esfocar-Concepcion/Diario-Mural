@@ -207,6 +207,14 @@
 .honor-nombre { font-size:.86rem; font-weight:600; color:var(--text); }
 .honor-motivo { font-size:.72rem; color:var(--text3); margin-top:2px; }
 
+  
+    .usr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.8rem;}
+    .usr-row:last-child{border-bottom:none;}
+    .usr-cod{font-family:monospace;color:var(--accent);font-weight:700;min-width:80px;}
+    .usr-nombre{flex:1;color:var(--text);}
+    .usr-rol{font-size:.65rem;font-family:monospace;padding:2px 7px;border-radius:2px;background:var(--accent3);color:var(--accent);border:1px solid var(--accent);}
+    .usr-rol.admin{background:rgba(201,168,76,.15);color:#c9a84c;border-color:#c9a84c;}
+
   </style>
 </head>
 <body>
@@ -327,6 +335,7 @@
       <div class="flex-row">
         <button class="btn-p" onclick="openModalPub()">+ Publicación</button>
         <button class="btn-s" onclick="openModalEv()">+ Evento</button>
+        <button class="btn-s" onclick="openUsuarios()">👥 Usuarios</button>
       </div>
     </div>
     <div class="grid-5 mb-26" id="admin-metrics" style="grid-template-columns:repeat(4,1fr)"></div>
@@ -696,7 +705,14 @@ const DEST_CATS = [{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores
 let esAdmin=false,darkMode=false,secActual="inicio";
 let editPubId=null,editEvId=null,editSvcId=null;
 let adjuntosTemp=[],docSvcTemp=null,etqSeleccionadas=[],ordenEditando=false;
-let ordenDia={fecha:HOY,encuadre:"07:30",instruccion:"",novedad:"Sin novedad.",firmante:"",grado:""};
+let ordenDia={fecha:HOY,encuadre:"07:30",instruccion:"",novedad:"Sin novedad.",firmante:"",grado:""}
+let usuarios=[];
+const SESSION_KEY="dmSesion";
+const ADMIN_CODE="974877Z";
+const ADMIN_RUT="15926121";
+function getSesion(){try{const s=JSON.parse(sessionStorage.getItem(SESSION_KEY));if(!s)return null;if(Date.now()>s.expira){sessionStorage.removeItem(SESSION_KEY);return null;}return s;}catch(e){return null;}}
+function setSesion(u){sessionStorage.setItem(SESSION_KEY,JSON.stringify({...u,expira:Date.now()+8*3600*1000}));}
+let sesionActual=getSesion();;
 let servicios=[],docsSvc=[];
 let pubs=[]
 let eventos=[]
@@ -767,12 +783,105 @@ function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id,e){if(e&&e.target!==e.currentTarget)return;document.getElementById(id).style.display="none";}
 
 // LOGIN
+// ── LOGIN FUNCIONARIO ────────────────────────────────────────────────────
+function mostrarLogin(){
+  document.getElementById("login-screen").classList.remove("hidden");
+  setTimeout(()=>{const el=document.getElementById("inp-cod-login");if(el)el.focus();},100);
+}
+function ocultarLogin(){
+  const el=document.getElementById("login-screen");
+  if(el)el.classList.add("hidden");
+}
+function normalizaCod(v){return(v||"").trim().toUpperCase();}
+function normalizaRut(v){return(v||"").trim().replace(/[^0-9]/g,"");}
+
+function doLoginFuncionario(){
+  const cod=normalizaCod((document.getElementById("inp-cod-login")||{}).value);
+  const rut=normalizaRut((document.getElementById("inp-rut-login")||{}).value);
+  const err=document.getElementById("login-func-err");
+  if(!cod||!rut){if(err){err.textContent="Ingrese código y RUT.";err.style.display="block";}return;}
+  // Admin hardcodeado
+  if(cod===ADMIN_CODE&&rut===ADMIN_RUT){
+    sesionActual={cod,nombre:"Administrador",rol:"admin"};
+    setSesion(sesionActual);esAdmin=true;
+    ocultarLogin();buildNav();renderInicio();return;
+  }
+  // Buscar en lista
+  const u=usuarios.find(x=>normalizaCod(x.cod)===cod&&normalizaRut(x.rut)===rut);
+  if(!u){if(err){err.textContent="Código o RUT incorrecto.";err.style.display="block";}
+    const ri=document.getElementById("inp-rut-login");if(ri)ri.value="";return;}
+  sesionActual={cod:u.cod,nombre:u.nombre,rol:u.rol||"alumno"};
+  setSesion(sesionActual);esAdmin=(u.rol==="admin");
+  ocultarLogin();buildNav();renderInicio();
+}
+
+function cerrarSesion(){
+  sessionStorage.removeItem(SESSION_KEY);
+  sesionActual=null;esAdmin=false;
+  buildNav();mostrarLogin();
+}
+
+// Login admin original (por contraseña — se mantiene como fallback)
 function doLogin(){
   const p=document.getElementById("inp-pass").value;
   if(p===ADMIN_PASS){esAdmin=true;closeModal("modal-login");document.getElementById("inp-pass").value="";document.getElementById("pass-err").style.display="none";buildNav();showSec("admin");}
   else{document.getElementById("pass-err").style.display="block";}
 }
-function doLogout(){esAdmin=false;buildNav();showSec("inicio");}
+function doLogout(){cerrarSesion();}
+
+// ── GESTIÓN USUARIOS ─────────────────────────────────────────────────────
+function openUsuarios(){openModal("modal-usuarios");renderUsuariosList();}
+function showAddUsuario(){const f=document.getElementById("add-usr-form");if(f){f.style.display="block";document.getElementById("nu-cod").focus();}}
+
+function guardarUsuario(){
+  const cod=normalizaCod(document.getElementById("nu-cod").value);
+  const rut=normalizaRut(document.getElementById("nu-rut").value);
+  const nombre=(document.getElementById("nu-nombre").value||"").trim().toUpperCase();
+  const rol=document.getElementById("nu-rol").value;
+  if(!cod||!rut||!nombre){showCloud("✕ Complete todos los campos","err");return;}
+  if(usuarios.find(u=>normalizaCod(u.cod)===cod)){showCloud("✕ Código ya existe","err");return;}
+  usuarios.push({cod,rut,nombre,rol});
+  document.getElementById("add-usr-form").style.display="none";
+  ["nu-cod","nu-rut","nu-nombre"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  renderUsuariosList();jbSave();showCloud("✓ Usuario agregado");
+}
+
+function eliminarUsuario(cod){
+  confirm("¿Eliminar usuario "+cod+"?",()=>{
+    usuarios=usuarios.filter(u=>u.cod!==cod);
+    renderUsuariosList();jbSave();showCloud("✓ Usuario eliminado");
+  });
+}
+
+function renderUsuariosList(){
+  const list=document.getElementById("usr-list");
+  const count=document.getElementById("usr-count");
+  if(!list)return;
+  if(count)count.textContent=usuarios.length+" usuarios registrados";
+  if(!usuarios.length){list.innerHTML='<div class="vacio">Sin usuarios registrados</div>';return;}
+  const sorted=[...usuarios].sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  list.innerHTML=sorted.map(u=>`<div class="usr-row"><span class="usr-cod">${esc(u.cod)}</span><span class="usr-nombre">${esc(u.nombre)}</span><span class="usr-rol ${u.rol==="admin"?"admin":""}">${u.rol||"alumno"}</span><button class="mini-btn" style="color:var(--danger)" onclick="eliminarUsuario('${esc(u.cod)}')">✕</button></div>`).join("");
+}
+
+function importarCSV(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const lines=ev.target.result.split("\n").map(l=>l.trim()).filter(l=>l&&!l.startsWith("#"));
+    let agregados=0,errores=0;
+    for(const line of lines){
+      const parts=line.split(",").map(p=>p.trim());
+      if(parts.length<3){errores++;continue;}
+      const cod=normalizaCod(parts[0]),rut=normalizaRut(parts[1]),nombre=(parts[2]||"").toUpperCase(),rol=parts[3]||"alumno";
+      if(!cod||!rut||!nombre||usuarios.find(u=>u.cod===cod)){errores++;continue;}
+      usuarios.push({cod,rut,nombre,rol});agregados++;
+    }
+    renderUsuariosList();jbSave();
+    showCloud("✓ "+agregados+" importados"+(errores?" ("+errores+" omitidos)":""));
+    input.value="";
+  };
+  reader.readAsText(file);
+}
 
 // INICIO
 function renderInicio(){
@@ -1276,7 +1385,7 @@ async function jbSave(){
     const r=await fetch(`https://api.jsonbin.io/v3/b/${binId}`,{
       method:"PUT",
       headers:{"Content-Type":"application/json","X-Master-Key":apiKey,"X-Bin-Versioning":"false"},
-      body:JSON.stringify({pubs,eventos,servicios,docsSvc,cumpleanos,ordenDia,albums,destacados})
+      body:JSON.stringify({pubs,eventos,servicios,docsSvc,cumpleanos,ordenDia,albums,destacados,usuarios})
     });
     if(!r.ok){
       const err=await r.json().catch(()=>({}));
@@ -1301,6 +1410,7 @@ async function jbLoad(){
   if(d.albums    &&Array.isArray(d.albums))                           albums     =d.albums;
   if(d.destacados&&Array.isArray(d.destacados))                       destacados =d.destacados;
   if(d.ordenDia  &&typeof d.ordenDia==="object")                      ordenDia   =d.ordenDia;
+  if(d.usuarios  &&Array.isArray(d.usuarios))                            usuarios   =d.usuarios;
 }
 
 function saveCfgData(obj){localStorage.setItem(STORAGE_KEY,JSON.stringify(obj));}
@@ -1350,7 +1460,8 @@ async function subirCloudinary(file){
   const name=getCldName(),key=getCldKey(),secret=getCldSecret();
   if(!name||!key||!secret)throw new Error("Sin credenciales Cloudinary");
   const ts=Math.round(Date.now()/1000);
-  const strToSign=`timestamp=${ts}${secret}`;
+  // Parámetros en orden alfabético + secret al final (requerido por Cloudinary)
+  const strToSign=`folder=esfocar&timestamp=${ts}${secret}`;
   const msgBuf=new TextEncoder().encode(strToSign);
   const hashBuf=await crypto.subtle.digest("SHA-1",msgBuf);
   const sig=Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,"0")).join("");
@@ -1494,6 +1605,8 @@ document.getElementById("footer-year").textContent=new Date().getFullYear();
     catch(e){await new Promise(r=>setTimeout(r,1200));}
   }
   if(!loaded){showCloud("✕ Sin conexión a JSONBin","err");}
+  if(sesionActual){esAdmin=(sesionActual.rol==="admin");ocultarLogin();}
+  else{mostrarLogin();}
   buildNav();renderInicio();buildTicker();
 })();
 </script>
