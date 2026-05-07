@@ -819,11 +819,19 @@ function buildNav(){
   _syncCfgBtn();
 }
 function showSec(id){
+  console.log("[showSec] llamando con id=",id);
   document.querySelectorAll(".section").forEach(s=>{s.classList.remove("active");});
   const el=document.getElementById("sec-"+id);
-  if(!el){console.warn("showSec: no existe sec-"+id);return;}
+  if(!el){console.error("[showSec] ERROR: no existe sec-"+id);return;}
   el.classList.add("active");
-  secActual=id;buildNav();renderSection(id);window.scrollTo(0,0);
+  console.log("[showSec] sec-"+id+" ahora tiene active:",el.className);
+  secActual=id;
+  buildNav();
+  try{renderSection(id);}catch(e){console.error("[showSec] renderSection error:",e);}
+  // Asegurar que login-screen esté oculto
+  const ls=document.getElementById("login-screen");
+  if(ls&&ls.style.display!=="none"){console.warn("[showSec] login-screen sigue visible, ocultando...");ocultarLogin();}
+  window.scrollTo(0,0);
 }
 function renderSection(id){
   if(id==="inicio")renderInicio();
