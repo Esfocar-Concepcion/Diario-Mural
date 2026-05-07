@@ -872,7 +872,7 @@ async function doLoginFuncionario(){
     setSesion(sesionActual);esAdmin=true;
     ocultarLogin();
     try{await jbLoad();}catch(e){console.warn("jbLoad error:",e);}
-    buildNav();renderInicio();buildTicker();return;
+    buildTicker();showSec("inicio");return;
   }
   // Buscar en lista
   const u=usuarios.find(x=>normalizaCod(x.cod)===cod&&normalizaRut(x.rut)===rut);
@@ -882,7 +882,7 @@ async function doLoginFuncionario(){
   setSesion(sesionActual);esAdmin=(u.rol==="admin");
   ocultarLogin();
   try{await jbLoad();}catch(e){console.warn("jbLoad error:",e);}
-  buildNav();renderInicio();buildTicker();
+  buildTicker();showSec("inicio");
 }
 
 function cerrarSesion(){
@@ -1760,7 +1760,7 @@ document.getElementById("footer-year").textContent=new Date().getFullYear();
   if(sesionActual){
     esAdmin=(sesionActual.rol==="admin");
     ocultarLogin();
-    buildNav();renderInicio();buildTicker();
+    buildTicker();showSec("inicio");
   } else {
     mostrarLogin();
     buildTicker();
