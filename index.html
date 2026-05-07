@@ -226,7 +226,7 @@
     <nav class="nav-d" id="nav-desktop"></nav>
     <nav class="nav-m">
       <span id="reloj-mob" style="font-family:monospace;font-size:.7rem;color:var(--accent2);letter-spacing:.06em;padding:3px 6px;background:var(--accent3);border-radius:2px;border:1px solid var(--border)"></span><button class="icon-btn" style="color:var(--header-text)" onclick="toggleDark()" id="dark-btn-mob">◑</button>
-      <button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer">⚙</button>
+      <button onclick="openCfg()" id="btn-cfg-mob" style="background:#3a7a50;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:.7rem;font-family:monospace;cursor:pointer;display:none">⚙</button>
       <button class="nav-btn" style="border:1px solid var(--accent)" onclick="toggleMobMenu()">☰</button>
     </nav>
   </div>
@@ -732,7 +732,7 @@ function buildNav(){
   const mm=document.getElementById("mob-menu");
   const items=[...NAV_ITEMS,...(esAdmin?[{id:"admin",lbl:"⚙ Admin"}]:[])];
   nd.innerHTML=items.map(n=>`<button class="nav-btn ${secActual===n.id?"active":""}" onclick="showSec('${n.id}')">${esc(n.lbl)}</button>`).join("")
-    +`<button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 14px;border-radius:3px;font-size:.72rem;font-family:monospace;cursor:pointer;margin-left:8px">☁ NUBE</button>`
+    +`${esAdmin?'<button onclick="openCfg()" style="background:#3a7a50;color:#fff;border:none;padding:5px 14px;border-radius:3px;font-size:.72rem;font-family:monospace;cursor:pointer;margin-left:8px">☁ NUBE</button>':''}` 
     +`<span id="reloj-header" style="font-family:monospace;font-size:.75rem;color:var(--accent2);letter-spacing:.10em;padding:4px 10px;background:var(--accent3);border-radius:2px;border:1px solid var(--border);margin-left:8px"></span>`
     +`<button class="icon-btn" onclick="toggleDark()" style="margin-left:6px;opacity:.75;color:var(--header-text)">${darkMode?"☀":"◑"}</button>`
     +(esAdmin?`<button class="nav-btn" onclick="doLogout()" style="color:var(--danger);border:1px solid var(--danger);margin-left:4px">Salir</button>`
@@ -740,6 +740,7 @@ function buildNav(){
   mm.innerHTML=items.map(n=>`<button class="mob-item" onclick="showSec('${n.id}');closeMobMenu()">${esc(n.lbl)}</button>`).join("")
     +(esAdmin?`<button class="mob-item" onclick="doLogout()" style="color:var(--danger)">Cerrar sesión</button>`
              :`<button class="mob-item" onclick="openModal('modal-login');closeMobMenu()" style="color:var(--accent2)">Acceso Admin</button>`);
+  _syncCfgBtn();
 }
 function showSec(id){
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -758,6 +759,7 @@ function renderSection(id){
   if(id==="destacados")renderDestacados();
 }
 function toggleDark(){darkMode=!darkMode;document.body.classList.toggle("dark",darkMode);buildNav();const mb=document.getElementById("dark-btn-mob");if(mb)mb.textContent=darkMode?"☀":"◑";}
+function _syncCfgBtn(){const b=document.getElementById("btn-cfg-mob");if(b)b.style.display=esAdmin?"inline-block":"none";}
 function toggleMobMenu(){document.getElementById("mob-menu").classList.toggle("open");}
 function closeMobMenu(){document.getElementById("mob-menu").classList.remove("open");}
 function openModal(id){document.getElementById(id).style.display="flex";}
@@ -1476,21 +1478,21 @@ actualizarReloj();
 document.getElementById("footer-year").textContent=new Date().getFullYear();
 (async()=>{
   const cur=getCfg();
-  if(!cur.imgbbKey&&!cur.cldName){
-    saveCfgData({
-      ...cur,
-      imgbbKey:"03346e8bfb0bbf795554af9b3157bdef",
-      cldName:"ddrfuehpf",cldKey:"432359831444321",cldSecret:"aofXxmzOW7Sfq_qr1N5O2GkUrFg",
-    });
+  // Siempre asegurar credenciales por defecto (cualquier navegador)
+  saveCfgData({
+    binId:    cur.binId    || "69f8bb86856a682189a5cda0",
+    apiKey:   cur.apiKey   || "$2a$10$lSCPlgt078DytTWN3gEchuZL/QNjiBa3DYhM0rTw0oOHijLgb2ZgK",
+    imgbbKey: cur.imgbbKey || "03346e8bfb0bbf795554af9b3157bdef",
+    cldName:  cur.cldName  || "ddrfuehpf",
+    cldKey:   cur.cldKey   || "432359831444321",
+    cldSecret:cur.cldSecret|| "aofXxmzOW7Sfq_qr1N5O2GkUrFg",
+  });
+  let loaded=false;
+  for(let i=0;i<3;i++){
+    try{await jbLoad();loaded=true;break;}
+    catch(e){await new Promise(r=>setTimeout(r,1200));}
   }
-  if(jbBinId()&&jbApiKey()){
-    let loaded=false;
-    for(let i=0;i<3;i++){
-      try{await jbLoad();loaded=true;break;}
-      catch(e){await new Promise(r=>setTimeout(r,1200));}
-    }
-    if(!loaded){showCloud("✕ Sin conexión a JSONBin — datos vacíos","err");}
-  }
+  if(!loaded){showCloud("✕ Sin conexión a JSONBin","err");}
   buildNav();renderInicio();buildTicker();
 })();
 </script>
