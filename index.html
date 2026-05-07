@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -812,7 +812,7 @@ function doLoginFuncionario(){
     const ri=document.getElementById("inp-rut-login");if(ri)ri.value="";return;}
   sesionActual={cod:u.cod,nombre:u.nombre,rol:u.rol||"alumno"};
   setSesion(sesionActual);esAdmin=(u.rol==="admin");
-  ocultarLogin();buildNav();renderInicio();
+  ocultarLogin();buildNav();renderInicio();buildTicker();
 }
 
 function cerrarSesion(){
@@ -1605,9 +1605,14 @@ document.getElementById("footer-year").textContent=new Date().getFullYear();
     catch(e){await new Promise(r=>setTimeout(r,1200));}
   }
   if(!loaded){showCloud("✕ Sin conexión a JSONBin","err");}
-  if(sesionActual){esAdmin=(sesionActual.rol==="admin");ocultarLogin();}
-  else{mostrarLogin();}
-  buildNav();renderInicio();buildTicker();
+  if(sesionActual){
+    esAdmin=(sesionActual.rol==="admin");
+    ocultarLogin();
+    buildNav();renderInicio();buildTicker();
+  } else {
+    mostrarLogin();
+    buildTicker();
+  }
 })();
 </script>
 </body>
