@@ -1309,7 +1309,18 @@ function openCfg(){
   document.getElementById("cfg-status").textContent="";openModal("modal-cfg");
 }
 function guardarCfg(){
-  const obj={binId:document.getElementById("cfg-binid").value.trim(),apiKey:document.getElementById("cfg-apikey").value.trim(),imgbbKey:document.getElementById("cfg-imgbb").value.trim(),cldName:document.getElementById("cfg-cld-name").value.trim(),cldKey:document.getElementById("cfg-cld-key").value.trim(),cldSecret:document.getElementById("cfg-cld-secret").value.trim()};
+  const cur=getCfg();
+  const binId=document.getElementById("cfg-binid").value.trim();
+  const apiKey=document.getElementById("cfg-apikey").value.trim();
+  const obj={
+    ...cur,
+    binId:    binId    || cur.binId    || "",
+    apiKey:   apiKey   || cur.apiKey   || "",
+    imgbbKey: document.getElementById("cfg-imgbb").value.trim()    || cur.imgbbKey    || "",
+    cldName:  document.getElementById("cfg-cld-name").value.trim() || cur.cldName     || "",
+    cldKey:   document.getElementById("cfg-cld-key").value.trim()  || cur.cldKey      || "",
+    cldSecret:document.getElementById("cfg-cld-secret").value.trim()|| cur.cldSecret  || "",
+  };
   saveCfgData(obj);document.getElementById("cfg-status").textContent="✓ Configuración guardada";document.getElementById("cfg-status").style.color="var(--accent)";showCloud("✓ Configuración guardada");
 }
 async function probarCfg(){
