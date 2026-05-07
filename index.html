@@ -115,6 +115,7 @@
     .bday-tab-btn.active { background:var(--accent);color:#fff;border-color:var(--accent2); }
     .bday-card { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 16px;display:flex;align-items:center;gap:14px; }
     .bday-card.hoy { border-left:4px solid #c9a84c;background:rgba(201,168,76,.07); }
+    .bday-card.proximo { border-left:4px solid var(--warn);background:rgba(192,120,64,.07); }
     .bday-card.este-mes { border-left:4px solid var(--accent); }
     .bday-avatar { width:42px;height:42px;border-radius:50%;background:var(--accent3);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;flex-shrink:0;border:2px solid var(--border); }
     .bday-card.hoy .bday-avatar { background:rgba(201,168,76,.18);color:#9a7a1a;border-color:#c9a84c; }
@@ -444,6 +445,8 @@
     <div class="flex-sb mb-16">
       <div class="sec-title" style="margin:0"><h2>🎂 Cumpleaños</h2><div class="sec-title-bar"></div></div>
       <button class="btn-p" id="btn-add-bday" style="display:none" onclick="openModalBday()">+ Agregar</button>
+      <button class="btn-s" id="btn-import-bday" style="display:none" onclick="document.getElementById('inp-import-bday').click()">📂 Importar JSON</button>
+      <input id="inp-import-bday" type="file" accept=".json" style="display:none" onchange="importarCumpleanos(this)">
     </div>
     <div class="bday-tabs" id="bday-tabs"></div>
     <div id="bday-content"></div>
@@ -890,6 +893,41 @@ function doLogin(){
 }
 function doLogout(){cerrarSesion();}
 
+
+// ── IMPORTAR CUMPLEAÑOS MASIVO (JSON) ────────────────────────────────────
+function importarCumpleanos(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data)){showCloud("✕ JSON inválido","err");return;}
+      let agregados=0,omitidos=0;
+      for(const r of data){
+        if(!r.nombre||!r.dia||!r.mes){omitidos++;continue;}
+        // Evitar duplicados por nombre+dia+mes
+        if(cumpleanos.find(c=>c.nombre===r.nombre&&c.dia===r.dia&&c.mes===r.mes)){omitidos++;continue;}
+        cumpleanos.push({
+          id: Date.now()+agregados,
+          nombre: r.nombre,
+          grado: r.grado||"ALUMNO CARABINERO",
+          categoria: r.categoria||"alumnos",
+          dia: Number(r.dia),
+          mes: Number(r.mes),
+          anio: Number(r.anio)||0,
+          escuadron: r.escuadron||"",
+          seccion: r.seccion||""
+        });
+        agregados++;
+      }
+      renderCumpleanos();jbSave();
+      showCloud("✓ "+agregados+" cumpleaños importados"+(omitidos?" ("+omitidos+" omitidos)":""));
+    }catch(e){showCloud("✕ Error al leer JSON: "+e.message,"err");}
+    input.value="";
+  };
+  reader.readAsText(file,"utf-8");
+}
+
 // ── GESTIÓN USUARIOS ─────────────────────────────────────────────────────
 function openUsuarios(){openModal("modal-usuarios");renderUsuariosList();}
 function showAddUsuario(){const f=document.getElementById("add-usr-form");if(f){f.style.display="block";document.getElementById("nu-cod").focus();}}
@@ -1146,13 +1184,58 @@ function renderDocsSvc(){
 
 // CUMPLEAÑOS
 function renderCumpleanos(){
-  if(esAdmin)document.getElementById("btn-add-bday").style.display="block";
+  if(esAdmin){
+    document.getElementById("btn-add-bday").style.display="block";
+    const bi=document.getElementById("btn-import-bday");if(bi)bi.style.display="inline-block";
+  }
+  const hoy=new Date(),hoyMes=hoy.getMonth()+1,hoyDia=hoy.getDate();
+
+  // Contar por categoría para los badges
+  const conteo={
+    todos:cumpleanos.length,
+    alumnos:cumpleanos.filter(b=>b.categoria==="alumnos").length,
+    instructores:cumpleanos.filter(b=>b.categoria==="instructores").length,
+    docentes:cumpleanos.filter(b=>b.categoria==="docentes").length,
+    administrativo:cumpleanos.filter(b=>b.categoria==="administrativo").length,
+  };
+  // Contar próximos (≤14 días) para alerta
+  const proximos=cumpleanos.filter(b=>{
+    const dr=(new Date(hoy.getFullYear(),b.mes-1,b.dia)-new Date(hoy.getFullYear(),hoyMes-1,hoyDia))/(1000*60*60*24);
+    const df=dr<0?dr+365:dr;
+    return df<=14;
+  });
+
   const tabs=[{id:"todos",l:"Todos"},{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores"},{id:"docentes",l:"Docentes"},{id:"administrativo",l:"Administrativo"}];
   const tabActivo=window._bdayTab||"todos";
-  document.getElementById("bday-tabs").innerHTML=tabs.map(t=>`<button class="bday-tab-btn ${tabActivo===t.id?"active":""}" onclick="window._bdayTab='${t.id}';renderCumpleanos()">${t.l}</button>`).join("");
+
+  // Renderizar tabs con contador
+  document.getElementById("bday-tabs").innerHTML=tabs.map(t=>{
+    const n=conteo[t.id]||0;
+    return`<button class="bday-tab-btn ${tabActivo===t.id?"active":""}" onclick="window._bdayTab='${t.id}';renderCumpleanos()">${t.l} <span style="font-size:.65rem;opacity:.75;font-family:monospace">(${n})</span></button>`;
+  }).join("");
+
+  // Alerta próximos 14 días
+  const alertaEl=document.getElementById("bday-alerta");
+  if(alertaEl){
+    if(proximos.length){
+      const hoyList=proximos.filter(b=>b.dia===hoyDia&&b.mes===hoyMes);
+      const proxList=proximos.filter(b=>!(b.dia===hoyDia&&b.mes===hoyMes));
+      let msg="";
+      if(hoyList.length) msg+=`🎂 <b>Hoy:</b> ${hoyList.map(b=>b.nombre.split(" ").slice(0,2).join(" ")).join(", ")}. `;
+      if(proxList.length) msg+=`⏰ <b>Próximos 14 días:</b> ${proxList.map(b=>{
+        const dr=(new Date(hoy.getFullYear(),b.mes-1,b.dia)-new Date(hoy.getFullYear(),hoyMes-1,hoyDia))/(1000*60*60*24);
+        const df=Math.round(dr<0?dr+365:dr);
+        return b.nombre.split(" ").slice(0,2).join(" ")+" ("+df+"d)";
+      }).join(", ")}.`;
+      alertaEl.innerHTML=msg;
+      alertaEl.style.display="block";
+    } else {
+      alertaEl.style.display="none";
+    }
+  }
+
   let list=[...cumpleanos];
   if(tabActivo!=="todos")list=list.filter(b=>b.categoria===tabActivo);
-  const hoy=new Date(),hoyMes=hoy.getMonth()+1,hoyDia=hoy.getDate();
   list.sort((a,b)=>{const am=(a.mes-hoyMes+12)%12*31+(a.dia-hoyDia);const bm=(b.mes-hoyMes+12)%12*31+(b.dia-hoyDia);return am-bm;});
   const cont=document.getElementById("bday-content");
   if(!list.length){cont.innerHTML=`<div class="vacio">Sin registros de cumpleaños</div>`;return;}
@@ -1161,12 +1244,14 @@ function renderCumpleanos(){
     const esMes=b.mes===hoyMes&&!esHoy;
     const diasR=(new Date(hoy.getFullYear(),b.mes-1,b.dia)-new Date(hoy.getFullYear(),hoyMes-1,hoyDia))/(1000*60*60*24);
     const diasFinal=diasR<0?diasR+365:diasR;
-    return`<div class="bday-card ${esHoy?"hoy":esMes?"este-mes":""}">
-      <div class="bday-avatar">${esHoy?"🎂":b.nombre.charAt(0).toUpperCase()}</div>
-      <div><div class="bday-name">${esc(b.nombre)}</div><div class="bday-meta">${b.grado?esc(b.grado)+" · ":""}${b.escuadron?esc(b.escuadron)+" · ":""}${b.dia} ${MESES_L[b.mes-1]}${b.anio?" "+b.anio:""}</div></div>
+    const esProximo=diasFinal<=14&&!esHoy;
+    return`<div class="bday-card ${esHoy?"hoy":esProximo?"proximo":esMes?"este-mes":""}">
+      <div class="bday-avatar">${esHoy?"🎂":esProximo?"⏰":b.nombre.charAt(0).toUpperCase()}</div>
+      <div><div class="bday-name">${esc(b.nombre)}</div>
+      <div class="bday-meta">${b.grado?esc(b.grado)+" · ":""}${b.escuadron?esc(b.escuadron)+" · ":""}${b.seccion?esc(b.seccion)+" · ":""}${b.dia} ${MESES_L[b.mes-1]}${b.anio?" "+b.anio:""}</div></div>
       <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
         ${esHoy?`<span class="bday-badge-hoy">🎉 HOY</span>`:""}
-        ${esMes?`<span class="bday-badge-mes">ESTE MES</span>`:""}
+        ${esProximo?`<span style="background:rgba(192,120,64,.15);color:var(--warn);border:1px solid var(--warn);border-radius:2px;font-size:.62rem;font-family:monospace;padding:1px 6px">⏰ PRÓXIMO</span>`:""}
         <span class="bday-dias">${esHoy?"¡Hoy!":diasFinal===0?"Hoy":"en "+Math.round(diasFinal)+" días"}</span>
         ${esAdmin?`<button class="mini-btn" onclick="eliminarBday(${b.id})" style="color:var(--danger);font-size:.65rem">🗑</button>`:""}
       </div>
