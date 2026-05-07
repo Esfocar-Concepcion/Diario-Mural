@@ -859,7 +859,7 @@ function ocultarLogin(){
 function normalizaCod(v){return(v||"").trim().toUpperCase();}
 function normalizaRut(v){return(v||"").trim().replace(/[^0-9]/g,"");}
 
-function doLoginFuncionario(){
+async function doLoginFuncionario(){
   const cod=normalizaCod((document.getElementById("inp-cod-login")||{}).value);
   const rut=normalizaRut((document.getElementById("inp-rut-login")||{}).value);
   const err=document.getElementById("login-func-err");
@@ -868,7 +868,9 @@ function doLoginFuncionario(){
   if(cod===ADMIN_CODE&&rut===ADMIN_RUT){
     sesionActual={cod,nombre:"Administrador",rol:"admin"};
     setSesion(sesionActual);esAdmin=true;
-    ocultarLogin();buildNav();renderInicio();return;
+    ocultarLogin();
+    try{await jbLoad();}catch(e){}
+    buildNav();renderInicio();buildTicker();return;
   }
   // Buscar en lista
   const u=usuarios.find(x=>normalizaCod(x.cod)===cod&&normalizaRut(x.rut)===rut);
@@ -876,7 +878,9 @@ function doLoginFuncionario(){
     const ri=document.getElementById("inp-rut-login");if(ri)ri.value="";return;}
   sesionActual={cod:u.cod,nombre:u.nombre,rol:u.rol||"alumno"};
   setSesion(sesionActual);esAdmin=(u.rol==="admin");
-  ocultarLogin();buildNav();renderInicio();buildTicker();
+  ocultarLogin();
+  try{await jbLoad();}catch(e){}
+  buildNav();renderInicio();buildTicker();
 }
 
 function cerrarSesion(){
