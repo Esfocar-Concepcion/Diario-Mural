@@ -630,6 +630,7 @@
           <select id="fb-cat">
             <option value="alumnos">Alumnos</option>
             <option value="instructores">Instructores</option>
+            <option value="docentes">Docentes</option>
             <option value="administrativo">Personal Administrativo</option>
           </select>
         </div>
@@ -976,7 +977,7 @@ function renderDocsSvc(){
 // CUMPLEAÑOS
 function renderCumpleanos(){
   if(esAdmin)document.getElementById("btn-add-bday").style.display="block";
-  const tabs=[{id:"todos",l:"Todos"},{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores"},{id:"administrativo",l:"Administrativo"}];
+  const tabs=[{id:"todos",l:"Todos"},{id:"alumnos",l:"Alumnos"},{id:"instructores",l:"Instructores"},{id:"docentes",l:"Docentes"},{id:"administrativo",l:"Administrativo"}];
   const tabActivo=window._bdayTab||"todos";
   document.getElementById("bday-tabs").innerHTML=tabs.map(t=>`<button class="bday-tab-btn ${tabActivo===t.id?"active":""}" onclick="window._bdayTab='${t.id}';renderCumpleanos()">${t.l}</button>`).join("");
   let list=[...cumpleanos];
