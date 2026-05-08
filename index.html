@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Diario Mural v20260507-1842 — ESFOCAR Concepción</title>
+  <title>Diario Mural v20260508-1638 — ESFOCAR Concepción</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -249,6 +249,7 @@
       <input id="inp-import-csv" type="file" accept=".csv,.txt" style="display:none" onchange="previsualizarCSV(this)">
       <button class="btn-s" onclick="descargarPlantillaCSV()" title="Descargar plantilla de ejemplo">⬇ Plantilla</button>
       <button class="btn-s" onclick="exportarUsuariosCSV()" title="Exportar usuarios actuales">⬆ Exportar</button>
+      <button class="btn-s" onclick="normalizarTodosRuts()" title="Limpia puntos, guiones y dígito verificador de todos los RUTs guardados" style="color:var(--warn);border-color:var(--warn)">🔧 Normalizar RUTs</button>
     </div>
 
     <div id="add-usr-form" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:14px">
@@ -892,7 +893,14 @@ function ocultarLogin(){
   el.classList.add("hidden");
 }
 function normalizaCod(v){return(v||"").trim().toUpperCase();}
-function normalizaRut(v){return(v||"").trim().replace(/[^0-9]/g,"");}
+function normalizaRut(v){
+  // Elimina puntos, guiones, espacios y letra DV (K/k) — acepta cualquier formato chileno
+  return(v||"").trim()
+    .replace(/\./g,"")          // puntos: 15.926.121 → 15926121
+    .replace(/-[0-9kK]$/,"")    // dígito verificador: 15926121-K → 15926121
+    .replace(/[kK]$/,"")         // K al final sin guión: 15926121K → 15926121
+    .replace(/[^0-9]/g,"");      // cualquier otro carácter no numérico
+}
 
 async function doLoginFuncionario(){
   const cod=normalizaCod((document.getElementById("inp-cod-login")||{}).value);
@@ -911,7 +919,7 @@ async function doLoginFuncionario(){
   }
   // Buscar en lista
   const u=usuarios.find(x=>normalizaCod(x.cod)===cod&&normalizaRut(x.rut)===rut);
-  if(!u){if(err){err.textContent="Código o RUT incorrecto.";err.style.display="block";}
+  if(!u){if(err){err.textContent="Código o RUT incorrecto. Ingrese el RUT sin puntos, guión ni dígito verificador (ej: 12345678).";err.style.display="block";}
     const ri=document.getElementById("inp-rut-login");if(ri)ri.value="";return;}
   sesionActual={cod:u.cod,nombre:u.nombre,rol:u.rol||"alumno"};
   setSesion(sesionActual);esAdmin=(u.rol==="admin");
@@ -1124,6 +1132,19 @@ function exportarUsuariosCSV(){
   a.download="usuarios_esfocar_"+new Date().toISOString().split("T")[0]+".csv";
   a.click();
   showCloud("✓ "+sorted.length+" usuarios exportados");
+}
+
+function normalizarTodosRuts(){
+  if(!usuarios.length){showCloud("✕ Sin usuarios registrados","err");return;}
+  let corregidos=0;
+  usuarios=usuarios.map(u=>{
+    const rutLimpio=normalizaRut(u.rut);
+    if(rutLimpio!==u.rut){corregidos++;return{...u,rut:rutLimpio};}
+    return u;
+  });
+  if(corregidos===0){showCloud("✓ Todos los RUTs ya están en formato correcto");return;}
+  renderUsuariosList();jbSave();
+  showCloud("✓ "+corregidos+" RUT(s) normalizados y guardados");
 }
 
 // FILTROS
