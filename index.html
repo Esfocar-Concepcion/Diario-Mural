@@ -239,10 +239,10 @@
   </div>
 </div>
 
-<!-- ════ MODAL USUARIOS ════ -->
 <div id="modal-usuarios" class="modal-overlay" style="display:none" onclick="closeModal('modal-usuarios',event)">
   <div class="modal-box" style="max-width:720px">
     <h3>👥 Gestión de Usuarios</h3>
+
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
       <button class="btn-p" onclick="showAddUsuario()">+ Agregar</button>
       <button class="btn-s" onclick="document.getElementById('inp-import-csv').click()">📂 Carga Masiva CSV</button>
@@ -250,11 +250,12 @@
       <button class="btn-s" onclick="descargarPlantillaCSV()" title="Descargar plantilla de ejemplo">⬇ Plantilla</button>
       <button class="btn-s" onclick="exportarUsuariosCSV()" title="Exportar usuarios actuales">⬆ Exportar</button>
     </div>
+
     <div id="add-usr-form" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:14px">
-      <div class="sub-lbl" style="margin-bottom:8px">NUEVO USUARIO</div>
+      <div class="sub-lbl" style="margin-bottom:8px" id="add-usr-title">NUEVO USUARIO</div>
       <div class="form-row" style="margin-bottom:10px">
-        <div><div class="sub-lbl">CÓDIGO FUNCIONARIO</div><input id="nu-cod" placeholder="974877Z" style="text-transform:uppercase"></div>
-        <div><div class="sub-lbl">RUT (sin dígito verificador)</div><input id="nu-rut" type="password" placeholder="12345678"></div>
+        <div><div class="sub-lbl">CÓDIGO FUNCIONARIO</div><input id="nu-cod" placeholder="Ej: 974877Z" style="text-transform:uppercase"></div>
+        <div><div class="sub-lbl">RUT (sin dígito verificador)</div><input id="nu-rut" type="password" placeholder="Ej: 12345678"></div>
       </div>
       <div class="form-row" style="margin-bottom:10px">
         <div><div class="sub-lbl">NOMBRE COMPLETO</div><input id="nu-nombre" placeholder="APELLIDO NOMBRE"></div>
@@ -271,9 +272,10 @@
         <button class="btn-s" onclick="cancelarAddUsuario()">Cancelar</button>
       </div>
     </div>
+
     <div id="csv-preview-box" style="display:none;background:var(--bg3);border:1px solid var(--accent);border-radius:3px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="sub-lbl" style="margin:0">VISTA PREVIA — CARGA MASIVA</div>
+        <div class="sub-lbl" style="margin:0" id="csv-preview-title">VISTA PREVIA — CARGA MASIVA</div>
         <button class="mini-btn" onclick="cancelarPreviewCSV()">✕ Cancelar</button>
       </div>
       <div id="csv-preview-stats" style="font-size:.75rem;font-family:monospace;margin-bottom:8px"></div>
@@ -284,10 +286,12 @@
         <button class="btn-s" onclick="cancelarPreviewCSV()">Cancelar</button>
       </div>
     </div>
+
     <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
       <input id="usr-search" placeholder="🔍 Buscar por nombre o código..." oninput="renderUsuariosList()" style="flex:1;font-size:.78rem;padding:6px 10px">
       <span style="font-size:.7rem;color:var(--text3);font-family:monospace;white-space:nowrap" id="usr-count"></span>
     </div>
+
     <div style="max-height:340px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:8px 14px" id="usr-list"></div>
     <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
       <span style="font-size:.65rem;color:var(--text3);font-family:monospace">CSV: cod,rut,nombre,rol — separador , o ;</span>
@@ -966,7 +970,7 @@ function importarCumpleanos(input){
 }
 
 // ── GESTIÓN USUARIOS ─────────────────────────────────────────────────────
-let csvPendiente=[];
+let csvPendiente = [];
 
 function openUsuarios(){openModal("modal-usuarios");renderUsuariosList();}
 
@@ -997,7 +1001,7 @@ function eliminarUsuario(cod){
   showConfirm("¿Eliminar usuario "+cod+"?",()=>{
     usuarios=usuarios.filter(u=>u.cod!==cod);
     renderUsuariosList();jbSave();showCloud("✓ Usuario eliminado");
-  });
+  },"Confirmar eliminación");
 }
 
 function renderUsuariosList(){
@@ -1008,31 +1012,38 @@ function renderUsuariosList(){
   let filtrados=[...usuarios];
   if(q.trim()){
     const qt=q.trim().toUpperCase();
-    filtrados=filtrados.filter(u=>(u.nombre||"").toUpperCase().includes(qt)||(u.cod||"").toUpperCase().includes(qt));
+    filtrados=filtrados.filter(u=>u.nombre.toUpperCase().includes(qt)||u.cod.toUpperCase().includes(qt));
   }
   if(count)count.textContent=filtrados.length+"/"+usuarios.length+" usuarios";
   if(!usuarios.length){list.innerHTML='<div class="vacio">Sin usuarios registrados</div>';return;}
   if(!filtrados.length){list.innerHTML='<div class="vacio">Sin resultados para la búsqueda</div>';return;}
   const sorted=[...filtrados].sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  list.innerHTML=sorted.map(u=>`<div class="usr-row"><span class="usr-cod">${esc(u.cod)}</span><span class="usr-nombre">${esc(u.nombre)}</span><span class="usr-rol ${u.rol==="admin"?"admin":""}">${u.rol||"alumno"}</span><button class="mini-btn" style="color:var(--danger)" onclick="eliminarUsuario('${esc(u.cod)}')">✕</button></div>`).join("");
+  list.innerHTML=sorted.map(u=>`
+    <div class="usr-row">
+      <span class="usr-cod">${esc(u.cod)}</span>
+      <span class="usr-nombre">${esc(u.nombre)}</span>
+      <span class="usr-rol ${u.rol==="admin"?"admin":""}">${u.rol||"alumno"}</span>
+      <button class="mini-btn" style="color:var(--danger)" onclick="eliminarUsuario('${esc(u.cod)}')">✕</button>
+    </div>`).join("");
 }
 
 // ── CARGA MASIVA CSV ──────────────────────────────────────────────────────
 
 function previsualizarCSV(input){
-  const file=input.files[0];if(!file)return;
+  const file=input.files[0]; if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
     const raw=ev.target.result;
-    const sep=(raw.indexOf(";")>-1&&raw.indexOf(",")===-1)?";":","
+    const sep=(raw.indexOf(";")>-1 && raw.indexOf(",")===-1) ? ";" : ",";
     const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l&&!l.startsWith("#"));
     const validos=[],errList=[];
     for(let i=0;i<lines.length;i++){
       const parts=lines[i].split(sep).map(p=>p.trim());
-      if(parts.length<3){errList.push("Fila "+(i+1)+': faltan columnas → "'+lines[i]+'"');continue;}
-      const cod=normalizaCod(parts[0]),rut=normalizaRut(parts[1]),nombre=(parts[2]||"").toUpperCase(),rolRaw=(parts[3]||"alumno").toLowerCase().trim();
+      if(parts.length<3){errList.push("Fila "+(i+1)+": faltan columnas → \""+lines[i]+"\"");continue;}
+      const cod=normalizaCod(parts[0]),rut=normalizaRut(parts[1]),nombre=(parts[2]||"").toUpperCase();
+      const rolRaw=(parts[3]||"alumno").toLowerCase().trim();
       const rol=["alumno","funcionario","admin"].includes(rolRaw)?rolRaw:"alumno";
-      if(!cod||!rut||!nombre){errList.push("Fila "+(i+1)+': datos vacíos → "'+lines[i]+'"');continue;}
+      if(!cod||!rut||!nombre){errList.push("Fila "+(i+1)+": datos vacíos → \""+lines[i]+"\"");continue;}
       const yaExiste=!!usuarios.find(u=>u.cod===cod);
       validos.push({cod,rut,nombre,rol,_dup:yaExiste,_fila:i+1});
     }
@@ -1052,11 +1063,24 @@ function mostrarPreviewCSV(validos,errList,sep){
   const btn=document.getElementById("btn-confirmar-csv");
   const nuevos=validos.filter(v=>!v._dup).length;
   const dups=validos.filter(v=>v._dup).length;
-  stats.innerHTML='<span style="color:var(--accent)">✓ '+nuevos+' nuevos</span>'+(dups?'<span style="color:var(--warn);margin-left:12px">⚠ '+dups+' duplicados (se omitirán)</span>':"")+( errList.length?'<span style="color:var(--danger);margin-left:12px">✕ '+errList.length+' errores</span>':"")+'<span style="color:var(--text3);margin-left:12px">sep: "'+sep+'"</span>';
-  list.innerHTML=validos.length?validos.map(v=>`<div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:.76rem;opacity:${v._dup?"0.45":"1"}"><span style="font-family:monospace;color:var(--accent);min-width:90px">${esc(v.cod)}</span><span style="flex:1;color:var(--text)">${esc(v.nombre)}</span><span style="font-size:.65rem;font-family:monospace;color:${v.rol==="admin"?"#c9a84c":"var(--accent2)"}">${v.rol}</span>${v._dup?'<span style="font-size:.62rem;color:var(--warn);font-family:monospace">DUP</span>':""}</div>`).join(""):'<div class="vacio">Sin filas válidas</div>';
-  if(errList.length){errEl.innerHTML="<strong>Errores detectados:</strong><br>"+errList.map(e=>"• "+esc(e)).join("<br>");errEl.style.display="block";}
-  else{errEl.style.display="none";}
-  btn.disabled=nuevos===0;btn.style.opacity=nuevos===0?"0.5":"1";
+  stats.innerHTML=
+    `<span style="color:var(--accent)">✓ ${nuevos} nuevos</span>`+
+    (dups?`<span style="color:var(--warn);margin-left:12px">⚠ ${dups} duplicados (se omitirán)</span>`:"")+
+    (errList.length?`<span style="color:var(--danger);margin-left:12px">✕ ${errList.length} errores</span>`:"")+
+    `<span style="color:var(--text3);margin-left:12px">sep: "${sep}"</span>`;
+  list.innerHTML=validos.length?validos.map(v=>
+    `<div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:.76rem;${v._dup?"opacity:.45":""}">
+      <span style="font-family:monospace;color:var(--accent);min-width:90px">${esc(v.cod)}</span>
+      <span style="flex:1;color:var(--text)">${esc(v.nombre)}</span>
+      <span style="font-size:.65rem;font-family:monospace;color:${v.rol==="admin"?"#c9a84c":"var(--accent2)"}">${v.rol}</span>
+      ${v._dup?'<span style="font-size:.62rem;color:var(--warn);font-family:monospace">DUP</span>':''}</div>`
+  ).join(""):'<div class="vacio">Sin filas válidas</div>';
+  if(errList.length){
+    errEl.innerHTML="<strong>Errores detectados:</strong><br>"+errList.map(e=>`• ${esc(e)}`).join("<br>");
+    errEl.style.display="block";
+  } else {errEl.style.display="none";}
+  btn.disabled=nuevos===0;
+  btn.style.opacity=nuevos===0?"0.5":"1";
   box.style.display="block";
   document.getElementById("add-usr-form").style.display="none";
 }
@@ -1067,7 +1091,7 @@ function confirmarImportCSV(){
   nuevos.forEach(v=>usuarios.push({cod:v.cod,rut:v.rut,nombre:v.nombre,rol:v.rol}));
   cancelarPreviewCSV();
   renderUsuariosList();jbSave();
-  showCloud("✓ "+nuevos.length+" usuario(s) importados");
+  showCloud("✓ "+nuevos.length+" usuario(s) importados correctamente");
 }
 
 function cancelarPreviewCSV(){
@@ -1077,111 +1101,29 @@ function cancelarPreviewCSV(){
 }
 
 function descargarPlantillaCSV(){
-  const contenido="# Plantilla Carga Masiva Usuarios - Diario Mural ESFOCAR\n# Formato: codigo,rut_sin_dv,nombre_completo,rol\n# Roles válidos: alumno | funcionario | admin\n# Elimina estas líneas de comentario antes de importar\n974877Z,15926121,GARCIA LOPEZ CARLOS,alumno\n985123K,16234567,MARTINEZ PEREZ ANA,funcionario\n";
+  const contenido=`# Plantilla Carga Masiva Usuarios - Diario Mural ESFOCAR
+# Formato: codigo,rut_sin_dv,nombre_completo,rol
+# Roles validos: alumno | funcionario | admin
+# Elimina estas lineas de comentario antes de importar
+974877Z,15926121,GARCIA LOPEZ CARLOS,alumno
+985123K,16234567,MARTINEZ PEREZ ANA,funcionario
+`;
   const blob=new Blob([contenido],{type:"text/csv;charset=utf-8;"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="plantilla_usuarios_esfocar.csv";a.click();
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="plantilla_usuarios_esfocar.csv";a.click();
   showCloud("✓ Plantilla descargada");
 }
 
 function exportarUsuariosCSV(){
   if(!usuarios.length){showCloud("✕ Sin usuarios para exportar","err");return;}
   const sorted=[...usuarios].sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  const header="# Exportación Usuarios - Diario Mural ESFOCAR\n# codigo,rut,nombre,rol\n";
-  const rows=sorted.map(u=>u.cod+","+u.rut+","+u.nombre+","+(u.rol||"alumno")).join("\n");
+  const header="# Exportacion Usuarios - Diario Mural ESFOCAR\n# codigo,rut,nombre,rol\n";
+  const rows=sorted.map(u=>`${u.cod},${u.rut},${u.nombre},${u.rol||"alumno"}`).join("\n");
   const blob=new Blob([header+rows],{type:"text/csv;charset=utf-8;"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="usuarios_esfocar_"+new Date().toISOString().split("T")[0]+".csv";a.click();
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="usuarios_esfocar_"+new Date().toISOString().split("T")[0]+".csv";
+  a.click();
   showCloud("✓ "+sorted.length+" usuarios exportados");
-}
-
-// INICIO
-function renderInicio(){
-  const act=pubsActivas(),prox=proxEventos();
-  const critico=pubs.find(p=>p.prioridad==="critico"&&p.activa&&p.fijada);
-  const bar=document.getElementById("crit-bar");
-  if(critico){document.getElementById("crit-txt").textContent="▲ CRÍTICO: "+critico.titulo;bar.classList.remove("hidden");}
-  else{bar.classList.add("hidden");}
-  const urgentes=act.filter(p=>p.prioridad==="urgente"||p.prioridad==="critico").length;
-  document.getElementById("metrics-grid").innerHTML=[
-    {v:act.length,l:"Publicaciones",i:"📋",r:false},
-    {v:act.filter(p=>p.categoria==="noticias").length,l:"Noticias",i:"◈",r:false},
-    {v:prox.length,l:"Próximos eventos",i:"📅",r:false},
-    {v:urgentes,l:"Urgentes/Críticos",i:"⚠",r:true},
-    {v:act.filter(p=>p.categoria==="documentos").length,l:"Documentos",i:"▣",r:false},
-  ].map(m=>`<div class="metric-card" style="border-top:3px solid ${m.r?"var(--danger)":"var(--accent)"}"><div class="metric-icon" style="color:${m.r?"var(--danger)":"var(--accent)"}">${m.i}</div><div class="metric-val" style="color:${m.r&&m.v>0?"var(--danger)":"var(--text)"}">${m.v}</div><div class="metric-label">${m.l}</div></div>`).join("");
-  document.getElementById("home-pubs").innerHTML=act.slice(0,4).map(p=>pubCardHTML(p)).join("")||`<div class="vacio">Sin publicaciones</div>`;
-  document.getElementById("home-evs").innerHTML=prox.slice(0,4).map(e=>evCardHTML(e)).join("")||`<div class="vacio">Sin eventos próximos</div>`;
-  // Tabla de honor
-  const honorEl=document.getElementById("home-honor");
-  if(honorEl){
-    const mesActual=new Date().getMonth()+1, anioActual=new Date().getFullYear();
-    const honorList=destacados.filter(d=>d.mes===mesActual&&d.anio===anioActual).slice(0,4);
-    if(!honorList.length){
-      // Mostrar los más recientes si no hay del mes actual
-      const recientes=[...destacados].sort((a,b)=>b.anio*12+b.mes-(a.anio*12+a.mes)).slice(0,4);
-      honorEl.innerHTML=recientes.length?recientes.map((d,i)=>`
-        <div class="honor-card ${i===0?"gold":""}">
-          <div class="honor-num ${i===0?"g1":""}">${i+1}</div>
-          <div>
-            <div class="honor-nombre">${esc(d.nombre)}</div>
-            <div class="honor-motivo">${esc(d.grado||"")}${d.escuadron?" · "+esc(d.escuadron):""}</div>
-            <div class="honor-motivo" style="color:var(--text2);margin-top:2px">${esc((d.motivo||"").substring(0,60))}${(d.motivo||"").length>60?"…":""}</div>
-          </div>
-        </div>`).join(""):`<div class="vacio">Sin destacados registrados</div>`;
-    } else {
-      honorEl.innerHTML=honorList.map((d,i)=>`
-        <div class="honor-card ${i===0?"gold":""}">
-          <div class="honor-num ${i===0?"g1":""}">${i+1}</div>
-          <div>
-            <div class="honor-nombre">${esc(d.nombre)}</div>
-            <div class="honor-motivo">${esc(d.grado||"")}${d.escuadron?" · "+esc(d.escuadron):""}</div>
-            <div class="honor-motivo" style="color:var(--text2);margin-top:2px">${esc((d.motivo||"").substring(0,60))}${(d.motivo||"").length>60?"…":""}</div>
-          </div>
-        </div>`).join("");
-    }
-  }
-}
-function pubCardHTML(p){
-  const pulseClass = p.prioridad==="critico"?" pulse-crit":p.prioridad==="urgente"?" pulse-urg":"";
-  return`<div class="pub-card${pulseClass}" onclick="verDetalle(${p.id})" style="border-left:3px solid ${priColor(p.prioridad)}">
-    <div class="pub-card-meta"><span class="badge badge-cat">${catLabel(p.categoria)}</span>${priBadge(p.prioridad)}${p.fijada?'<span style="color:#c9a84c;font-size:.8rem">📌</span>':''}</div>
-    <div class="pub-card-title">${esc(p.titulo)}</div>
-    <div class="pub-card-date">${fmt(p.fecha)} · ${esc(p.autor)}</div>
-    <div class="pub-card-body">${esc(p.contenido)}</div>
-    ${p.etiquetas?.length?`<div class="pub-card-tags">${p.etiquetas.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>`:""}
-  </div>`;
-}
-function evCardHTML(e){
-  const hoyD=new Date(HOY), evD=new Date(e.fecha);
-  const diffMs=evD-hoyD, diffDias=Math.ceil(diffMs/(1000*60*60*24));
-  let countdown="";
-  if(e.fecha>=HOY){
-    if(diffDias===0) countdown=`<span class="ev-countdown hoy">🔔 HOY</span>`;
-    else if(diffDias===1) countdown=`<span class="ev-countdown prox">⏳ Mañana</span>`;
-    else if(diffDias<=7) countdown=`<span class="ev-countdown prox">⏳ en ${diffDias} días</span>`;
-  }
-  return`<div class="ev-card" style="opacity:${e.fecha<HOY?.7:1}">
-    <div class="ev-card-title">${esc(e.titulo)}</div>
-    <div class="ev-card-date">${fmt(e.fecha)}${e.hora?" · "+esc(e.hora):""}</div>
-    ${e.lugar?`<div class="ev-card-lugar">📍 ${esc(e.lugar)}</div>`:""}
-    ${e.descripcion?`<div class="ev-card-desc">${esc(e.descripcion)}</div>`:""}
-    ${countdown}
-  </div>`;
-}
-function verDetalle(id){
-  const p=pubs.find(x=>x.id===id);if(!p)return;
-  document.getElementById("detalle-content").innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px">
-      <div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><span class="badge badge-cat">${catLabel(p.categoria)}</span>${priBadge(p.prioridad)}${p.fijada?'<span style="color:#c9a84c">📌 Fijada</span>':''}</div>
-        <h2 style="font-size:1.3rem;color:var(--text);margin:0 0 6px">${esc(p.titulo)}</h2>
-        <div style="font-size:.78rem;color:var(--text3);font-family:monospace">${fmt(p.fecha)} · ${esc(p.autor)}</div>
-      </div>
-      ${esAdmin?`<div style="display:flex;gap:8px"><button class="btn-s" onclick="editPub(${p.id})">✏ Editar</button><button class="btn-s" style="color:var(--danger);border-color:var(--danger)" onclick="eliminarPub(${p.id})">✕ Eliminar</button></div>`:""}
-    </div>
-    <div style="font-size:.9rem;color:var(--text2);line-height:1.8;white-space:pre-wrap;margin-bottom:18px">${esc(p.contenido)}</div>
-    ${p.etiquetas?.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${p.etiquetas.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>`:""}
-    ${p.adjuntos?.length?`<div><div class="sub-lbl">ADJUNTOS</div><div class="adj-list">${p.adjuntos.map(a=>`<div class="adj-item"><span>${iconAdj(a.tipo,a.nombre)}</span><a href="${a.url}" download="${esc(a.nombre)}" style="color:var(--accent);text-decoration:none">${esc(a.nombre)}</a><span style="color:var(--text3);font-size:.7rem">${a.size||""}</span></div>`).join("")}</div></div>`:""}`;
-  showSec("detalle");
 }
 
 // FILTROS
