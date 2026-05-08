@@ -241,18 +241,20 @@
 
 <!-- ════ MODAL USUARIOS ════ -->
 <div id="modal-usuarios" class="modal-overlay" style="display:none" onclick="closeModal('modal-usuarios',event)">
-  <div class="modal-box" style="max-width:680px">
+  <div class="modal-box" style="max-width:720px">
     <h3>👥 Gestión de Usuarios</h3>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
       <button class="btn-p" onclick="showAddUsuario()">+ Agregar</button>
-      <button class="btn-s" onclick="document.getElementById('inp-import-csv').click()">📂 Importar CSV</button>
-      <input id="inp-import-csv" type="file" accept=".csv,.txt" style="display:none" onchange="importarCSV(this)">
-      <span style="font-size:.68rem;color:var(--text3);font-family:monospace;align-self:center">CSV: cod,rut,nombre,rol</span>
+      <button class="btn-s" onclick="document.getElementById('inp-import-csv').click()">📂 Carga Masiva CSV</button>
+      <input id="inp-import-csv" type="file" accept=".csv,.txt" style="display:none" onchange="previsualizarCSV(this)">
+      <button class="btn-s" onclick="descargarPlantillaCSV()" title="Descargar plantilla de ejemplo">⬇ Plantilla</button>
+      <button class="btn-s" onclick="exportarUsuariosCSV()" title="Exportar usuarios actuales">⬆ Exportar</button>
     </div>
     <div id="add-usr-form" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:14px">
+      <div class="sub-lbl" style="margin-bottom:8px">NUEVO USUARIO</div>
       <div class="form-row" style="margin-bottom:10px">
         <div><div class="sub-lbl">CÓDIGO FUNCIONARIO</div><input id="nu-cod" placeholder="974877Z" style="text-transform:uppercase"></div>
-        <div><div class="sub-lbl">RUT (sin dígito)</div><input id="nu-rut" type="password" placeholder="12345678"></div>
+        <div><div class="sub-lbl">RUT (sin dígito verificador)</div><input id="nu-rut" type="password" placeholder="12345678"></div>
       </div>
       <div class="form-row" style="margin-bottom:10px">
         <div><div class="sub-lbl">NOMBRE COMPLETO</div><input id="nu-nombre" placeholder="APELLIDO NOMBRE"></div>
@@ -266,12 +268,31 @@
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn-p" onclick="guardarUsuario()">Guardar</button>
-        <button class="btn-s" onclick="document.getElementById('add-usr-form').style.display='none'">Cancelar</button>
+        <button class="btn-s" onclick="cancelarAddUsuario()">Cancelar</button>
       </div>
     </div>
-    <div style="font-size:.7rem;color:var(--text3);font-family:monospace;margin-bottom:8px" id="usr-count"></div>
-    <div style="max-height:380px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:8px 14px" id="usr-list"></div>
-    <div style="margin-top:14px;text-align:right"><button class="btn-s" onclick="closeModal('modal-usuarios')">Cerrar</button></div>
+    <div id="csv-preview-box" style="display:none;background:var(--bg3);border:1px solid var(--accent);border-radius:3px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="sub-lbl" style="margin:0">VISTA PREVIA — CARGA MASIVA</div>
+        <button class="mini-btn" onclick="cancelarPreviewCSV()">✕ Cancelar</button>
+      </div>
+      <div id="csv-preview-stats" style="font-size:.75rem;font-family:monospace;margin-bottom:8px"></div>
+      <div style="max-height:220px;overflow-y:auto;margin-bottom:12px" id="csv-preview-list"></div>
+      <div id="csv-preview-err" style="color:var(--danger);font-size:.75rem;margin-bottom:10px;display:none"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-p" id="btn-confirmar-csv" onclick="confirmarImportCSV()">✓ Confirmar importación</button>
+        <button class="btn-s" onclick="cancelarPreviewCSV()">Cancelar</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input id="usr-search" placeholder="🔍 Buscar por nombre o código..." oninput="renderUsuariosList()" style="flex:1;font-size:.78rem;padding:6px 10px">
+      <span style="font-size:.7rem;color:var(--text3);font-family:monospace;white-space:nowrap" id="usr-count"></span>
+    </div>
+    <div style="max-height:340px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:8px 14px" id="usr-list"></div>
+    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:.65rem;color:var(--text3);font-family:monospace">CSV: cod,rut,nombre,rol — separador , o ;</span>
+      <button class="btn-s" onclick="closeModal('modal-usuarios')">Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -945,8 +966,20 @@ function importarCumpleanos(input){
 }
 
 // ── GESTIÓN USUARIOS ─────────────────────────────────────────────────────
+let csvPendiente=[];
+
 function openUsuarios(){openModal("modal-usuarios");renderUsuariosList();}
-function showAddUsuario(){const f=document.getElementById("add-usr-form");if(f){f.style.display="block";document.getElementById("nu-cod").focus();}}
+
+function showAddUsuario(){
+  cancelarPreviewCSV();
+  const f=document.getElementById("add-usr-form");
+  if(f){f.style.display="block";document.getElementById("nu-cod").focus();}
+}
+
+function cancelarAddUsuario(){
+  document.getElementById("add-usr-form").style.display="none";
+  ["nu-cod","nu-rut","nu-nombre"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+}
 
 function guardarUsuario(){
   const cod=normalizaCod(document.getElementById("nu-cod").value);
@@ -956,13 +989,12 @@ function guardarUsuario(){
   if(!cod||!rut||!nombre){showCloud("✕ Complete todos los campos","err");return;}
   if(usuarios.find(u=>normalizaCod(u.cod)===cod)){showCloud("✕ Código ya existe","err");return;}
   usuarios.push({cod,rut,nombre,rol});
-  document.getElementById("add-usr-form").style.display="none";
-  ["nu-cod","nu-rut","nu-nombre"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  cancelarAddUsuario();
   renderUsuariosList();jbSave();showCloud("✓ Usuario agregado");
 }
 
 function eliminarUsuario(cod){
-  confirm("¿Eliminar usuario "+cod+"?",()=>{
+  showConfirm("¿Eliminar usuario "+cod+"?",()=>{
     usuarios=usuarios.filter(u=>u.cod!==cod);
     renderUsuariosList();jbSave();showCloud("✓ Usuario eliminado");
   });
@@ -971,31 +1003,94 @@ function eliminarUsuario(cod){
 function renderUsuariosList(){
   const list=document.getElementById("usr-list");
   const count=document.getElementById("usr-count");
+  const q=(document.getElementById("usr-search")||{}).value||"";
   if(!list)return;
-  if(count)count.textContent=usuarios.length+" usuarios registrados";
+  let filtrados=[...usuarios];
+  if(q.trim()){
+    const qt=q.trim().toUpperCase();
+    filtrados=filtrados.filter(u=>(u.nombre||"").toUpperCase().includes(qt)||(u.cod||"").toUpperCase().includes(qt));
+  }
+  if(count)count.textContent=filtrados.length+"/"+usuarios.length+" usuarios";
   if(!usuarios.length){list.innerHTML='<div class="vacio">Sin usuarios registrados</div>';return;}
-  const sorted=[...usuarios].sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  if(!filtrados.length){list.innerHTML='<div class="vacio">Sin resultados para la búsqueda</div>';return;}
+  const sorted=[...filtrados].sort((a,b)=>a.nombre.localeCompare(b.nombre));
   list.innerHTML=sorted.map(u=>`<div class="usr-row"><span class="usr-cod">${esc(u.cod)}</span><span class="usr-nombre">${esc(u.nombre)}</span><span class="usr-rol ${u.rol==="admin"?"admin":""}">${u.rol||"alumno"}</span><button class="mini-btn" style="color:var(--danger)" onclick="eliminarUsuario('${esc(u.cod)}')">✕</button></div>`).join("");
 }
 
-function importarCSV(input){
+// ── CARGA MASIVA CSV ──────────────────────────────────────────────────────
+
+function previsualizarCSV(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
-    const lines=ev.target.result.split("\n").map(l=>l.trim()).filter(l=>l&&!l.startsWith("#"));
-    let agregados=0,errores=0;
-    for(const line of lines){
-      const parts=line.split(",").map(p=>p.trim());
-      if(parts.length<3){errores++;continue;}
-      const cod=normalizaCod(parts[0]),rut=normalizaRut(parts[1]),nombre=(parts[2]||"").toUpperCase(),rol=parts[3]||"alumno";
-      if(!cod||!rut||!nombre||usuarios.find(u=>u.cod===cod)){errores++;continue;}
-      usuarios.push({cod,rut,nombre,rol});agregados++;
+    const raw=ev.target.result;
+    const sep=(raw.indexOf(";")>-1&&raw.indexOf(",")===-1)?";":","
+    const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l&&!l.startsWith("#"));
+    const validos=[],errList=[];
+    for(let i=0;i<lines.length;i++){
+      const parts=lines[i].split(sep).map(p=>p.trim());
+      if(parts.length<3){errList.push("Fila "+(i+1)+': faltan columnas → "'+lines[i]+'"');continue;}
+      const cod=normalizaCod(parts[0]),rut=normalizaRut(parts[1]),nombre=(parts[2]||"").toUpperCase(),rolRaw=(parts[3]||"alumno").toLowerCase().trim();
+      const rol=["alumno","funcionario","admin"].includes(rolRaw)?rolRaw:"alumno";
+      if(!cod||!rut||!nombre){errList.push("Fila "+(i+1)+': datos vacíos → "'+lines[i]+'"');continue;}
+      const yaExiste=!!usuarios.find(u=>u.cod===cod);
+      validos.push({cod,rut,nombre,rol,_dup:yaExiste,_fila:i+1});
     }
-    renderUsuariosList();jbSave();
-    showCloud("✓ "+agregados+" importados"+(errores?" ("+errores+" omitidos)":""));
-    input.value="";
+    csvPendiente=validos;
+    mostrarPreviewCSV(validos,errList,sep);
   };
-  reader.readAsText(file);
+  reader.readAsText(file,"utf-8");
+  input.value="";
+}
+
+function mostrarPreviewCSV(validos,errList,sep){
+  cancelarAddUsuario();
+  const box=document.getElementById("csv-preview-box");
+  const stats=document.getElementById("csv-preview-stats");
+  const list=document.getElementById("csv-preview-list");
+  const errEl=document.getElementById("csv-preview-err");
+  const btn=document.getElementById("btn-confirmar-csv");
+  const nuevos=validos.filter(v=>!v._dup).length;
+  const dups=validos.filter(v=>v._dup).length;
+  stats.innerHTML='<span style="color:var(--accent)">✓ '+nuevos+' nuevos</span>'+(dups?'<span style="color:var(--warn);margin-left:12px">⚠ '+dups+' duplicados (se omitirán)</span>':"")+( errList.length?'<span style="color:var(--danger);margin-left:12px">✕ '+errList.length+' errores</span>':"")+'<span style="color:var(--text3);margin-left:12px">sep: "'+sep+'"</span>';
+  list.innerHTML=validos.length?validos.map(v=>`<div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:.76rem;opacity:${v._dup?"0.45":"1"}"><span style="font-family:monospace;color:var(--accent);min-width:90px">${esc(v.cod)}</span><span style="flex:1;color:var(--text)">${esc(v.nombre)}</span><span style="font-size:.65rem;font-family:monospace;color:${v.rol==="admin"?"#c9a84c":"var(--accent2)"}">${v.rol}</span>${v._dup?'<span style="font-size:.62rem;color:var(--warn);font-family:monospace">DUP</span>':""}</div>`).join(""):'<div class="vacio">Sin filas válidas</div>';
+  if(errList.length){errEl.innerHTML="<strong>Errores detectados:</strong><br>"+errList.map(e=>"• "+esc(e)).join("<br>");errEl.style.display="block";}
+  else{errEl.style.display="none";}
+  btn.disabled=nuevos===0;btn.style.opacity=nuevos===0?"0.5":"1";
+  box.style.display="block";
+  document.getElementById("add-usr-form").style.display="none";
+}
+
+function confirmarImportCSV(){
+  const nuevos=csvPendiente.filter(v=>!v._dup);
+  if(!nuevos.length){showCloud("✕ No hay usuarios nuevos para importar","err");return;}
+  nuevos.forEach(v=>usuarios.push({cod:v.cod,rut:v.rut,nombre:v.nombre,rol:v.rol}));
+  cancelarPreviewCSV();
+  renderUsuariosList();jbSave();
+  showCloud("✓ "+nuevos.length+" usuario(s) importados");
+}
+
+function cancelarPreviewCSV(){
+  csvPendiente=[];
+  const box=document.getElementById("csv-preview-box");
+  if(box)box.style.display="none";
+}
+
+function descargarPlantillaCSV(){
+  const contenido="# Plantilla Carga Masiva Usuarios - Diario Mural ESFOCAR\n# Formato: codigo,rut_sin_dv,nombre_completo,rol\n# Roles válidos: alumno | funcionario | admin\n# Elimina estas líneas de comentario antes de importar\n974877Z,15926121,GARCIA LOPEZ CARLOS,alumno\n985123K,16234567,MARTINEZ PEREZ ANA,funcionario\n";
+  const blob=new Blob([contenido],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="plantilla_usuarios_esfocar.csv";a.click();
+  showCloud("✓ Plantilla descargada");
+}
+
+function exportarUsuariosCSV(){
+  if(!usuarios.length){showCloud("✕ Sin usuarios para exportar","err");return;}
+  const sorted=[...usuarios].sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const header="# Exportación Usuarios - Diario Mural ESFOCAR\n# codigo,rut,nombre,rol\n";
+  const rows=sorted.map(u=>u.cod+","+u.rut+","+u.nombre+","+(u.rol||"alumno")).join("\n");
+  const blob=new Blob([header+rows],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="usuarios_esfocar_"+new Date().toISOString().split("T")[0]+".csv";a.click();
+  showCloud("✓ "+sorted.length+" usuarios exportados");
 }
 
 // INICIO
