@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Diario Mural v20260508-1643 — ESFOCAR Concepción</title>
+  <title>Diario Mural v20260508-1658 — ESFOCAR Concepción</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -1621,11 +1621,10 @@ async function subirImgBB(file){
 async function subirCloudinary(file){
   const name=getCldName(),key=getCldKey(),secret=getCldSecret();
   if(!name||!key||!secret)throw new Error("Sin credenciales Cloudinary");
-  // FIX PDF: resource_type "raw" para PDF/doc/xlsx, "image" para imágenes
-  const resourceType=esImagen(file.type,file.name)?"image":"raw";
   const ts=Math.round(Date.now()/1000);
-  // resource_type debe ir en el string a firmar (orden alfabético estricto)
-  const strToSign=`folder=esfocar&resource_type=${resourceType}&timestamp=${ts}${secret}`;
+  // FIX PDF: usar /auto/upload — Cloudinary detecta automáticamente imagen/PDF/raw
+  // La firma SOLO incluye los parámetros del FormData (folder + timestamp), NO resource_type
+  const strToSign=`folder=esfocar&timestamp=${ts}${secret}`;
   const msgBuf=new TextEncoder().encode(strToSign);
   const hashBuf=await crypto.subtle.digest("SHA-1",msgBuf);
   const sig=Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,"0")).join("");
@@ -1635,8 +1634,8 @@ async function subirCloudinary(file){
   fd.append("timestamp",ts);
   fd.append("signature",sig);
   fd.append("folder","esfocar");
-  fd.append("resource_type",resourceType);
-  const r=await fetch(`https://api.cloudinary.com/v1_1/${name}/${resourceType}/upload`,{method:"POST",body:fd});
+  // Endpoint /auto/upload acepta imágenes, PDFs, Word, Excel y cualquier archivo
+  const r=await fetch(`https://api.cloudinary.com/v1_1/${name}/auto/upload`,{method:"POST",body:fd});
   const d=await r.json();if(d.error)throw new Error(d.error.message);
   return{url:d.secure_url,nombre:file.name,tipo:file.type,size:formatSize(file.size)};
 }
